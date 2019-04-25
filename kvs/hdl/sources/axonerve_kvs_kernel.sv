@@ -2,72 +2,72 @@
 `default_nettype none
 
 module axonerve_kvs_kernel (
-		     input wire 	  I_CLK,
-		     input wire 	  I_CLKX2,
-		     input wire 	  I_XRST, // active low
-		     output logic [31:0]  O_VERSION,
-		     output logic 	  O_READY,
-		     output logic 	  O_WAIT,
+			    input wire 		 I_CLK,
+			    input wire 		 I_CLKX2,
+			    input wire 		 I_XRST, // active low
+			    output logic [31:0]  O_VERSION,
+			    output logic 	 O_READY,
+			    output logic 	 O_WAIT,
 
-		     output logic 	  O_ACK,
-		     output logic 	  O_ENT_ERR,
-		     output logic 	  O_SINGLE_HIT,
-		     output logic 	  O_MULTIL_HIT,
-		     output logic [127:0] O_KEY_DAT,
-		     output logic [127:0] O_EKEY_MSK,
-		     output logic [6:0]   O_KEY_PRI,
-		     output logic [31:0]  O_KEY_VALUE,
-		     output logic 	  O_CMD_EMPTY,
-		     output logic 	  O_CMD_FULL,
-		     output logic 	  O_ENT_FULL,
+			    output logic 	 O_ACK,
+			    output logic 	 O_ENT_ERR,
+			    output logic 	 O_SINGLE_HIT,
+			    output logic 	 O_MULTIL_HIT,
+			    output logic [127:0] O_KEY_DAT,
+			    output logic [127:0] O_EKEY_MSK,
+			    output logic [6:0] 	 O_KEY_PRI,
+			    output logic [31:0]  O_KEY_VALUE,
+			    output logic 	 O_CMD_EMPTY,
+			    output logic 	 O_CMD_FULL,
+			    output logic 	 O_ENT_FULL,
 
-		     input wire 	  I_CMD_INIT,
-		     input wire 	  I_CMD_VALID,
-		     input wire 	  I_CMD_ERASE,
-		     input wire 	  I_CMD_WRITE,
-		     input wire 	  I_CMD_READ,
-		     input wire 	  I_CMD_SEARCH,
-		     input wire 	  I_CMD_UPDATE,
-		     input wire [127:0]   I_KEY_DAT,
-		     input wire [127:0]   I_EKEY_MSK,
-		     input wire [6:0] 	  I_KEY_PRI,
-		     input wire [31:0] 	  I_KEY_VALUE
-		     );
+			    input wire 		 I_CMD_INIT,
+			    input wire 		 I_CMD_VALID,
+			    input wire 		 I_CMD_ERASE,
+			    input wire 		 I_CMD_WRITE,
+			    input wire 		 I_CMD_READ,
+			    input wire 		 I_CMD_SEARCH,
+			    input wire 		 I_CMD_UPDATE,
+			    input wire [127:0] 	 I_KEY_DAT,
+			    input wire [127:0] 	 I_EKEY_MSK,
+			    input wire [6:0] 	 I_KEY_PRI,
+			    input wire [31:0] 	 I_KEY_VALUE
+			    );
    
-   logic 		  OACK;
-   logic 		  OENT_ERR;
-   logic 		  OSHIT;
-   logic 		  OMHIT;
-   logic [15:0] 	  OSRCH_ENT_ADD;
-   logic 		  OXMATCH_WAIT;
-   logic [127:0] 	  OKEY_DAT;
-   logic [127:0] 	  OEKEY_MSK;
-   logic [6:0] 		  OKEY_PRI;
-   logic [31:0] 	  OKEY_VALUE;
-   logic [16:0] 	  OREG_SERC_MEM_RDT;
-   logic [31:0] 	  OVERSION;
-   logic 		  OFIFO_FULL;
+   logic 					 OACK;
+   logic 					 OENT_ERR;
+   logic 					 OSHIT;
+   logic 					 OMHIT;
+   logic [15:0] 				 OSRCH_ENT_ADD;
+   logic 					 OXMATCH_WAIT;
+   logic [127:0] 				 OKEY_DAT;
+   logic [127:0] 				 OEKEY_MSK;
+   logic [6:0] 					 OKEY_PRI;
+   logic [31:0] 				 OKEY_VALUE;
+   logic [16:0] 				 OREG_SERC_MEM_RDT;
+   logic [31:0] 				 OVERSION;
+   logic 					 OFIFO_FULL;
    
-   logic 		  XRST;
-   logic 		  ICLK;
-   logic 		  ICLKX2;
-   logic 		  ICAM_IE = 1'b0;
-   logic 		  ICAM_WE = 1'b0;
-   logic 		  ICAM_RE = 1'b0;
-   logic 		  ICAM_SE = 1'b0;
-   logic [15:0] 	  IENT_ADD = 16'd0;
-   logic 		  ICODE_MODE = 1'b0;
-   logic [127:0] 	  IKEY_DAT = 128'd0;
-   logic [127:0] 	  IEKEY_MSK = 128'd0;
-   logic [6:0] 		  IKEY_PRI = 7'd0;
-   logic [31:0] 	  IKEY_VALUE = 32'd0;
-   logic 		  IREG_DBG = 1'b0;
-   logic [2:0] 		  IREG_CLUS_SEL = 3'd0;
-   logic [4:0] 		  IREG_SERC_MEM_SEL = 5'd0;
-   logic [15:0] 	  IREG_SERC_MEM_ADR = 16'd0;
-   logic 		  IREG_SERC_MEM_XRW = 1'b0;
-   logic 		  IREG_SERC_MEM_DON = 1'b0;
-   logic [16:0] 	  IREG_SERC_MEM_WDT = 17'd0;
+   logic 					 XRST;
+   logic 					 ICLK;
+   logic 					 ICLKX2;
+   logic 					 ICAM_IE = 1'b0;
+   logic 					 ICAM_WE = 1'b0;
+   logic 					 ICAM_RE = 1'b0;
+   logic 					 ICAM_SE = 1'b0;
+   logic [15:0] 				 IENT_ADD = 16'd0;
+   logic 					 ICODE_MODE = 1'b0;
+   logic [127:0] 				 IKEY_DAT = 128'd0;
+   logic [127:0] 				 IEKEY_MSK = 128'd0;
+   logic [6:0] 					 IKEY_PRI = 7'd0;
+   logic [31:0] 				 IKEY_VALUE = 32'd0;
+   logic 					 IREG_DBG = 1'b0;
+   logic [2:0] 					 IREG_CLUS_SEL = 3'd0;
+   logic [4:0] 					 IREG_SERC_MEM_SEL = 5'd0;
+   logic [15:0] 				 IREG_SERC_MEM_ADR = 16'd0;
+   logic 					 IREG_SERC_MEM_XRW = 1'b0;
+   logic 					 IREG_SERC_MEM_DON = 1'b0;
+   logic [16:0] 				 IREG_SERC_MEM_WDT = 17'd0;
 
    assign O_VERSION = OVERSION;
 
@@ -111,17 +111,17 @@ module axonerve_kvs_kernel (
 		  .IREG_SERC_MEM_WDT(IREG_SERC_MEM_WDT)
 		  );
 
-   logic [299:0] 	  cmd_din;
-   logic 		  cmd_we;
-   logic 		  cmd_rd = 1'b0;
-   logic [299:0] 	  cmd_q = 300'd0;
-   logic 		  cmd_full;
-   logic 		  cmd_empty;
-   logic 		  cmd_valid;
-   logic [4:0] 		  cmd_count;
-   logic 		  cmd_prog_full;
-   logic 		  cmd_wr_rst_busy;
-   logic 		  cmd_rd_rst_busy;
+   logic [299:0] 				 cmd_din;
+   logic 					 cmd_we;
+   logic 					 cmd_rd = 1'b0;
+   logic [299:0] 				 cmd_q = 300'd0;
+   logic 					 cmd_full;
+   logic 					 cmd_empty;
+   logic 					 cmd_valid;
+   logic [4:0] 					 cmd_count;
+   logic 					 cmd_prog_full;
+   logic 					 cmd_wr_rst_busy;
+   logic 					 cmd_rd_rst_busy;
 
    assign O_CMD_EMPTY = cmd_empty;
    assign O_CMD_FULL = cmd_prog_full;
@@ -152,15 +152,15 @@ module axonerve_kvs_kernel (
    assign cmd_din[298] = I_CMD_SEARCH;
    assign cmd_din[299] = I_CMD_UPDATE;
    
-   logic [127:0] 	  key_data;
-   logic [127:0] 	  ekey_msk;
-   logic [6:0] 		  key_pri;
-   logic [31:0] 	  key_value;
-   logic 		  cmd_erase;
-   logic 		  cmd_write;
-   logic 		  cmd_read;
-   logic 		  cmd_search;
-   logic 		  cmd_update;
+   logic [127:0] 				 key_data;
+   logic [127:0] 				 ekey_msk;
+   logic [6:0] 					 key_pri;
+   logic [31:0] 				 key_value;
+   logic 					 cmd_erase;
+   logic 					 cmd_write;
+   logic 					 cmd_read;
+   logic 					 cmd_search;
+   logic 					 cmd_update;
 
    always_comb begin
       key_data <= cmd_q[127:0];
@@ -213,12 +213,12 @@ module axonerve_kvs_kernel (
 			       );
 
    
-   logic READY; // the flag whether the module reset has been done
+   logic 		  READY; // the flag whether the module reset has been done
    assign O_READY = READY;
 
    // reset AXONERVE
-   logic AXONERVE_READY = 1'b0;
-   logic OXMATCH_WAIT_d = 1'b0;
+   logic 		  AXONERVE_READY = 1'b0;
+   logic 		  OXMATCH_WAIT_d = 1'b0;
    always @(posedge ICLK) begin
       OXMATCH_WAIT_d <= OXMATCH_WAIT;
       if(XRST == 1'b0) begin
@@ -267,7 +267,7 @@ module axonerve_kvs_kernel (
    logic WAIT_FLAG = 1'b1;
    assign O_WAIT = WAIT_FLAG;
 
-   logic [7:0]  state_counter;
+   logic [7:0] state_counter;
    logic [15:0] ent_addr_fifo_init_addr;
    logic [8:0] 	request_counter;
 
@@ -402,19 +402,22 @@ module axonerve_kvs_kernel (
 	      end
 	      O_ACK <= OACK;
 	   end
-	      
+	   
 	   OP_ERASE: begin // wait ACK and delete
 	      WAIT_FLAG <= 1'b0;
 	      ent_addr_we <= 1'b0;
 	      ent_addr_din <= 16'd0;
 	      if(OACK == 1'b1 && request_counter == 8'd1) begin
-		 state_counter <= WAIT_FOR_ACK;
 		 if(OENT_ERR == 1'b0 && (OSHIT == 1'b1 || OMHIT == 1'b1)) begin
 		    {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b1000;
 		    IENT_ADD <= OSRCH_ENT_ADD;		    
 		    request_counter = request_counter + 1; // block
+		    O_ACK <= 1'b0; // this OACK consumes only for erase interanl
+		    state_counter <= WAIT_FOR_ACK;
+		 end else begin
+		    O_ACK <= 1'b1; // nothing to erase
+		    state_counter <= 8'd2;
 		 end
-		 O_ACK <= 1'b0; // this OACK consumes only for erase interanl
 	      end else begin
 		 {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b0000;
 		 O_ACK <= OACK;
@@ -424,15 +427,18 @@ module axonerve_kvs_kernel (
 	   OP_UPDATE: begin // wait ACK and update
 	      WAIT_FLAG <= 1'b0;
 	      if(OACK == 1'b1 && request_counter == 8'd1) begin
-		 state_counter <= WAIT_FOR_ACK;
 		 if(OENT_ERR == 1'b0 && (OSHIT == 1'b1 || OMHIT == 1'b1)) begin
 		    {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b1100;
 		    IENT_ADD <= OSRCH_ENT_ADD;
 		    ent_addr_we <= 1'b1;
 		    ent_addr_din <= OSRCH_ENT_ADD;
 		    request_counter = request_counter + 1; // block
+		    O_ACK <= 1'b0; // this OACK consumes only for update interanl
+		    state_counter <= WAIT_FOR_ACK;
+		 end else begin
+		    O_ACK <= 1'b1; // nothing to update
+		    state_counter <= 8'd2;
 		 end
-		 O_ACK <= 1'b0; // this OACK consumes only for update interanl
 	      end else begin
 		 {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b0000;
 		 ent_addr_we <= 1'b0;
