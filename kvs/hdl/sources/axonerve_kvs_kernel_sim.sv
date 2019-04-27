@@ -75,6 +75,14 @@ module axonerve_kvs_kernel_sim ( );
       forever #5 I_CLKX2 = ~I_CLKX2; // generate a clock
    end
 
+   logic [31:0] ack_count = 32'd0;
+   always @(posedge I_CLK) begin
+      if(O_ACK == 1'b1) begin
+	 ack_count <= ack_count + 1;
+      end
+   end
+   
+
    logic [31:0] counter = 32'd0;
 
    always @(posedge I_CLK) begin
