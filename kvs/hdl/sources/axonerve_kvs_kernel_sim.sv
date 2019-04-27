@@ -76,9 +76,13 @@ module axonerve_kvs_kernel_sim ( );
    end
 
    logic [31:0] ack_count = 32'd0;
+   logic [31:0] cmd_count = 32'd0;
    always @(posedge I_CLK) begin
       if(O_ACK == 1'b1) begin
 	 ack_count <= ack_count + 1;
+      end
+      if(I_CMD_VALID == 1'b1) begin
+	 cmd_count <= cmd_count + 1;
       end
    end
    
@@ -189,7 +193,16 @@ module axonerve_kvs_kernel_sim ( );
 	   I_KEY_PRI <= 7'd0;
 	   I_KEY_VALUE <= 32'h_fefefefe;
 	end
-	32'd29: begin // search
+	32'd29: begin // erase (should be failure)
+	   counter <= counter + 1;
+	   I_CMD_VALID <= 1'b1;
+	   {I_CMD_ERASE, I_CMD_WRITE, I_CMD_READ, I_CMD_SEARCH, I_CMD_UPDATE} <= 5'b10000;
+	   I_KEY_DAT <= 128'h_00000000_00000000_00000000_00000000;
+	   I_EKEY_MSK <= 128'd0;
+	   I_KEY_PRI <= 7'd0;
+	   I_KEY_VALUE <= 32'h_fefefefe;
+	end
+	32'd30: begin // search
 	   counter <= counter + 1;
 	   I_CMD_VALID <= 1'b1;
 	   {I_CMD_ERASE, I_CMD_WRITE, I_CMD_READ, I_CMD_SEARCH, I_CMD_UPDATE} <= 5'b00010;
@@ -199,7 +212,70 @@ module axonerve_kvs_kernel_sim ( );
 	   I_KEY_PRI <= 7'd0;
 	   I_KEY_VALUE <= 32'h_34343434;
 	end
-	32'd30: begin // search
+	32'd31: begin // search
+	   counter <= counter + 1;
+	   I_CMD_VALID <= 1'b1;
+	   {I_CMD_ERASE, I_CMD_WRITE, I_CMD_READ, I_CMD_SEARCH, I_CMD_UPDATE} <= 5'b00010;
+	   I_KEY_DAT <= 128'h_deadbeef_deadbeef_deadbeef_deadbeef;
+	   I_EKEY_MSK <= 128'd0;
+	   I_KEY_PRI <= 7'd0;
+	   I_KEY_VALUE <= 32'h_34343434;
+	end
+	32'd32: begin // erase
+	   counter <= counter + 1;
+	   I_CMD_VALID <= 1'b1;
+	   {I_CMD_ERASE, I_CMD_WRITE, I_CMD_READ, I_CMD_SEARCH, I_CMD_UPDATE} <= 5'b10000;
+	   I_KEY_DAT <= 128'h_deadbeef_deadbeef_deadbeef_deadbeef;
+	   I_EKEY_MSK <= 128'd0;
+	   I_KEY_PRI <= 7'd0;
+	   I_KEY_VALUE <= 32'h_34343434;
+	end
+	32'd33: begin // erase (should be failure)
+	   counter <= counter + 1;
+	   I_CMD_VALID <= 1'b1;
+	   {I_CMD_ERASE, I_CMD_WRITE, I_CMD_READ, I_CMD_SEARCH, I_CMD_UPDATE} <= 5'b10000;
+	   I_KEY_DAT <= 128'h_deadbeef_deadbeef_deadbeef_deadbeef;
+	   I_EKEY_MSK <= 128'd0;
+	   I_KEY_PRI <= 7'd0;
+	   I_KEY_VALUE <= 32'h_34343434;
+	end
+	32'd34: begin // search
+	   counter <= counter + 1;
+	   I_CMD_VALID <= 1'b1;
+	   {I_CMD_ERASE, I_CMD_WRITE, I_CMD_READ, I_CMD_SEARCH, I_CMD_UPDATE} <= 5'b00010;
+	   I_KEY_DAT <= 128'h_deadbeef_deadbeef_deadbeef_deadbeef;
+	   I_EKEY_MSK <= 128'd0;
+	   I_KEY_PRI <= 7'd0;
+	   I_KEY_VALUE <= 32'h_34343434;
+	end
+	32'd35: begin // update (search and write)
+	   counter <= counter + 1;
+	   I_CMD_VALID <= 1'b1;
+	   {I_CMD_ERASE, I_CMD_WRITE, I_CMD_READ, I_CMD_SEARCH, I_CMD_UPDATE} <= 5'b00001;
+	   I_KEY_DAT <= 128'h_deadbeef_deadbeef_deadbeef_deadbeef;
+	   I_EKEY_MSK <= 128'd0;
+	   I_KEY_PRI <= 7'd0;
+	   I_KEY_VALUE <= 32'h_5a5a5a5a;
+	end
+	32'd36: begin // search (search and write)
+	   counter <= counter + 1;
+	   I_CMD_VALID <= 1'b1;
+	   {I_CMD_ERASE, I_CMD_WRITE, I_CMD_READ, I_CMD_SEARCH, I_CMD_UPDATE} <= 5'b00010;
+	   I_KEY_DAT <= 128'h_deadbeef_deadbeef_deadbeef_deadbeef;
+	   I_EKEY_MSK <= 128'd0;
+	   I_KEY_PRI <= 7'd0;
+	   I_KEY_VALUE <= 32'h_34343434;
+	end
+	32'd37: begin // update
+	   counter <= counter + 1;
+	   I_CMD_VALID <= 1'b1;
+	   {I_CMD_ERASE, I_CMD_WRITE, I_CMD_READ, I_CMD_SEARCH, I_CMD_UPDATE} <= 5'b00001;
+	   I_KEY_DAT <= 128'h_deadbeef_deadbeef_deadbeef_deadbeef;
+	   I_EKEY_MSK <= 128'd0;
+	   I_KEY_PRI <= 7'd0;
+	   I_KEY_VALUE <= 32'h_6b6b6b6b;
+	end
+	32'd38: begin // search (search and write)
 	   counter <= counter + 1;
 	   I_CMD_VALID <= 1'b1;
 	   {I_CMD_ERASE, I_CMD_WRITE, I_CMD_READ, I_CMD_SEARCH, I_CMD_UPDATE} <= 5'b00010;

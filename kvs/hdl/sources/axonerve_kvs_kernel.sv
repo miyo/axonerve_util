@@ -271,6 +271,9 @@ module axonerve_kvs_kernel (
    logic [15:0] ent_addr_fifo_init_addr;
    logic [8:0] 	request_counter;
 
+   localparam IDLE             = 8'd0;
+   localparam INTERNAL_INIT    = 8'd1;
+   localparam MAIN_LOOP        = 8'd2;
    localparam WAIT_FOR_ACK     = 8'd3;
    localparam FLUSH_AND_OP_ADD = 8'd4;
    localparam OP_ERASE         = 8'd5;
@@ -319,27 +322,27 @@ module axonerve_kvs_kernel (
 	      WAIT_FLAG <= 1'b1;
 	      if(ent_addr_fifo_init_flag == 1'b1) begin
 		 ent_addr_fifo_init_done <= 1'b0;
-		 state_counter <= state_counter + 1;
+		 state_counter <= INTERNAL_INIT;
 		 ent_addr_fifo_init_addr <= ent_addr_fifo_init_addr + 1;
 		 ent_addr_we <= 1'b1;
 		 ent_addr_din <= ent_addr_fifo_init_addr;
 	      end
 	   end
 	   
-	   8'd1: begin // init ent_addr_fifo
+	   INTERNAL_INIT: begin // init ent_addr_fifo
 	      WAIT_FLAG <= 1'b1;
 	      if(ent_addr_fifo_init_addr < 16'd65535) begin
 		 ent_addr_fifo_init_done <= 1'b0;
 		 ent_addr_fifo_init_addr <= ent_addr_fifo_init_addr + 1;
 	      end else begin
 		 ent_addr_fifo_init_done <= 1'b1;
-		 state_counter <= state_counter + 1;
+		 state_counter <= MAIN_LOOP;
 	      end
 	      ent_addr_we <= 1'b1;
 	      ent_addr_din <= ent_addr_fifo_init_addr;
-	   end // case: 8'd1
+	   end // case: INTERNAL_INIT
 	   
-	   8'd2: begin // main state
+	   MAIN_LOOP: begin // main state
 	      WAIT_FLAG <= 1'b0;
 	      ent_addr_we <= 1'b0;
 	      ent_addr_din <= 16'd0;
@@ -379,7 +382,7 @@ module axonerve_kvs_kernel (
 	      end else begin
 		 {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b0000;
 	      end
-	   end // case: 8'd2
+	   end // case: MAIN_LOOP
 
 	   WAIT_FOR_ACK: begin // wait ACK
 	      WAIT_FLAG <= 1'b0;
@@ -387,7 +390,7 @@ module axonerve_kvs_kernel (
 	      ent_addr_din <= 16'd0;
 	      {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b0000;
 	      if(OACK == 1'b1) begin
-		 state_counter <= 8'd2;
+		 state_counter <= MAIN_LOOP;
 	      end
 	      O_ACK <= OACK;
 	   end
@@ -405,44 +408,53 @@ module axonerve_kvs_kernel (
 	   
 	   OP_ERASE: begin // wait ACK and delete
 	      WAIT_FLAG <= 1'b0;
-	      ent_addr_we <= 1'b0;
-	      ent_addr_din <= 16'd0;
 	      if(OACK == 1'b1 && request_counter == 8'd1) begin
 		 if(OENT_ERR == 1'b0 && (OSHIT == 1'b1 || OMHIT == 1'b1)) begin
 		    {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b1000;
-		    IENT_ADD <= OSRCH_ENT_ADD;		    
+		    IENT_ADD <= OSRCH_ENT_ADD;
+		    ent_addr_we <= 1'b1;
+		    ent_addr_din <= OSRCH_ENT_ADD;
 		    request_counter = request_counter + 1; // block
 		    O_ACK <= 1'b0; // this OACK consumes only for erase interanl
 		    state_counter <= WAIT_FOR_ACK;
 		 end else begin
+		    ent_addr_we <= 1'b0;
+		    ent_addr_din <= 16'h0;
 		    O_ACK <= 1'b1; // nothing to erase
-		    state_counter <= 8'd2;
+		    state_counter <= MAIN_LOOP;
 		 end
 	      end else begin
 		 {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b0000;
 		 O_ACK <= OACK;
+		 ent_addr_we <= 1'b0;
+		 ent_addr_din <= 16'h0;
 	      end
 	   end
 	   
 	   OP_UPDATE: begin // wait ACK and update
 	      WAIT_FLAG <= 1'b0;
+	      ent_addr_we <= 1'b0;
 	      if(OACK == 1'b1 && request_counter == 8'd1) begin
 		 if(OENT_ERR == 1'b0 && (OSHIT == 1'b1 || OMHIT == 1'b1)) begin
 		    {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b1100;
 		    IENT_ADD <= OSRCH_ENT_ADD;
-		    ent_addr_we <= 1'b1;
-		    ent_addr_din <= OSRCH_ENT_ADD;
 		    request_counter = request_counter + 1; // block
 		    O_ACK <= 1'b0; // this OACK consumes only for update interanl
 		    state_counter <= WAIT_FOR_ACK;
 		 end else begin
-		    O_ACK <= 1'b1; // nothing to update
-		    state_counter <= 8'd2;
+		    // nothing to update, instead write
+		    IKEY_DAT   <= IKEY_DAT;
+		    IKEY_PRI   <= IKEY_PRI;
+		    IEKEY_MSK  <= IEKEY_MSK;
+		    IKEY_VALUE <= IKEY_VALUE;
+		    IENT_ADD   <= ent_addr_q;
+	      	    {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b0100;
+		    request_counter = request_counter + 1; // block
+		    O_ACK <= 1'b0; // this OACK consumes only for update interanl
+		    state_counter <= WAIT_FOR_ACK;
 		 end
 	      end else begin
 		 {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b0000;
-		 ent_addr_we <= 1'b0;
-		 ent_addr_din <= 16'h0;
 		 O_ACK <= OACK;
 	      end
 	   end
@@ -459,7 +471,7 @@ module axonerve_kvs_kernel (
 
 
    always_comb begin
-      if(state_counter == 8'd2 && cmd_valid == 1'b1) begin
+      if(state_counter == MAIN_LOOP && cmd_valid == 1'b1) begin
 	 cmd_rd <= 1'b1;
       end else begin
 	 cmd_rd <= 1'b0;
@@ -467,7 +479,9 @@ module axonerve_kvs_kernel (
    end
 
    always_comb begin
-      if(state_counter == 8'd2 && cmd_valid == 1'b1 && cmd_write == 1'b1) begin
+      if((state_counter == MAIN_LOOP && cmd_valid == 1'b1 && cmd_write == 1'b1) ||
+	 (state_counter == OP_UPDATE && OACK == 1'b1 && request_counter == 8'd1 && OSHIT == 1'b0 && OMHIT == 1'b0)
+	 ) begin
 	 ent_addr_rd <= 1'b1;
       end else begin
 	 ent_addr_rd <= 1'b0;
