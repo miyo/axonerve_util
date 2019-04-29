@@ -1,0 +1,283 @@
+diff -uprN src.orig/hdl/krnl_vadd_2clk_rtl.v src/hdl/krnl_vadd_2clk_rtl.v
+--- src.orig/hdl/krnl_vadd_2clk_rtl.v	2019-04-29 13:29:54.955882690 +0900
++++ src/hdl/krnl_vadd_2clk_rtl.v	2019-04-29 13:34:07.891083637 +0900
+@@ -33,14 +33,14 @@
+ // *******************************************************************************/
+ 
+ ///////////////////////////////////////////////////////////////////////////////
+-// Description: This is a wrapper of module krnl_vadd_2clk_rtl_int
++// Description: This is a wrapper of module axonerve_kvs_rtl_int
+ ///////////////////////////////////////////////////////////////////////////////
+ 
+ // default_nettype of none prevents implicit wire declaration.
+ `default_nettype none
+ `timescale 1 ns / 1 ps 
+ 
+-module krnl_vadd_2clk_rtl #( 
++module axonerve_kvs_rtl #( 
+   parameter integer  C_S_AXI_CONTROL_DATA_WIDTH = 32,
+   parameter integer  C_S_AXI_CONTROL_ADDR_WIDTH = 6,
+   parameter integer  C_M_AXI_GMEM_ID_WIDTH = 1,
+@@ -115,7 +115,7 @@ module krnl_vadd_2clk_rtl #(
+   output wire [1:0]                              s_axi_control_BRESP 
+ );
+ 
+-krnl_vadd_2clk_rtl_int #
++axonerve_kvs_rtl_int #
+ ( 
+   .C_S_AXI_CONTROL_DATA_WIDTH  ( C_S_AXI_CONTROL_DATA_WIDTH ),
+   .C_S_AXI_CONTROL_ADDR_WIDTH  ( C_S_AXI_CONTROL_ADDR_WIDTH ),
+@@ -123,7 +123,7 @@ krnl_vadd_2clk_rtl_int #
+   .C_M_AXI_GMEM_ADDR_WIDTH     ( C_M_AXI_GMEM_ADDR_WIDTH ),
+   .C_M_AXI_GMEM_DATA_WIDTH     ( C_M_AXI_GMEM_DATA_WIDTH )
+ )
+-inst_krnl_vadd_2clk_rtl_int (
++inst_axonerve_kvs_rtl_int (
+   .ap_clk                 ( ap_clk ),
+   .ap_rst_n               ( ap_rst_n ),
+   .ap_clk_2               ( ap_clk_2 ),
+@@ -186,6 +186,6 @@ inst_krnl_vadd_2clk_rtl_int (
+   .s_axi_control_BRESP    ( s_axi_control_BRESP )
+ );
+ 
+-endmodule : krnl_vadd_2clk_rtl
++endmodule : axonerve_kvs_rtl
+ 
+ `default_nettype wire
+diff -uprN src.orig/hdl/krnl_vadd_2clk_rtl_axi_read_master.sv src/hdl/krnl_vadd_2clk_rtl_axi_read_master.sv
+--- src.orig/hdl/krnl_vadd_2clk_rtl_axi_read_master.sv	2019-04-29 13:29:54.955882690 +0900
++++ src/hdl/krnl_vadd_2clk_rtl_axi_read_master.sv	2019-04-29 13:35:16.531626431 +0900
+@@ -42,7 +42,7 @@
+ 
+ `default_nettype none
+ 
+-module krnl_vadd_2clk_rtl_axi_read_master #( 
++module axonerve_kvs_rtl_axi_read_master #( 
+   parameter integer C_ID_WIDTH         = 1,   // Must be >= $clog2(C_NUM_CHANNELS)
+   parameter integer C_ADDR_WIDTH       = 64,
+   parameter integer C_DATA_WIDTH       = 32,
+@@ -204,7 +204,7 @@ always @(posedge aclk) begin
+ end
+ 
+ // Counts down the number of transactions to send.
+-krnl_vadd_2clk_rtl_counter #(
++axonerve_kvs_rtl_counter #(
+   .C_WIDTH ( LP_TRANSACTION_CNTR_WIDTH         ) ,
+   .C_INIT  ( {LP_TRANSACTION_CNTR_WIDTH{1'b0}} ) 
+ )
+@@ -231,7 +231,7 @@ end
+ 
+ // Keeps track of the number of outstanding transactions. Stalls 
+ // when the value is reached so that the FIFO won't overflow.
+-krnl_vadd_2clk_rtl_counter #(
++axonerve_kvs_rtl_counter #(
+   .C_WIDTH ( LP_MAX_OUTSTANDING_CNTR_WIDTH                       ) ,
+   .C_INIT  ( C_MAX_OUTSTANDING[0+:LP_MAX_OUTSTANDING_CNTR_WIDTH] ) 
+ )
+@@ -270,7 +270,7 @@ always_comb begin
+     decr_r_transaction_cntr[i] = rxfer & rlast & (rid == i);
+   end
+ end
+-krnl_vadd_2clk_rtl_counter #(
++axonerve_kvs_rtl_counter #(
+   .C_WIDTH ( LP_TRANSACTION_CNTR_WIDTH         ) ,
+   .C_INIT  ( {LP_TRANSACTION_CNTR_WIDTH{1'b0}} ) 
+ )
+@@ -287,6 +287,6 @@ inst_r_transaction_cntr[C_NUM_CHANNELS-1
+ );
+ 
+ 
+-endmodule : krnl_vadd_2clk_rtl_axi_read_master
++endmodule : axonerve_kvs_rtl_axi_read_master
+ 
+ `default_nettype wire
+diff -uprN src.orig/hdl/krnl_vadd_2clk_rtl_axi_write_master.sv src/hdl/krnl_vadd_2clk_rtl_axi_write_master.sv
+--- src.orig/hdl/krnl_vadd_2clk_rtl_axi_write_master.sv	2019-04-29 13:29:54.955882690 +0900
++++ src/hdl/krnl_vadd_2clk_rtl_axi_write_master.sv	2019-04-29 13:39:36.402580313 +0900
+@@ -37,7 +37,7 @@
+ // appends address information and sends it out.
+ `default_nettype none
+ 
+-module krnl_vadd_2clk_rtl_axi_write_master #(
++module axonerve_kvs_rtl_axi_write_master #(
+   parameter integer C_ADDR_WIDTH       = 64,
+   parameter integer C_DATA_WIDTH       = 32,
+   parameter integer C_MAX_LENGTH_WIDTH = 32,
+@@ -158,7 +158,7 @@ end
+ // Load burst counter with partial burst if on final transaction or if there is only 1 transaction
+ assign load_burst_cntr = (wxfer & wlast & w_almost_final_transaction) || (start & single_transaction);
+ 
+-krnl_vadd_2clk_rtl_counter #(
++axonerve_kvs_rtl_counter #(
+   .C_WIDTH ( C_LOG_BURST_LEN         ) ,
+   .C_INIT  ( {C_LOG_BURST_LEN{1'b1}} ) 
+ )
+@@ -174,7 +174,7 @@ inst_burst_cntr (
+   .is_zero    ( wlast           ) 
+ );
+ 
+-krnl_vadd_2clk_rtl_counter #(
++axonerve_kvs_rtl_counter #(
+   .C_WIDTH ( LP_TRANSACTION_CNTR_WIDTH         ) ,
+   .C_INIT  ( {LP_TRANSACTION_CNTR_WIDTH{1'b0}} ) 
+ )
+@@ -226,7 +226,7 @@ end
+ assign awlen   = aw_final_transaction || (start & single_transaction) ? final_burst_len : C_BURST_LEN - 1;
+ assign awsize  = $clog2((C_DATA_WIDTH/8));
+ 
+-krnl_vadd_2clk_rtl_counter #(
++axonerve_kvs_rtl_counter #(
+   .C_WIDTH (LP_LOG_MAX_W_TO_AW),
+   .C_INIT ({LP_LOG_MAX_W_TO_AW{1'b0}})
+ )
+@@ -250,7 +250,7 @@ always @(posedge aclk) begin
+   wfirst_pulse <= wvalid & wfirst & ~wfirst_d1;
+ end
+ 
+-krnl_vadd_2clk_rtl_counter #(
++axonerve_kvs_rtl_counter #(
+   .C_WIDTH ( LP_TRANSACTION_CNTR_WIDTH         ) ,
+   .C_INIT  ( {LP_TRANSACTION_CNTR_WIDTH{1'b0}} ) 
+ )
+@@ -273,7 +273,7 @@ inst_aw_transaction_cntr (
+ assign bready = 1'b1;
+ assign bxfer = bready & bvalid;
+ 
+-krnl_vadd_2clk_rtl_counter #(
++axonerve_kvs_rtl_counter #(
+   .C_WIDTH ( LP_TRANSACTION_CNTR_WIDTH         ) ,
+   .C_INIT  ( {LP_TRANSACTION_CNTR_WIDTH{1'b0}} ) 
+ )
+@@ -289,6 +289,6 @@ inst_b_transaction_cntr (
+   .is_zero    ( b_final_transaction  ) 
+ );
+ 
+-endmodule : krnl_vadd_2clk_rtl_axi_write_master
++endmodule : axonerve_kvs_rtl_axi_write_master
+ 
+ `default_nettype wire
+diff -uprN src.orig/hdl/krnl_vadd_2clk_rtl_control_s_axi.v src/hdl/krnl_vadd_2clk_rtl_control_s_axi.v
+--- src.orig/hdl/krnl_vadd_2clk_rtl_control_s_axi.v	2019-04-29 13:29:54.955882690 +0900
++++ src/hdl/krnl_vadd_2clk_rtl_control_s_axi.v	2019-04-29 13:32:29.660041989 +0900
+@@ -33,7 +33,7 @@
+ // *******************************************************************************/
+ 
+ `timescale 1ns/1ps
+-module krnl_vadd_2clk_rtl_control_s_axi
++module axonerve_kvs_rtl_control_s_axi
+ #(parameter
+     C_S_AXI_ADDR_WIDTH = 6,
+     C_S_AXI_DATA_WIDTH = 32
+diff -uprN src.orig/hdl/krnl_vadd_2clk_rtl_counter.sv src/hdl/krnl_vadd_2clk_rtl_counter.sv
+--- src.orig/hdl/krnl_vadd_2clk_rtl_counter.sv	2019-04-29 13:29:54.955882690 +0900
++++ src/hdl/krnl_vadd_2clk_rtl_counter.sv	2019-04-29 13:38:18.614479452 +0900
+@@ -37,7 +37,7 @@
+ //-----------------------------------------------------------------------------
+ `default_nettype none
+ `timescale 1ps/1ps
+-module krnl_vadd_2clk_rtl_counter  #(
++module axonerve_kvs_rtl_counter  #(
+   parameter integer C_WIDTH  = 4,
+   parameter [C_WIDTH-1:0] C_INIT = {C_WIDTH{1'b0}}
+ )
+@@ -101,5 +101,5 @@ module krnl_vadd_2clk_rtl_counter  #(
+   end
+ 
+ 
+-endmodule : krnl_vadd_2clk_rtl_counter
++endmodule : axonerve_kvs_rtl_counter
+ `default_nettype wire
+diff -uprN src.orig/hdl/krnl_vadd_2clk_rtl_int.sv src/hdl/krnl_vadd_2clk_rtl_int.sv
+--- src.orig/hdl/krnl_vadd_2clk_rtl_int.sv	2019-04-29 13:29:54.955882690 +0900
++++ src/hdl/krnl_vadd_2clk_rtl_int.sv	2019-04-29 13:37:45.224154568 +0900
+@@ -44,7 +44,7 @@
+ `default_nettype none
+ `timescale 1 ns / 1 ps 
+ 
+-module krnl_vadd_2clk_rtl_int #( 
++module axonerve_kvs_rtl_int #( 
+   parameter integer  C_S_AXI_CONTROL_DATA_WIDTH = 32,
+   parameter integer  C_S_AXI_CONTROL_ADDR_WIDTH = 6,
+   parameter integer  C_M_AXI_GMEM_ID_WIDTH = 1,
+@@ -217,11 +217,11 @@ end
+ assign ap_ready = ap_done;
+ 
+ // AXI4-Lite slave
+-krnl_vadd_2clk_rtl_control_s_axi #(
++axonerve_kvs_rtl_control_s_axi #(
+   .C_S_AXI_ADDR_WIDTH( C_S_AXI_CONTROL_ADDR_WIDTH ),
+   .C_S_AXI_DATA_WIDTH( C_S_AXI_CONTROL_DATA_WIDTH )
+ ) 
+-inst_krnl_vadd_control_s_axi (
++inst_axonerve_kvs_control_s_axi (
+   .AWVALID   ( s_axi_control_AWVALID         ) ,
+   .AWREADY   ( s_axi_control_AWREADY         ) ,
+   .AWADDR    ( s_axi_control_AWADDR          ) ,
+@@ -254,7 +254,7 @@ inst_krnl_vadd_control_s_axi (
+ );
+ 
+ // AXI4 Read Master
+-krnl_vadd_2clk_rtl_axi_read_master #( 
++axonerve_kvs_rtl_axi_read_master #( 
+   .C_ADDR_WIDTH       ( C_M_AXI_GMEM_ADDR_WIDTH ) ,
+   .C_DATA_WIDTH       ( C_M_AXI_GMEM_DATA_WIDTH ) ,
+   .C_ID_WIDTH         ( C_M_AXI_GMEM_ID_WIDTH   ) ,
+@@ -403,7 +403,7 @@ xpm_fifo_async # (
+ 
+ 
+ // AXI4 Write Master
+-krnl_vadd_2clk_rtl_axi_write_master #( 
++axonerve_kvs_rtl_axi_write_master #( 
+   .C_ADDR_WIDTH       ( C_M_AXI_GMEM_ADDR_WIDTH ) ,
+   .C_DATA_WIDTH       ( C_M_AXI_GMEM_DATA_WIDTH ) ,
+   .C_MAX_LENGTH_WIDTH ( LP_LENGTH_WIDTH     ) ,
+@@ -440,6 +440,6 @@ inst_axi_write_master (
+   .bresp       ( m_axi_gmem_BRESP   ) 
+ );
+ 
+-endmodule : krnl_vadd_2clk_rtl_int
++endmodule : axonerve_kvs_rtl_int
+ 
+ `default_nettype wire
+diff -uprN src.orig/host.cpp src/host.cpp
+--- src.orig/host.cpp	2019-04-29 13:29:54.951882893 +0900
++++ src/host.cpp	2019-04-29 13:40:49.898900079 +0900
+@@ -62,7 +62,7 @@ int main(int argc, char** argv)
+     cl::Program::Binaries bins = xcl::import_binary_file(binaryFile);
+     devices.resize(1);
+     cl::Program program(context, devices, bins);
+-    cl::Kernel krnl_vadd(program,"krnl_vadd_rtl");
++    cl::Kernel axonerve_kvs_rtl(program,"axonerve_kvs_rtl");
+ 
+     //Allocate Buffer in Global Memory
+     std::vector<cl::Memory> inBufVec, outBufVec;
+@@ -80,13 +80,13 @@ int main(int argc, char** argv)
+     q.enqueueMigrateMemObjects(inBufVec,0/* 0 means from host*/);
+ 
+     //Set the Kernel Arguments
+-    krnl_vadd.setArg(0,buffer_r1);
+-    krnl_vadd.setArg(1,buffer_r2);
+-    krnl_vadd.setArg(2,buffer_w);
+-    krnl_vadd.setArg(3,size);
++    axonerve_kvs_rtl.setArg(0,buffer_r1);
++    axonerve_kvs_rtl.setArg(1,buffer_r2);
++    axonerve_kvs_rtl.setArg(2,buffer_w);
++    axonerve_kvs_rtl.setArg(3,size);
+ 
+     //Launch the Kernel
+-    q.enqueueTask(krnl_vadd);
++    q.enqueueTask(axonerve_kvs_rtl);
+ 
+     //Copy Result from Device Global Memory to Host Local Memory
+     q.enqueueMigrateMemObjects(outBufVec,CL_MIGRATE_MEM_OBJECT_HOST);
+diff -uprN src.orig/kernel.xml src/kernel.xml
+--- src.orig/kernel.xml	2019-04-29 13:29:54.955882690 +0900
++++ src/kernel.xml	2019-04-29 13:31:57.433671802 +0900
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <root versionMajor="1" versionMinor="5">
+-  <kernel name="krnl_vadd_rtl" language="ip" vlnv="xilinx.com:RTLKernel:krnl_vadd_2clk_rtl:1.0" attributes="" preferredWorkGroupSizeMultiple="0" workGroupSize="1" debug="true" compileOptions=" -g" profileType="none">
++  <kernel name="axonerve_kvs_rtl" language="ip" vlnv="xilinx.com:RTLKernel:axonerve_kvs_rtl:1.0" attributes="" preferredWorkGroupSizeMultiple="0" workGroupSize="1" debug="true" compileOptions=" -g" profileType="none">
+     <ports>
+       <port name="s_axi_control" mode="slave" range="0x1000" dataWidth="32" portType="addressable" base="0x0"/>
+       <port name="m_axi_gmem" mode="master" range="0xFFFFFFFF" dataWidth="32" portType="addressable" base="0x0"/>
