@@ -1,191 +1,415 @@
-// /*******************************************************************************
-// Copyright (c) 2018, Xilinx, Inc.
-// All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or without modification,
-// are permitted provided that the following conditions are met:
-// 
-// 1. Redistributions of source code must retain the above copyright notice,
-// this list of conditions and the following disclaimer.
-// 
-// 
-// 2. Redistributions in binary form must reproduce the above copyright notice,
-// this list of conditions and the following disclaimer in the documentation
-// and/or other materials provided with the distribution.
-// 
-// 
-// 3. Neither the name of the copyright holder nor the names of its contributors
-// may be used to endorse or promote products derived from this software
-// without specific prior written permission.
-// 
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,THE IMPLIED 
-// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-// IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-// INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
-// BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY 
-// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
-// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-// EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-// *******************************************************************************/
-
-///////////////////////////////////////////////////////////////////////////////
-// Description: This is a wrapper of module axonerve_kvs_rtl_int
-///////////////////////////////////////////////////////////////////////////////
-
+// This is a generated file. Use and modify at your own risk.
+//////////////////////////////////////////////////////////////////////////////// 
 // default_nettype of none prevents implicit wire declaration.
 `default_nettype none
-`timescale 1 ns / 1 ps 
-
-module axonerve_kvs_rtl #( 
-  parameter integer  C_S_AXI_CONTROL_DATA_WIDTH = 32,
-  parameter integer  C_S_AXI_CONTROL_ADDR_WIDTH = 6,
-  parameter integer  C_M_AXI_GMEM_ID_WIDTH = 1,
-  parameter integer  C_M_AXI_GMEM_ADDR_WIDTH = 64,
-  parameter integer  C_M_AXI_GMEM_DATA_WIDTH = 32
+`timescale 1 ns / 1 ps
+// Top level of the kernel. Do not modify module name, parameters or ports.
+module axonerve_kvs_rtl #(
+  parameter integer C_S_AXI_CONTROL_ADDR_WIDTH = 12  ,
+  parameter integer C_S_AXI_CONTROL_DATA_WIDTH = 32  ,
+  parameter integer C_M00_AXI_ADDR_WIDTH       = 64  ,
+  parameter integer C_M00_AXI_DATA_WIDTH       = 1024,
+  parameter integer C_M01_AXI_ADDR_WIDTH       = 64  ,
+  parameter integer C_M01_AXI_DATA_WIDTH       = 1024,
+  parameter integer C_M02_AXI_ADDR_WIDTH       = 64  ,
+  parameter integer C_M02_AXI_DATA_WIDTH       = 1024,
+  parameter integer C_M03_AXI_ADDR_WIDTH       = 64  ,
+  parameter integer C_M03_AXI_DATA_WIDTH       = 1024,
+  parameter integer C_M04_AXI_ADDR_WIDTH       = 64  ,
+  parameter integer C_M04_AXI_DATA_WIDTH       = 1024,
+  parameter integer C_M05_AXI_ADDR_WIDTH       = 64  ,
+  parameter integer C_M05_AXI_DATA_WIDTH       = 1024
 )
 (
-  // System signals
-  input  wire  ap_clk,
-  input  wire  ap_rst_n,
-  input  wire  ap_clk_2,
-  input  wire  ap_rst_n_2,
-  // AXI4 master interface 
-  output wire                                 m_axi_gmem_AWVALID,
-  input  wire                                 m_axi_gmem_AWREADY,
-  output wire [C_M_AXI_GMEM_ADDR_WIDTH-1:0]   m_axi_gmem_AWADDR,
-  output wire [C_M_AXI_GMEM_ID_WIDTH - 1:0]   m_axi_gmem_AWID,
-  output wire [7:0]                           m_axi_gmem_AWLEN,
-  output wire [2:0]                           m_axi_gmem_AWSIZE,
-  // Tie-off AXI4 transaction options that are not being used.
-  output wire [1:0]                           m_axi_gmem_AWBURST,
-  output wire [1:0]                           m_axi_gmem_AWLOCK,
-  output wire [3:0]                           m_axi_gmem_AWCACHE,
-  output wire [2:0]                           m_axi_gmem_AWPROT,
-  output wire [3:0]                           m_axi_gmem_AWQOS,
-  output wire [3:0]                           m_axi_gmem_AWREGION,
-  output wire                                 m_axi_gmem_WVALID,
-  input  wire                                 m_axi_gmem_WREADY,
-  output wire [C_M_AXI_GMEM_DATA_WIDTH-1:0]   m_axi_gmem_WDATA,
-  output wire [C_M_AXI_GMEM_DATA_WIDTH/8-1:0] m_axi_gmem_WSTRB,
-  output wire                                 m_axi_gmem_WLAST,
-  output wire                                 m_axi_gmem_ARVALID,
-  input  wire                                 m_axi_gmem_ARREADY,
-  output wire [C_M_AXI_GMEM_ADDR_WIDTH-1:0]   m_axi_gmem_ARADDR,
-  output wire [C_M_AXI_GMEM_ID_WIDTH-1:0]     m_axi_gmem_ARID,
-  output wire [7:0]                           m_axi_gmem_ARLEN,
-  output wire [2:0]                           m_axi_gmem_ARSIZE,
-  output wire [1:0]                           m_axi_gmem_ARBURST,
-  output wire [1:0]                           m_axi_gmem_ARLOCK,
-  output wire [3:0]                           m_axi_gmem_ARCACHE,
-  output wire [2:0]                           m_axi_gmem_ARPROT,
-  output wire [3:0]                           m_axi_gmem_ARQOS,
-  output wire [3:0]                           m_axi_gmem_ARREGION,
-  input  wire                                 m_axi_gmem_RVALID,
-  output wire                                 m_axi_gmem_RREADY,
-  input  wire [C_M_AXI_GMEM_DATA_WIDTH - 1:0] m_axi_gmem_RDATA,
-  input  wire                                 m_axi_gmem_RLAST,
-  input  wire [C_M_AXI_GMEM_ID_WIDTH - 1:0]   m_axi_gmem_RID,
-  input  wire [1:0]                           m_axi_gmem_RRESP,
-  input  wire                                 m_axi_gmem_BVALID,
-  output wire                                 m_axi_gmem_BREADY,
-  input  wire [1:0]                           m_axi_gmem_BRESP,
-  input  wire [C_M_AXI_GMEM_ID_WIDTH - 1:0]   m_axi_gmem_BID,
-
+  // System Signals
+  input  wire                                    ap_clk               ,
+  input  wire                                    ap_rst_n             ,
+  input  wire                                    ap_clk_2             ,
+  input  wire                                    ap_rst_n_2           ,
+  //  Note: A minimum subset of AXI4 memory mapped signals are declared.  AXI
+  // signals omitted from these interfaces are automatically inferred with the
+  // optimal values for Xilinx SDx systems.  This allows Xilinx AXI4 Interconnects
+  // within the system to be optimized by removing logic for AXI4 protocol
+  // features that are not necessary. When adapting AXI4 masters within the RTL
+  // kernel that have signals not declared below, it is suitable to add the
+  // signals to the declarations below to connect them to the AXI4 Master.
+  // 
+  // List of ommited signals - effect
+  // -------------------------------
+  // ID - Transaction ID are used for multithreading and out of order
+  // transactions.  This increases complexity. This saves logic and increases Fmax
+  // in the system when ommited.
+  // SIZE - Default value is log2(data width in bytes). Needed for subsize bursts.
+  // This saves logic and increases Fmax in the system when ommited.
+  // BURST - Default value (0b01) is incremental.  Wrap and fixed bursts are not
+  // recommended. This saves logic and increases Fmax in the system when ommited.
+  // LOCK - Not supported in AXI4
+  // CACHE - Default value (0b0011) allows modifiable transactions. No benefit to
+  // changing this.
+  // PROT - Has no effect in SDx systems.
+  // QOS - Has no effect in SDx systems.
+  // REGION - Has no effect in SDx systems.
+  // USER - Has no effect in SDx systems.
+  // RESP - Not useful in most SDx systems.
+  // 
+  // AXI4 master interface m00_axi
+  output wire                                    m00_axi_awvalid      ,
+  input  wire                                    m00_axi_awready      ,
+  output wire [C_M00_AXI_ADDR_WIDTH-1:0]         m00_axi_awaddr       ,
+  output wire [8-1:0]                            m00_axi_awlen        ,
+  output wire                                    m00_axi_wvalid       ,
+  input  wire                                    m00_axi_wready       ,
+  output wire [C_M00_AXI_DATA_WIDTH-1:0]         m00_axi_wdata        ,
+  output wire [C_M00_AXI_DATA_WIDTH/8-1:0]       m00_axi_wstrb        ,
+  output wire                                    m00_axi_wlast        ,
+  input  wire                                    m00_axi_bvalid       ,
+  output wire                                    m00_axi_bready       ,
+  output wire                                    m00_axi_arvalid      ,
+  input  wire                                    m00_axi_arready      ,
+  output wire [C_M00_AXI_ADDR_WIDTH-1:0]         m00_axi_araddr       ,
+  output wire [8-1:0]                            m00_axi_arlen        ,
+  input  wire                                    m00_axi_rvalid       ,
+  output wire                                    m00_axi_rready       ,
+  input  wire [C_M00_AXI_DATA_WIDTH-1:0]         m00_axi_rdata        ,
+  input  wire                                    m00_axi_rlast        ,
+  // AXI4 master interface m01_axi
+  output wire                                    m01_axi_awvalid      ,
+  input  wire                                    m01_axi_awready      ,
+  output wire [C_M01_AXI_ADDR_WIDTH-1:0]         m01_axi_awaddr       ,
+  output wire [8-1:0]                            m01_axi_awlen        ,
+  output wire                                    m01_axi_wvalid       ,
+  input  wire                                    m01_axi_wready       ,
+  output wire [C_M01_AXI_DATA_WIDTH-1:0]         m01_axi_wdata        ,
+  output wire [C_M01_AXI_DATA_WIDTH/8-1:0]       m01_axi_wstrb        ,
+  output wire                                    m01_axi_wlast        ,
+  input  wire                                    m01_axi_bvalid       ,
+  output wire                                    m01_axi_bready       ,
+  output wire                                    m01_axi_arvalid      ,
+  input  wire                                    m01_axi_arready      ,
+  output wire [C_M01_AXI_ADDR_WIDTH-1:0]         m01_axi_araddr       ,
+  output wire [8-1:0]                            m01_axi_arlen        ,
+  input  wire                                    m01_axi_rvalid       ,
+  output wire                                    m01_axi_rready       ,
+  input  wire [C_M01_AXI_DATA_WIDTH-1:0]         m01_axi_rdata        ,
+  input  wire                                    m01_axi_rlast        ,
+  // AXI4 master interface m02_axi
+  output wire                                    m02_axi_awvalid      ,
+  input  wire                                    m02_axi_awready      ,
+  output wire [C_M02_AXI_ADDR_WIDTH-1:0]         m02_axi_awaddr       ,
+  output wire [8-1:0]                            m02_axi_awlen        ,
+  output wire                                    m02_axi_wvalid       ,
+  input  wire                                    m02_axi_wready       ,
+  output wire [C_M02_AXI_DATA_WIDTH-1:0]         m02_axi_wdata        ,
+  output wire [C_M02_AXI_DATA_WIDTH/8-1:0]       m02_axi_wstrb        ,
+  output wire                                    m02_axi_wlast        ,
+  input  wire                                    m02_axi_bvalid       ,
+  output wire                                    m02_axi_bready       ,
+  output wire                                    m02_axi_arvalid      ,
+  input  wire                                    m02_axi_arready      ,
+  output wire [C_M02_AXI_ADDR_WIDTH-1:0]         m02_axi_araddr       ,
+  output wire [8-1:0]                            m02_axi_arlen        ,
+  input  wire                                    m02_axi_rvalid       ,
+  output wire                                    m02_axi_rready       ,
+  input  wire [C_M02_AXI_DATA_WIDTH-1:0]         m02_axi_rdata        ,
+  input  wire                                    m02_axi_rlast        ,
+  // AXI4 master interface m03_axi
+  output wire                                    m03_axi_awvalid      ,
+  input  wire                                    m03_axi_awready      ,
+  output wire [C_M03_AXI_ADDR_WIDTH-1:0]         m03_axi_awaddr       ,
+  output wire [8-1:0]                            m03_axi_awlen        ,
+  output wire                                    m03_axi_wvalid       ,
+  input  wire                                    m03_axi_wready       ,
+  output wire [C_M03_AXI_DATA_WIDTH-1:0]         m03_axi_wdata        ,
+  output wire [C_M03_AXI_DATA_WIDTH/8-1:0]       m03_axi_wstrb        ,
+  output wire                                    m03_axi_wlast        ,
+  input  wire                                    m03_axi_bvalid       ,
+  output wire                                    m03_axi_bready       ,
+  output wire                                    m03_axi_arvalid      ,
+  input  wire                                    m03_axi_arready      ,
+  output wire [C_M03_AXI_ADDR_WIDTH-1:0]         m03_axi_araddr       ,
+  output wire [8-1:0]                            m03_axi_arlen        ,
+  input  wire                                    m03_axi_rvalid       ,
+  output wire                                    m03_axi_rready       ,
+  input  wire [C_M03_AXI_DATA_WIDTH-1:0]         m03_axi_rdata        ,
+  input  wire                                    m03_axi_rlast        ,
+  // AXI4 master interface m04_axi
+  output wire                                    m04_axi_awvalid      ,
+  input  wire                                    m04_axi_awready      ,
+  output wire [C_M04_AXI_ADDR_WIDTH-1:0]         m04_axi_awaddr       ,
+  output wire [8-1:0]                            m04_axi_awlen        ,
+  output wire                                    m04_axi_wvalid       ,
+  input  wire                                    m04_axi_wready       ,
+  output wire [C_M04_AXI_DATA_WIDTH-1:0]         m04_axi_wdata        ,
+  output wire [C_M04_AXI_DATA_WIDTH/8-1:0]       m04_axi_wstrb        ,
+  output wire                                    m04_axi_wlast        ,
+  input  wire                                    m04_axi_bvalid       ,
+  output wire                                    m04_axi_bready       ,
+  output wire                                    m04_axi_arvalid      ,
+  input  wire                                    m04_axi_arready      ,
+  output wire [C_M04_AXI_ADDR_WIDTH-1:0]         m04_axi_araddr       ,
+  output wire [8-1:0]                            m04_axi_arlen        ,
+  input  wire                                    m04_axi_rvalid       ,
+  output wire                                    m04_axi_rready       ,
+  input  wire [C_M04_AXI_DATA_WIDTH-1:0]         m04_axi_rdata        ,
+  input  wire                                    m04_axi_rlast        ,
+  // AXI4 master interface m05_axi
+  output wire                                    m05_axi_awvalid      ,
+  input  wire                                    m05_axi_awready      ,
+  output wire [C_M05_AXI_ADDR_WIDTH-1:0]         m05_axi_awaddr       ,
+  output wire [8-1:0]                            m05_axi_awlen        ,
+  output wire                                    m05_axi_wvalid       ,
+  input  wire                                    m05_axi_wready       ,
+  output wire [C_M05_AXI_DATA_WIDTH-1:0]         m05_axi_wdata        ,
+  output wire [C_M05_AXI_DATA_WIDTH/8-1:0]       m05_axi_wstrb        ,
+  output wire                                    m05_axi_wlast        ,
+  input  wire                                    m05_axi_bvalid       ,
+  output wire                                    m05_axi_bready       ,
+  output wire                                    m05_axi_arvalid      ,
+  input  wire                                    m05_axi_arready      ,
+  output wire [C_M05_AXI_ADDR_WIDTH-1:0]         m05_axi_araddr       ,
+  output wire [8-1:0]                            m05_axi_arlen        ,
+  input  wire                                    m05_axi_rvalid       ,
+  output wire                                    m05_axi_rready       ,
+  input  wire [C_M05_AXI_DATA_WIDTH-1:0]         m05_axi_rdata        ,
+  input  wire                                    m05_axi_rlast        ,
   // AXI4-Lite slave interface
-  input  wire                                    s_axi_control_AWVALID,
-  output wire                                    s_axi_control_AWREADY,
-  input  wire [C_S_AXI_CONTROL_ADDR_WIDTH-1:0]   s_axi_control_AWADDR,
-  input  wire                                    s_axi_control_WVALID,
-  output wire                                    s_axi_control_WREADY,
-  input  wire [C_S_AXI_CONTROL_DATA_WIDTH-1:0]   s_axi_control_WDATA,
-  input  wire [C_S_AXI_CONTROL_DATA_WIDTH/8-1:0] s_axi_control_WSTRB,
-  input  wire                                    s_axi_control_ARVALID,
-  output wire                                    s_axi_control_ARREADY,
-  input  wire [C_S_AXI_CONTROL_ADDR_WIDTH-1:0]   s_axi_control_ARADDR,
-  output wire                                    s_axi_control_RVALID,
-  input  wire                                    s_axi_control_RREADY,
-  output wire [C_S_AXI_CONTROL_DATA_WIDTH-1:0]   s_axi_control_RDATA,
-  output wire [1:0]                              s_axi_control_RRESP,
-  output wire                                    s_axi_control_BVALID,
-  input  wire                                    s_axi_control_BREADY,
-  output wire [1:0]                              s_axi_control_BRESP 
+  input  wire                                    s_axi_control_awvalid,
+  output wire                                    s_axi_control_awready,
+  input  wire [C_S_AXI_CONTROL_ADDR_WIDTH-1:0]   s_axi_control_awaddr ,
+  input  wire                                    s_axi_control_wvalid ,
+  output wire                                    s_axi_control_wready ,
+  input  wire [C_S_AXI_CONTROL_DATA_WIDTH-1:0]   s_axi_control_wdata  ,
+  input  wire [C_S_AXI_CONTROL_DATA_WIDTH/8-1:0] s_axi_control_wstrb  ,
+  input  wire                                    s_axi_control_arvalid,
+  output wire                                    s_axi_control_arready,
+  input  wire [C_S_AXI_CONTROL_ADDR_WIDTH-1:0]   s_axi_control_araddr ,
+  output wire                                    s_axi_control_rvalid ,
+  input  wire                                    s_axi_control_rready ,
+  output wire [C_S_AXI_CONTROL_DATA_WIDTH-1:0]   s_axi_control_rdata  ,
+  output wire [2-1:0]                            s_axi_control_rresp  ,
+  output wire                                    s_axi_control_bvalid ,
+  input  wire                                    s_axi_control_bready ,
+  output wire [2-1:0]                            s_axi_control_bresp  ,
+  output wire                                    interrupt            
 );
 
-axonerve_kvs_rtl_int #
-( 
-  .C_S_AXI_CONTROL_DATA_WIDTH  ( C_S_AXI_CONTROL_DATA_WIDTH ),
-  .C_S_AXI_CONTROL_ADDR_WIDTH  ( C_S_AXI_CONTROL_ADDR_WIDTH ),
-  .C_M_AXI_GMEM_ID_WIDTH       ( C_M_AXI_GMEM_ID_WIDTH ),
-  .C_M_AXI_GMEM_ADDR_WIDTH     ( C_M_AXI_GMEM_ADDR_WIDTH ),
-  .C_M_AXI_GMEM_DATA_WIDTH     ( C_M_AXI_GMEM_DATA_WIDTH )
+///////////////////////////////////////////////////////////////////////////////
+// Local Parameters
+///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// Wires and Variables
+///////////////////////////////////////////////////////////////////////////////
+(* DONT_TOUCH = "yes" *)
+reg                                 areset                         = 1'b0;
+wire                                ap_start                      ;
+wire                                ap_idle                       ;
+wire                                ap_done                       ;
+wire [32-1:0]                       scalar00                      ;
+wire [64-1:0]                       axi00_ptr0                    ;
+wire [64-1:0]                       axi01_ptr0                    ;
+wire [64-1:0]                       axi02_ptr0                    ;
+wire [64-1:0]                       axi03_ptr0                    ;
+wire [64-1:0]                       axi04_ptr0                    ;
+wire [64-1:0]                       axi05_ptr0                    ;
+
+// Register and invert reset signal.
+always @(posedge ap_clk) begin
+  areset <= ~ap_rst_n;
+end
+
+///////////////////////////////////////////////////////////////////////////////
+// Begin control interface RTL.  Modifying not recommended.
+///////////////////////////////////////////////////////////////////////////////
+
+
+// AXI4-Lite slave interface
+axonerve_kvs_rtl_control_s_axi #(
+  .C_ADDR_WIDTH ( C_S_AXI_CONTROL_ADDR_WIDTH ),
+  .C_DATA_WIDTH ( C_S_AXI_CONTROL_DATA_WIDTH )
+)
+inst_control_s_axi (
+  .aclk       ( ap_clk                ),
+  .areset     ( areset                ),
+  .aclk_en    ( 1'b1                  ),
+  .awvalid    ( s_axi_control_awvalid ),
+  .awready    ( s_axi_control_awready ),
+  .awaddr     ( s_axi_control_awaddr  ),
+  .wvalid     ( s_axi_control_wvalid  ),
+  .wready     ( s_axi_control_wready  ),
+  .wdata      ( s_axi_control_wdata   ),
+  .wstrb      ( s_axi_control_wstrb   ),
+  .arvalid    ( s_axi_control_arvalid ),
+  .arready    ( s_axi_control_arready ),
+  .araddr     ( s_axi_control_araddr  ),
+  .rvalid     ( s_axi_control_rvalid  ),
+  .rready     ( s_axi_control_rready  ),
+  .rdata      ( s_axi_control_rdata   ),
+  .rresp      ( s_axi_control_rresp   ),
+  .bvalid     ( s_axi_control_bvalid  ),
+  .bready     ( s_axi_control_bready  ),
+  .bresp      ( s_axi_control_bresp   ),
+  .interrupt  ( interrupt             ),
+  .ap_start   ( ap_start              ),
+  .ap_done    ( ap_done               ),
+  .ap_idle    ( ap_idle               ),
+  .scalar00   ( scalar00              ),
+  .axi00_ptr0 ( axi00_ptr0            ),
+  .axi01_ptr0 ( axi01_ptr0            ),
+  .axi02_ptr0 ( axi02_ptr0            ),
+  .axi03_ptr0 ( axi03_ptr0            ),
+  .axi04_ptr0 ( axi04_ptr0            ),
+  .axi05_ptr0 ( axi05_ptr0            )
+);
+
+///////////////////////////////////////////////////////////////////////////////
+// Kernel logic
+///////////////////////////////////////////////////////////////////////////////
+
+axonerve_kvs_rtl_int #(
+  .C_M00_AXI_ADDR_WIDTH ( C_M00_AXI_ADDR_WIDTH ),
+  .C_M00_AXI_DATA_WIDTH ( C_M00_AXI_DATA_WIDTH ),
+  .C_M01_AXI_ADDR_WIDTH ( C_M01_AXI_ADDR_WIDTH ),
+  .C_M01_AXI_DATA_WIDTH ( C_M01_AXI_DATA_WIDTH ),
+  .C_M02_AXI_ADDR_WIDTH ( C_M02_AXI_ADDR_WIDTH ),
+  .C_M02_AXI_DATA_WIDTH ( C_M02_AXI_DATA_WIDTH ),
+  .C_M03_AXI_ADDR_WIDTH ( C_M03_AXI_ADDR_WIDTH ),
+  .C_M03_AXI_DATA_WIDTH ( C_M03_AXI_DATA_WIDTH ),
+  .C_M04_AXI_ADDR_WIDTH ( C_M04_AXI_ADDR_WIDTH ),
+  .C_M04_AXI_DATA_WIDTH ( C_M04_AXI_DATA_WIDTH ),
+  .C_M05_AXI_ADDR_WIDTH ( C_M05_AXI_ADDR_WIDTH ),
+  .C_M05_AXI_DATA_WIDTH ( C_M05_AXI_DATA_WIDTH )
 )
 inst_axonerve_kvs_rtl_int (
-  .ap_clk                 ( ap_clk ),
-  .ap_rst_n               ( ap_rst_n ),
-  .ap_clk_2               ( ap_clk_2 ),
-  .ap_rst_n_2             ( ap_rst_n_2 ),
-  .m_axi_gmem_AWVALID     ( m_axi_gmem_AWVALID ),
-  .m_axi_gmem_AWREADY     ( m_axi_gmem_AWREADY ),
-  .m_axi_gmem_AWADDR      ( m_axi_gmem_AWADDR ),
-  .m_axi_gmem_AWID        ( m_axi_gmem_AWID ),
-  .m_axi_gmem_AWLEN       ( m_axi_gmem_AWLEN ),
-  .m_axi_gmem_AWSIZE      ( m_axi_gmem_AWSIZE ),
-  .m_axi_gmem_AWBURST     ( m_axi_gmem_AWBURST ),
-  .m_axi_gmem_AWLOCK      ( m_axi_gmem_AWLOCK ),
-  .m_axi_gmem_AWCACHE     ( m_axi_gmem_AWCACHE ),
-  .m_axi_gmem_AWPROT      ( m_axi_gmem_AWPROT ),
-  .m_axi_gmem_AWQOS       ( m_axi_gmem_AWQOS ),
-  .m_axi_gmem_AWREGION    ( m_axi_gmem_AWREGION ),
-  .m_axi_gmem_WVALID      ( m_axi_gmem_WVALID ),
-  .m_axi_gmem_WREADY      ( m_axi_gmem_WREADY ),
-  .m_axi_gmem_WDATA       ( m_axi_gmem_WDATA ),
-  .m_axi_gmem_WSTRB       ( m_axi_gmem_WSTRB ),
-  .m_axi_gmem_WLAST       ( m_axi_gmem_WLAST ),
-  .m_axi_gmem_ARVALID     ( m_axi_gmem_ARVALID ),
-  .m_axi_gmem_ARREADY     ( m_axi_gmem_ARREADY ),
-  .m_axi_gmem_ARADDR      ( m_axi_gmem_ARADDR ),
-  .m_axi_gmem_ARID        ( m_axi_gmem_ARID ),
-  .m_axi_gmem_ARLEN       ( m_axi_gmem_ARLEN ),
-  .m_axi_gmem_ARSIZE      ( m_axi_gmem_ARSIZE ),
-  .m_axi_gmem_ARBURST     ( m_axi_gmem_ARBURST ),
-  .m_axi_gmem_ARLOCK      ( m_axi_gmem_ARLOCK ),
-  .m_axi_gmem_ARCACHE     ( m_axi_gmem_ARCACHE ),
-  .m_axi_gmem_ARPROT      ( m_axi_gmem_ARPROT ),
-  .m_axi_gmem_ARQOS       ( m_axi_gmem_ARQOS ),
-  .m_axi_gmem_ARREGION    ( m_axi_gmem_ARREGION ),
-  .m_axi_gmem_RVALID      ( m_axi_gmem_RVALID ),
-  .m_axi_gmem_RREADY      ( m_axi_gmem_RREADY ),
-  .m_axi_gmem_RDATA       ( m_axi_gmem_RDATA ),
-  .m_axi_gmem_RLAST       ( m_axi_gmem_RLAST ),
-  .m_axi_gmem_RID         ( m_axi_gmem_RID ),
-  .m_axi_gmem_RRESP       ( m_axi_gmem_RRESP ),
-  .m_axi_gmem_BVALID      ( m_axi_gmem_BVALID ),
-  .m_axi_gmem_BREADY      ( m_axi_gmem_BREADY ),
-  .m_axi_gmem_BRESP       ( m_axi_gmem_BRESP ),
-  .m_axi_gmem_BID         ( m_axi_gmem_BID ),
-  .s_axi_control_AWVALID  ( s_axi_control_AWVALID ),
-  .s_axi_control_AWREADY  ( s_axi_control_AWREADY ),
-  .s_axi_control_AWADDR   ( s_axi_control_AWADDR ),
-  .s_axi_control_WVALID   ( s_axi_control_WVALID ),
-  .s_axi_control_WREADY   ( s_axi_control_WREADY ),
-  .s_axi_control_WDATA    ( s_axi_control_WDATA ),
-  .s_axi_control_WSTRB    ( s_axi_control_WSTRB ),
-  .s_axi_control_ARVALID  ( s_axi_control_ARVALID ),
-  .s_axi_control_ARREADY  ( s_axi_control_ARREADY ),
-  .s_axi_control_ARADDR   ( s_axi_control_ARADDR ),
-  .s_axi_control_RVALID   ( s_axi_control_RVALID ),
-  .s_axi_control_RREADY   ( s_axi_control_RREADY ),
-  .s_axi_control_RDATA    ( s_axi_control_RDATA ),
-  .s_axi_control_RRESP    ( s_axi_control_RRESP ),
-  .s_axi_control_BVALID   ( s_axi_control_BVALID ),
-  .s_axi_control_BREADY   ( s_axi_control_BREADY ),
-  .s_axi_control_BRESP    ( s_axi_control_BRESP )
+  .ap_clk          ( ap_clk          ),
+  .ap_rst_n        ( ap_rst_n        ),
+  .ap_clk_2        ( ap_clk_2        ),
+  .ap_rst_n_2      ( ap_rst_n_2      ),
+  .m00_axi_awvalid ( m00_axi_awvalid ),
+  .m00_axi_awready ( m00_axi_awready ),
+  .m00_axi_awaddr  ( m00_axi_awaddr  ),
+  .m00_axi_awlen   ( m00_axi_awlen   ),
+  .m00_axi_wvalid  ( m00_axi_wvalid  ),
+  .m00_axi_wready  ( m00_axi_wready  ),
+  .m00_axi_wdata   ( m00_axi_wdata   ),
+  .m00_axi_wstrb   ( m00_axi_wstrb   ),
+  .m00_axi_wlast   ( m00_axi_wlast   ),
+  .m00_axi_bvalid  ( m00_axi_bvalid  ),
+  .m00_axi_bready  ( m00_axi_bready  ),
+  .m00_axi_arvalid ( m00_axi_arvalid ),
+  .m00_axi_arready ( m00_axi_arready ),
+  .m00_axi_araddr  ( m00_axi_araddr  ),
+  .m00_axi_arlen   ( m00_axi_arlen   ),
+  .m00_axi_rvalid  ( m00_axi_rvalid  ),
+  .m00_axi_rready  ( m00_axi_rready  ),
+  .m00_axi_rdata   ( m00_axi_rdata   ),
+  .m00_axi_rlast   ( m00_axi_rlast   ),
+  .m01_axi_awvalid ( m01_axi_awvalid ),
+  .m01_axi_awready ( m01_axi_awready ),
+  .m01_axi_awaddr  ( m01_axi_awaddr  ),
+  .m01_axi_awlen   ( m01_axi_awlen   ),
+  .m01_axi_wvalid  ( m01_axi_wvalid  ),
+  .m01_axi_wready  ( m01_axi_wready  ),
+  .m01_axi_wdata   ( m01_axi_wdata   ),
+  .m01_axi_wstrb   ( m01_axi_wstrb   ),
+  .m01_axi_wlast   ( m01_axi_wlast   ),
+  .m01_axi_bvalid  ( m01_axi_bvalid  ),
+  .m01_axi_bready  ( m01_axi_bready  ),
+  .m01_axi_arvalid ( m01_axi_arvalid ),
+  .m01_axi_arready ( m01_axi_arready ),
+  .m01_axi_araddr  ( m01_axi_araddr  ),
+  .m01_axi_arlen   ( m01_axi_arlen   ),
+  .m01_axi_rvalid  ( m01_axi_rvalid  ),
+  .m01_axi_rready  ( m01_axi_rready  ),
+  .m01_axi_rdata   ( m01_axi_rdata   ),
+  .m01_axi_rlast   ( m01_axi_rlast   ),
+  .m02_axi_awvalid ( m02_axi_awvalid ),
+  .m02_axi_awready ( m02_axi_awready ),
+  .m02_axi_awaddr  ( m02_axi_awaddr  ),
+  .m02_axi_awlen   ( m02_axi_awlen   ),
+  .m02_axi_wvalid  ( m02_axi_wvalid  ),
+  .m02_axi_wready  ( m02_axi_wready  ),
+  .m02_axi_wdata   ( m02_axi_wdata   ),
+  .m02_axi_wstrb   ( m02_axi_wstrb   ),
+  .m02_axi_wlast   ( m02_axi_wlast   ),
+  .m02_axi_bvalid  ( m02_axi_bvalid  ),
+  .m02_axi_bready  ( m02_axi_bready  ),
+  .m02_axi_arvalid ( m02_axi_arvalid ),
+  .m02_axi_arready ( m02_axi_arready ),
+  .m02_axi_araddr  ( m02_axi_araddr  ),
+  .m02_axi_arlen   ( m02_axi_arlen   ),
+  .m02_axi_rvalid  ( m02_axi_rvalid  ),
+  .m02_axi_rready  ( m02_axi_rready  ),
+  .m02_axi_rdata   ( m02_axi_rdata   ),
+  .m02_axi_rlast   ( m02_axi_rlast   ),
+  .m03_axi_awvalid ( m03_axi_awvalid ),
+  .m03_axi_awready ( m03_axi_awready ),
+  .m03_axi_awaddr  ( m03_axi_awaddr  ),
+  .m03_axi_awlen   ( m03_axi_awlen   ),
+  .m03_axi_wvalid  ( m03_axi_wvalid  ),
+  .m03_axi_wready  ( m03_axi_wready  ),
+  .m03_axi_wdata   ( m03_axi_wdata   ),
+  .m03_axi_wstrb   ( m03_axi_wstrb   ),
+  .m03_axi_wlast   ( m03_axi_wlast   ),
+  .m03_axi_bvalid  ( m03_axi_bvalid  ),
+  .m03_axi_bready  ( m03_axi_bready  ),
+  .m03_axi_arvalid ( m03_axi_arvalid ),
+  .m03_axi_arready ( m03_axi_arready ),
+  .m03_axi_araddr  ( m03_axi_araddr  ),
+  .m03_axi_arlen   ( m03_axi_arlen   ),
+  .m03_axi_rvalid  ( m03_axi_rvalid  ),
+  .m03_axi_rready  ( m03_axi_rready  ),
+  .m03_axi_rdata   ( m03_axi_rdata   ),
+  .m03_axi_rlast   ( m03_axi_rlast   ),
+  .m04_axi_awvalid ( m04_axi_awvalid ),
+  .m04_axi_awready ( m04_axi_awready ),
+  .m04_axi_awaddr  ( m04_axi_awaddr  ),
+  .m04_axi_awlen   ( m04_axi_awlen   ),
+  .m04_axi_wvalid  ( m04_axi_wvalid  ),
+  .m04_axi_wready  ( m04_axi_wready  ),
+  .m04_axi_wdata   ( m04_axi_wdata   ),
+  .m04_axi_wstrb   ( m04_axi_wstrb   ),
+  .m04_axi_wlast   ( m04_axi_wlast   ),
+  .m04_axi_bvalid  ( m04_axi_bvalid  ),
+  .m04_axi_bready  ( m04_axi_bready  ),
+  .m04_axi_arvalid ( m04_axi_arvalid ),
+  .m04_axi_arready ( m04_axi_arready ),
+  .m04_axi_araddr  ( m04_axi_araddr  ),
+  .m04_axi_arlen   ( m04_axi_arlen   ),
+  .m04_axi_rvalid  ( m04_axi_rvalid  ),
+  .m04_axi_rready  ( m04_axi_rready  ),
+  .m04_axi_rdata   ( m04_axi_rdata   ),
+  .m04_axi_rlast   ( m04_axi_rlast   ),
+  .m05_axi_awvalid ( m05_axi_awvalid ),
+  .m05_axi_awready ( m05_axi_awready ),
+  .m05_axi_awaddr  ( m05_axi_awaddr  ),
+  .m05_axi_awlen   ( m05_axi_awlen   ),
+  .m05_axi_wvalid  ( m05_axi_wvalid  ),
+  .m05_axi_wready  ( m05_axi_wready  ),
+  .m05_axi_wdata   ( m05_axi_wdata   ),
+  .m05_axi_wstrb   ( m05_axi_wstrb   ),
+  .m05_axi_wlast   ( m05_axi_wlast   ),
+  .m05_axi_bvalid  ( m05_axi_bvalid  ),
+  .m05_axi_bready  ( m05_axi_bready  ),
+  .m05_axi_arvalid ( m05_axi_arvalid ),
+  .m05_axi_arready ( m05_axi_arready ),
+  .m05_axi_araddr  ( m05_axi_araddr  ),
+  .m05_axi_arlen   ( m05_axi_arlen   ),
+  .m05_axi_rvalid  ( m05_axi_rvalid  ),
+  .m05_axi_rready  ( m05_axi_rready  ),
+  .m05_axi_rdata   ( m05_axi_rdata   ),
+  .m05_axi_rlast   ( m05_axi_rlast   ),
+  .ap_start        ( ap_start        ),
+  .ap_done         ( ap_done         ),
+  .ap_idle         ( ap_idle         ),
+  .scalar00        ( scalar00        ),
+  .axi00_ptr0      ( axi00_ptr0      ),
+  .axi01_ptr0      ( axi01_ptr0      ),
+  .axi02_ptr0      ( axi02_ptr0      ),
+  .axi03_ptr0      ( axi03_ptr0      ),
+  .axi04_ptr0      ( axi04_ptr0      ),
+  .axi05_ptr0      ( axi05_ptr0      )
 );
 
-endmodule : axonerve_kvs_rtl
-
+endmodule
 `default_nettype wire
