@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root versionMajor="1" versionMinor="6">
-  <kernel name="axonerve_kvs_rtl" language="ip_c" vlnv="wasalabo:kernel:axonerve_kvs_rtl:1.0" attributes="" preferredWorkGroupSizeMultiple="0" workGroupSize="1" interrupt="true">
+  <kernel name="axonerve_kvs_rtl" language="ip" vlnv="wasalabo:kernel:axonerve_kvs_rtl:1.0" attributes="" preferredWorkGroupSizeMultiple="0" workGroupSize="1" debug="true" compileOptions=" -g" profileType="none" interrupt="true">
     <ports>
       <port name="s_axi_control" mode="slave" range="0x1000" dataWidth="32" portType="addressable" base="0x0"/>
       <port name="m00_axi" mode="master" range="0xFFFFFFFFFFFFFFFF" dataWidth="1024" portType="addressable" base="0x0"/>
