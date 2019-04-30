@@ -5,27 +5,25 @@
 `timescale 1 ns / 1 ps
 // Top level of the kernel. Do not modify module name, parameters or ports.
 module axonerve_kvs_rtl #(
-  parameter integer C_S_AXI_CONTROL_ADDR_WIDTH = 12  ,
-  parameter integer C_S_AXI_CONTROL_DATA_WIDTH = 32  ,
-  parameter integer C_M00_AXI_ADDR_WIDTH       = 64  ,
-  parameter integer C_M00_AXI_DATA_WIDTH       = 1024,
-  parameter integer C_M01_AXI_ADDR_WIDTH       = 64  ,
-  parameter integer C_M01_AXI_DATA_WIDTH       = 1024,
-  parameter integer C_M02_AXI_ADDR_WIDTH       = 64  ,
-  parameter integer C_M02_AXI_DATA_WIDTH       = 1024,
-  parameter integer C_M03_AXI_ADDR_WIDTH       = 64  ,
-  parameter integer C_M03_AXI_DATA_WIDTH       = 1024,
-  parameter integer C_M04_AXI_ADDR_WIDTH       = 64  ,
-  parameter integer C_M04_AXI_DATA_WIDTH       = 1024,
-  parameter integer C_M05_AXI_ADDR_WIDTH       = 64  ,
-  parameter integer C_M05_AXI_DATA_WIDTH       = 1024
+  parameter integer C_S_AXI_CONTROL_ADDR_WIDTH = 12 ,
+  parameter integer C_S_AXI_CONTROL_DATA_WIDTH = 32 ,
+  parameter integer C_M00_AXI_ADDR_WIDTH       = 64 ,
+  parameter integer C_M00_AXI_DATA_WIDTH       = 512,
+  parameter integer C_M01_AXI_ADDR_WIDTH       = 64 ,
+  parameter integer C_M01_AXI_DATA_WIDTH       = 512,
+  parameter integer C_M02_AXI_ADDR_WIDTH       = 64 ,
+  parameter integer C_M02_AXI_DATA_WIDTH       = 512,
+  parameter integer C_M03_AXI_ADDR_WIDTH       = 64 ,
+  parameter integer C_M03_AXI_DATA_WIDTH       = 512,
+  parameter integer C_M04_AXI_ADDR_WIDTH       = 64 ,
+  parameter integer C_M04_AXI_DATA_WIDTH       = 512,
+  parameter integer C_M05_AXI_ADDR_WIDTH       = 64 ,
+  parameter integer C_M05_AXI_DATA_WIDTH       = 512
 )
 (
   // System Signals
   input  wire                                    ap_clk               ,
-  input  wire                                    ap_rst_n             ,
   input  wire                                    ap_clk_2             ,
-  input  wire                                    ap_rst_n_2           ,
   //  Note: A minimum subset of AXI4 memory mapped signals are declared.  AXI
   // signals omitted from these interfaces are automatically inferred with the
   // optimal values for Xilinx SDx systems.  This allows Xilinx AXI4 Interconnects
@@ -200,23 +198,16 @@ module axonerve_kvs_rtl #(
 ///////////////////////////////////////////////////////////////////////////////
 // Wires and Variables
 ///////////////////////////////////////////////////////////////////////////////
-(* DONT_TOUCH = "yes" *)
-reg                                 areset                         = 1'b0;
 wire                                ap_start                      ;
 wire                                ap_idle                       ;
 wire                                ap_done                       ;
-wire [32-1:0]                       scalar00                      ;
+wire [32-1:0]                       data_num                      ;
 wire [64-1:0]                       axi00_ptr0                    ;
 wire [64-1:0]                       axi01_ptr0                    ;
 wire [64-1:0]                       axi02_ptr0                    ;
 wire [64-1:0]                       axi03_ptr0                    ;
 wire [64-1:0]                       axi04_ptr0                    ;
 wire [64-1:0]                       axi05_ptr0                    ;
-
-// Register and invert reset signal.
-always @(posedge ap_clk) begin
-  areset <= ~ap_rst_n;
-end
 
 ///////////////////////////////////////////////////////////////////////////////
 // Begin control interface RTL.  Modifying not recommended.
@@ -230,7 +221,7 @@ axonerve_kvs_rtl_control_s_axi #(
 )
 inst_control_s_axi (
   .aclk       ( ap_clk                ),
-  .areset     ( areset                ),
+  .areset     ( 1'b0                  ),
   .aclk_en    ( 1'b1                  ),
   .awvalid    ( s_axi_control_awvalid ),
   .awready    ( s_axi_control_awready ),
@@ -253,7 +244,7 @@ inst_control_s_axi (
   .ap_start   ( ap_start              ),
   .ap_done    ( ap_done               ),
   .ap_idle    ( ap_idle               ),
-  .scalar00   ( scalar00              ),
+  .data_num   ( data_num              ),
   .axi00_ptr0 ( axi00_ptr0            ),
   .axi01_ptr0 ( axi01_ptr0            ),
   .axi02_ptr0 ( axi02_ptr0            ),
@@ -263,10 +254,11 @@ inst_control_s_axi (
 );
 
 ///////////////////////////////////////////////////////////////////////////////
-// Kernel logic
+// Add kernel logic here.  Modify/remove example code as necessary.
 ///////////////////////////////////////////////////////////////////////////////
 
-axonerve_kvs_rtl_int #(
+// Example RTL block.  Remove to insert custom logic.
+axonerve_kvs_rtl_example #(
   .C_M00_AXI_ADDR_WIDTH ( C_M00_AXI_ADDR_WIDTH ),
   .C_M00_AXI_DATA_WIDTH ( C_M00_AXI_DATA_WIDTH ),
   .C_M01_AXI_ADDR_WIDTH ( C_M01_AXI_ADDR_WIDTH ),
@@ -280,11 +272,11 @@ axonerve_kvs_rtl_int #(
   .C_M05_AXI_ADDR_WIDTH ( C_M05_AXI_ADDR_WIDTH ),
   .C_M05_AXI_DATA_WIDTH ( C_M05_AXI_DATA_WIDTH )
 )
-inst_axonerve_kvs_rtl_int (
+inst_example (
   .ap_clk          ( ap_clk          ),
-  .ap_rst_n        ( ap_rst_n        ),
+  .ap_rst_n        ( 1'b1            ),
   .ap_clk_2        ( ap_clk_2        ),
-  .ap_rst_n_2      ( ap_rst_n_2      ),
+  .ap_rst_n_2      ( 1'b1            ),
   .m00_axi_awvalid ( m00_axi_awvalid ),
   .m00_axi_awready ( m00_axi_awready ),
   .m00_axi_awaddr  ( m00_axi_awaddr  ),
@@ -402,7 +394,7 @@ inst_axonerve_kvs_rtl_int (
   .ap_start        ( ap_start        ),
   .ap_done         ( ap_done         ),
   .ap_idle         ( ap_idle         ),
-  .scalar00        ( scalar00        ),
+  .data_num        ( data_num        ),
   .axi00_ptr0      ( axi00_ptr0      ),
   .axi01_ptr0      ( axi01_ptr0      ),
   .axi02_ptr0      ( axi02_ptr0      ),

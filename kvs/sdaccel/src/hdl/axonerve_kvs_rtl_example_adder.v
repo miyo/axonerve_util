@@ -5,7 +5,7 @@
 `default_nettype none
 `timescale 1ps / 1ps
 
-module axonerve_kvs_rtl_adder #(
+module axonerve_kvs_rtl_example_adder #(
   parameter integer C_AXIS_TDATA_WIDTH = 512, // Data width of both input and output data
   parameter integer C_ADDER_BIT_WIDTH  = 32
 )

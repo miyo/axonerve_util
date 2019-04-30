@@ -2,19 +2,19 @@
 //////////////////////////////////////////////////////////////////////////////// 
 // default_nettype of none prevents implicit wire declaration.
 `default_nettype none
-module axonerve_kvs_rtl_int #(
-  parameter integer C_M00_AXI_ADDR_WIDTH = 64  ,
-  parameter integer C_M00_AXI_DATA_WIDTH = 1024,
-  parameter integer C_M01_AXI_ADDR_WIDTH = 64  ,
-  parameter integer C_M01_AXI_DATA_WIDTH = 1024,
-  parameter integer C_M02_AXI_ADDR_WIDTH = 64  ,
-  parameter integer C_M02_AXI_DATA_WIDTH = 1024,
-  parameter integer C_M03_AXI_ADDR_WIDTH = 64  ,
-  parameter integer C_M03_AXI_DATA_WIDTH = 1024,
-  parameter integer C_M04_AXI_ADDR_WIDTH = 64  ,
-  parameter integer C_M04_AXI_DATA_WIDTH = 1024,
-  parameter integer C_M05_AXI_ADDR_WIDTH = 64  ,
-  parameter integer C_M05_AXI_DATA_WIDTH = 1024
+module axonerve_kvs_rtl_example #(
+  parameter integer C_M00_AXI_ADDR_WIDTH = 64 ,
+  parameter integer C_M00_AXI_DATA_WIDTH = 512,
+  parameter integer C_M01_AXI_ADDR_WIDTH = 64 ,
+  parameter integer C_M01_AXI_DATA_WIDTH = 512,
+  parameter integer C_M02_AXI_ADDR_WIDTH = 64 ,
+  parameter integer C_M02_AXI_DATA_WIDTH = 512,
+  parameter integer C_M03_AXI_ADDR_WIDTH = 64 ,
+  parameter integer C_M03_AXI_DATA_WIDTH = 512,
+  parameter integer C_M04_AXI_ADDR_WIDTH = 64 ,
+  parameter integer C_M04_AXI_DATA_WIDTH = 512,
+  parameter integer C_M05_AXI_ADDR_WIDTH = 64 ,
+  parameter integer C_M05_AXI_DATA_WIDTH = 512
 )
 (
   // System Signals
@@ -146,7 +146,7 @@ module axonerve_kvs_rtl_int #(
   input  wire                              ap_start       ,
   output wire                              ap_idle        ,
   output wire                              ap_done        ,
-  input  wire [32-1:0]                     scalar00       ,
+  input  wire [32-1:0]                     data_num       ,
   input  wire [64-1:0]                     axi00_ptr0     ,
   input  wire [64-1:0]                     axi01_ptr0     ,
   input  wire [64-1:0]                     axi02_ptr0     ,
@@ -164,7 +164,7 @@ timeprecision 1ps;
 ///////////////////////////////////////////////////////////////////////////////
 // Large enough for interesting traffic.
 localparam integer  LP_DEFAULT_LENGTH_IN_BYTES = 16384;
-localparam integer  LP_NUMS    = 6;
+localparam integer  LP_NUM_EXAMPLES    = 6;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Wires and Variables
@@ -175,8 +175,8 @@ logic                                kernel_rst                     = 1'b0;
 logic                                ap_start_r                     = 1'b0;
 logic                                ap_idle_r                      = 1'b1;
 logic                                ap_start_pulse                ;
-logic [LP_NUMS-1:0]          ap_done_i                     ;
-logic [LP_NUMS-1:0]          ap_done_r                      = {LP_NUMS{1'b0}};
+logic [LP_NUM_EXAMPLES-1:0]          ap_done_i                     ;
+logic [LP_NUM_EXAMPLES-1:0]          ap_done_r                      = {LP_NUM_EXAMPLES{1'b0}};
 logic [32-1:0]                       ctrl_xfer_size_in_bytes        = LP_DEFAULT_LENGTH_IN_BYTES;
 logic [32-1:0]                       ctrl_constant                  = 32'd1;
 
@@ -231,14 +231,14 @@ always @(posedge ap_clk_2) begin
 end
 
 
-// Vadd
-axonerve_kvs_rtl_vadd #(
+// Vadd example
+axonerve_kvs_rtl_example_vadd #(
   .C_M_AXI_ADDR_WIDTH ( C_M00_AXI_ADDR_WIDTH ),
   .C_M_AXI_DATA_WIDTH ( C_M00_AXI_DATA_WIDTH ),
   .C_ADDER_BIT_WIDTH  ( 32                   ),
   .C_XFER_SIZE_WIDTH  ( 32                   )
 )
-inst_vadd_m00_axi (
+inst_example_vadd_m00_axi (
   .aclk                    ( ap_clk                  ),
   .areset                  ( areset                  ),
   .kernel_clk              ( ap_clk_2                ),
@@ -270,14 +270,14 @@ inst_vadd_m00_axi (
 );
 
 
-// Vadd
-axonerve_kvs_rtl_vadd #(
+// Vadd example
+axonerve_kvs_rtl_example_vadd #(
   .C_M_AXI_ADDR_WIDTH ( C_M01_AXI_ADDR_WIDTH ),
   .C_M_AXI_DATA_WIDTH ( C_M01_AXI_DATA_WIDTH ),
   .C_ADDER_BIT_WIDTH  ( 32                   ),
   .C_XFER_SIZE_WIDTH  ( 32                   )
 )
-inst_vadd_m01_axi (
+inst_example_vadd_m01_axi (
   .aclk                    ( ap_clk                  ),
   .areset                  ( areset                  ),
   .kernel_clk              ( ap_clk_2                ),
@@ -309,14 +309,14 @@ inst_vadd_m01_axi (
 );
 
 
-// Vadd
-axonerve_kvs_rtl_vadd #(
+// Vadd example
+axonerve_kvs_rtl_example_vadd #(
   .C_M_AXI_ADDR_WIDTH ( C_M02_AXI_ADDR_WIDTH ),
   .C_M_AXI_DATA_WIDTH ( C_M02_AXI_DATA_WIDTH ),
   .C_ADDER_BIT_WIDTH  ( 32                   ),
   .C_XFER_SIZE_WIDTH  ( 32                   )
 )
-inst_vadd_m02_axi (
+inst_example_vadd_m02_axi (
   .aclk                    ( ap_clk                  ),
   .areset                  ( areset                  ),
   .kernel_clk              ( ap_clk_2                ),
@@ -348,14 +348,14 @@ inst_vadd_m02_axi (
 );
 
 
-// Vadd
-axonerve_kvs_rtl_vadd #(
+// Vadd example
+axonerve_kvs_rtl_example_vadd #(
   .C_M_AXI_ADDR_WIDTH ( C_M03_AXI_ADDR_WIDTH ),
   .C_M_AXI_DATA_WIDTH ( C_M03_AXI_DATA_WIDTH ),
   .C_ADDER_BIT_WIDTH  ( 32                   ),
   .C_XFER_SIZE_WIDTH  ( 32                   )
 )
-inst_vadd_m03_axi (
+inst_example_vadd_m03_axi (
   .aclk                    ( ap_clk                  ),
   .areset                  ( areset                  ),
   .kernel_clk              ( ap_clk_2                ),
@@ -387,14 +387,14 @@ inst_vadd_m03_axi (
 );
 
 
-// Vadd
-axonerve_kvs_rtl_vadd #(
+// Vadd example
+axonerve_kvs_rtl_example_vadd #(
   .C_M_AXI_ADDR_WIDTH ( C_M04_AXI_ADDR_WIDTH ),
   .C_M_AXI_DATA_WIDTH ( C_M04_AXI_DATA_WIDTH ),
   .C_ADDER_BIT_WIDTH  ( 32                   ),
   .C_XFER_SIZE_WIDTH  ( 32                   )
 )
-inst_vadd_m04_axi (
+inst_example_vadd_m04_axi (
   .aclk                    ( ap_clk                  ),
   .areset                  ( areset                  ),
   .kernel_clk              ( ap_clk_2                ),
@@ -426,14 +426,14 @@ inst_vadd_m04_axi (
 );
 
 
-// Vadd
-axonerve_kvs_rtl_vadd #(
+// Vadd example
+axonerve_kvs_rtl_example_vadd #(
   .C_M_AXI_ADDR_WIDTH ( C_M05_AXI_ADDR_WIDTH ),
   .C_M_AXI_DATA_WIDTH ( C_M05_AXI_DATA_WIDTH ),
   .C_ADDER_BIT_WIDTH  ( 32                   ),
   .C_XFER_SIZE_WIDTH  ( 32                   )
 )
-inst_vadd_m05_axi (
+inst_example_vadd_m05_axi (
   .aclk                    ( ap_clk                  ),
   .areset                  ( areset                  ),
   .kernel_clk              ( ap_clk_2                ),
@@ -465,5 +465,5 @@ inst_vadd_m05_axi (
 );
 
 
-endmodule : axonerve_kvs_rtl_int
+endmodule : axonerve_kvs_rtl_example
 `default_nettype wire

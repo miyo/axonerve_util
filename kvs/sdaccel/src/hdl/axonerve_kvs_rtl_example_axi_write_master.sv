@@ -39,7 +39,7 @@
 // default_nettype of none prevents implicit wire declaration.
 `default_nettype none
 
-module axonerve_kvs_rtl_axi_write_master #(
+module axonerve_kvs_rtl_example_axi_write_master #(
   // Set to the address width of the interface
   parameter integer C_M_AXI_ADDR_WIDTH  = 64,
 
@@ -312,7 +312,7 @@ end
 // Load burst counter with partial burst if on final transaction or if there is only 1 transaction
 assign load_burst_cntr = (wxfer & m_axi_wlast & w_almost_final_transaction) || (start & single_transaction);
 
-axonerve_kvs_rtl_counter #(
+axonerve_kvs_rtl_example_counter #(
   .C_WIDTH ( LP_LOG_BURST_LEN         ) ,
   .C_INIT  ( {LP_LOG_BURST_LEN{1'b1}} )
 )
@@ -328,7 +328,7 @@ inst_burst_cntr (
   .is_zero    ( m_axi_wlast     )
 );
 
-axonerve_kvs_rtl_counter #(
+axonerve_kvs_rtl_example_counter #(
   .C_WIDTH ( LP_TRANSACTION_CNTR_WIDTH         ) ,
   .C_INIT  ( {LP_TRANSACTION_CNTR_WIDTH{1'b0}} )
 )
@@ -379,7 +379,7 @@ end
 
 assign m_axi_awlen   = aw_final_transaction || (start & single_transaction) ? final_burst_len : LP_AXI_BURST_LEN- 1;
 
-axonerve_kvs_rtl_counter #(
+axonerve_kvs_rtl_example_counter #(
   .C_WIDTH (LP_LOG_MAX_W_TO_AW),
   .C_INIT ({LP_LOG_MAX_W_TO_AW{1'b0}})
 )
@@ -403,7 +403,7 @@ always @(posedge aclk) begin
   wfirst_pulse <= m_axi_wvalid & wfirst & ~wfirst_d1;
 end
 
-axonerve_kvs_rtl_counter #(
+axonerve_kvs_rtl_example_counter #(
   .C_WIDTH ( LP_TRANSACTION_CNTR_WIDTH         ) ,
   .C_INIT  ( {LP_TRANSACTION_CNTR_WIDTH{1'b0}} )
 )
@@ -425,7 +425,7 @@ inst_aw_transaction_cntr (
 assign m_axi_bready = 1'b1;
 assign bxfer = m_axi_bready & m_axi_bvalid;
 
-axonerve_kvs_rtl_counter #(
+axonerve_kvs_rtl_example_counter #(
   .C_WIDTH ( LP_TRANSACTION_CNTR_WIDTH         ) ,
   .C_INIT  ( {LP_TRANSACTION_CNTR_WIDTH{1'b0}} )
 )
@@ -444,7 +444,7 @@ inst_b_transaction_cntr (
 // Keeps track of the number of outstanding transactions. Stalls
 // when the value is reached so that the FIFO won't overflow.
 // If no FIFO present, then just limit at max outstanding transactions.
-axonerve_kvs_rtl_counter #(
+axonerve_kvs_rtl_example_counter #(
   .C_WIDTH ( LP_OUTSTANDING_CNTR_WIDTH                       ) ,
   .C_INIT  ( C_MAX_OUTSTANDING[0+:LP_OUTSTANDING_CNTR_WIDTH] )
 )
@@ -460,7 +460,7 @@ inst_aw_to_b_transaction_cntr (
   .is_zero    ( stall_aw                          )
 );
 
-endmodule : axonerve_kvs_rtl_axi_write_master
+endmodule : axonerve_kvs_rtl_example_axi_write_master
 
 `default_nettype wire
 

@@ -35,7 +35,7 @@ module axonerve_kvs_rtl_control_s_axi #(
   input  wire                      ap_idle   ,
   input  wire                      ap_done   ,
   // User defined arguments
-  output wire [32-1:0]             scalar00  ,
+  output wire [32-1:0]             data_num  ,
   output wire [64-1:0]             axi00_ptr0,
   output wire [64-1:0]             axi01_ptr0,
   output wire [64-1:0]             axi02_ptr0,
@@ -59,8 +59,8 @@ module axonerve_kvs_rtl_control_s_axi #(
 // 0x00c : IP Interrupt Status Register (Read/TOW)
 //         bit 0  - Channel 0 (ap_done)
 //         others - reserved
-// 0x010 : Data signal of scalar00
-//         bit 31~0 - scalar00[31:0] (Read/Write)
+// 0x010 : Data signal of data_num
+//         bit 31~0 - data_num[31:0] (Read/Write)
 // 0x014 : reserved
 // 0x018 : Data signal of axi00_ptr0
 //         bit 31~0 - axi00_ptr0[31:0] (Read/Write)
@@ -95,7 +95,7 @@ localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_AP_CTRL                = 12'h000;
 localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_GIE                    = 12'h004;
 localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_IER                    = 12'h008;
 localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_ISR                    = 12'h00c;
-localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_SCALAR00_0             = 12'h010;
+localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_DATA_NUM_0             = 12'h010;
 localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_axi00_ptr0_0           = 12'h018;
 localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_axi00_ptr0_1           = 12'h01c;
 localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_axi01_ptr0_0           = 12'h020;
@@ -139,7 +139,7 @@ reg                                 int_gie                        = 1'b0;
 reg                                 int_ier                        = 1'b0;
 reg                                 int_isr                        = 1'b0;
 
-reg  [32-1:0]                       int_scalar00                   = 32'd0;
+reg  [32-1:0]                       int_data_num                   = 32'd0;
 reg  [64-1:0]                       int_axi00_ptr0                 = 64'd0;
 reg  [64-1:0]                       int_axi01_ptr0                 = 64'd0;
 reg  [64-1:0]                       int_axi02_ptr0                 = 64'd0;
@@ -259,8 +259,8 @@ always @(posedge aclk) begin
           rdata_r[0] <= int_isr;
           rdata_r[1+:C_DATA_WIDTH-1] <=  {C_DATA_WIDTH-1{1'b0}};
         end
-        LP_ADDR_SCALAR00_0: begin
-          rdata_r <= int_scalar00[0+:32];
+        LP_ADDR_DATA_NUM_0: begin
+          rdata_r <= int_data_num[0+:32];
         end
         LP_ADDR_axi00_ptr0_0: begin
           rdata_r <= int_axi00_ptr0[0+:32];
@@ -311,7 +311,7 @@ end
 assign interrupt    = int_gie & (|int_isr);
 assign ap_start     = int_ap_start;
 assign int_ap_idle  = ap_idle;
-assign scalar00 = int_scalar00;
+assign data_num = int_data_num;
 assign axi00_ptr0 = int_axi00_ptr0;
 assign axi01_ptr0 = int_axi01_ptr0;
 assign axi02_ptr0 = int_axi02_ptr0;
@@ -376,13 +376,13 @@ always @(posedge aclk) begin
 end
 
 
-// int_scalar00[32-1:0]
+// int_data_num[32-1:0]
 always @(posedge aclk) begin
   if (areset)
-    int_scalar00[0+:32] <= 32'd0;
+    int_data_num[0+:32] <= 32'd0;
   else if (aclk_en) begin
-    if (w_hs && waddr == LP_ADDR_SCALAR00_0)
-      int_scalar00[0+:32] <= (wdata[0+:32] & wmask[0+:32]) | (int_scalar00[0+:32] & ~wmask[0+:32]);
+    if (w_hs && waddr == LP_ADDR_DATA_NUM_0)
+      int_data_num[0+:32] <= (wdata[0+:32] & wmask[0+:32]) | (int_data_num[0+:32] & ~wmask[0+:32]);
   end
 end
 

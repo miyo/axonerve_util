@@ -3,7 +3,7 @@
 // default_nettype of none prevents implicit wire declaration.
 `default_nettype none
 
-module axonerve_kvs_rtl_vadd #(
+module axonerve_kvs_rtl_example_vadd #(
   parameter integer C_M_AXI_ADDR_WIDTH       = 64 ,
   parameter integer C_M_AXI_DATA_WIDTH       = 512,
   parameter integer C_XFER_SIZE_WIDTH        = 32,
@@ -82,7 +82,7 @@ logic                          write_done;
 ///////////////////////////////////////////////////////////////////////////////
 
 // AXI4 Read Master, output format is an AXI4-Stream master, one stream per thread.
-axonerve_kvs_rtl_axi_read_master #(
+axonerve_kvs_rtl_example_axi_read_master #(
   .C_M_AXI_ADDR_WIDTH  ( C_M_AXI_ADDR_WIDTH    ) ,
   .C_M_AXI_DATA_WIDTH  ( C_M_AXI_DATA_WIDTH    ) ,
   .C_XFER_SIZE_WIDTH   ( C_XFER_SIZE_WIDTH     ) ,
@@ -127,7 +127,7 @@ inst_ctrl_constant_kernel_clk (
 );
 
 // Adder is combinatorial
-axonerve_kvs_rtl_adder #(
+axonerve_kvs_rtl_example_adder #(
   .C_AXIS_TDATA_WIDTH ( C_M_AXI_DATA_WIDTH ) ,
   .C_ADDER_BIT_WIDTH  ( C_ADDER_BIT_WIDTH  )
 )
@@ -148,7 +148,7 @@ inst_adder  (
 );
 
 // AXI4 Write Master
-axonerve_kvs_rtl_axi_write_master #(
+axonerve_kvs_rtl_example_axi_write_master #(
   .C_M_AXI_ADDR_WIDTH  ( C_M_AXI_ADDR_WIDTH    ) ,
   .C_M_AXI_DATA_WIDTH  ( C_M_AXI_DATA_WIDTH    ) ,
   .C_XFER_SIZE_WIDTH   ( C_XFER_SIZE_WIDTH     ) ,
@@ -182,6 +182,6 @@ inst_axi_write_master (
 
 assign ap_done = write_done;
 
-endmodule : axonerve_kvs_rtl_vadd
+endmodule : axonerve_kvs_rtl_example_vadd
 `default_nettype wire
 
