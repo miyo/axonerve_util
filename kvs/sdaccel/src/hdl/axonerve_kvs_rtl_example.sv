@@ -184,6 +184,10 @@ logic [32-1:0]                       ctrl_constant                  = 32'd1;
 // Begin RTL
 ///////////////////////////////////////////////////////////////////////////////
 
+always @(posedge ap_clk) begin
+   ctrl_xfer_size_in_bytes <= data_num;
+end
+
 // Register and invert reset signal.
 always @(posedge ap_clk) begin
   areset <= ~ap_rst_n;
