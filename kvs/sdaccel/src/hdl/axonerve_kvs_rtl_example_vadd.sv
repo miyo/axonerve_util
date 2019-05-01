@@ -123,16 +123,17 @@ inst_axi_read_master (
   .m_axi_rready            ( m_axi_rready            ) ,
   .m_axi_rdata             ( m_axi_rdata             ) ,
   .m_axi_rlast             ( m_axi_rlast             ) ,
-//  .m_axis_aclk             ( kernel_clk              ) ,
-//  .m_axis_areset           ( kernel_rst              ) ,
-  .m_axis_aclk             ( aclk                    ) ,
-  .m_axis_areset           ( areset                  ) ,
+  .m_axis_aclk             ( kernel_clk              ) ,
+  .m_axis_areset           ( kernel_rst              ) ,
+//  .m_axis_aclk             ( aclk                    ) ,
+//  .m_axis_areset           ( areset                  ) ,
   .m_axis_tvalid           ( rd_tvalid_int           ) ,
   .m_axis_tready           ( rd_tready_int           ) ,
   .m_axis_tlast            ( rd_tlast_int            ) ,
   .m_axis_tdata            ( rd_tdata_int            )
 );
 
+/*
 xpm_cdc_array_single #(
   .DEST_SYNC_FF   ( 4                 ) ,
   .INIT_SYNC_FF   ( 0                 ) ,
@@ -147,7 +148,6 @@ inst_ctrl_constant_kernel_clk (
   .dest_clk ( kernel_clk               )
 );
 
-/*
 // Adder is combinatorial
 axonerve_kvs_rtl_example_adder #(
   .C_AXIS_TDATA_WIDTH ( C_M_AXI_DATA_WIDTH ) ,
@@ -196,13 +196,13 @@ inst_axi_write_master (
   .m_axi_wlast             ( m_axi_wlast             ) ,
   .m_axi_bvalid            ( m_axi_bvalid            ) ,
   .m_axi_bready            ( m_axi_bready            ) ,
-//  .s_axis_aclk             ( kernel_clk              ) ,
-//  .s_axis_areset           ( kernel_rst              ) ,
+  .s_axis_aclk             ( kernel_clk              ) ,
+  .s_axis_areset           ( kernel_rst              ) ,
 //  .s_axis_tvalid           ( adder_tvalid            ) ,
 //  .s_axis_tready           ( adder_tready            ) ,
 //  .s_axis_tdata            ( adder_tdata             )
-  .s_axis_aclk             ( aclk                 ) ,
-  .s_axis_areset           ( areset               ) ,
+//  .s_axis_aclk             ( aclk                 ) ,
+//  .s_axis_areset           ( areset               ) ,
   .s_axis_tvalid           ( wr_tvalid            ) ,
   .s_axis_tready           ( wr_tready            ) ,
   .s_axis_tdata            ( wr_tdata             )

@@ -9,6 +9,7 @@ module user_logic
     input wire 				 areset,
     input wire 				 kernel_clk,
     input wire 				 kernel_rst,
+    input wire 				 kernel_clk_2x,
     
     input wire 				 p00_rd_tvalid,
     output wire 			 p00_rd_tready,
@@ -28,8 +29,8 @@ module user_logic
 
    assign p00_rd_tready = ~p00_rd_prog_full;
    fifo_512_512_ft inst_fifo_p00_rd (
-     .clk (aclk),
-     .srst(areset),
+     .clk (kernel_clk),
+     .srst(kernel_rst),
      .din      (p00_rd_tdata),
      .wr_en    (p00_rd_tvalid && ~p00_rd_prog_full),
      .full     (p00_rd_full),
@@ -49,8 +50,8 @@ module user_logic
    logic [512-1:0] p00_user_dout;
 
    fifo_512_512_ft inst_fifo_p00_wr (
-     .clk (aclk),
-     .srst(areset),
+     .clk (kernel_clk),
+     .srst(kernel_rst),
      .din      (p00_user_dout),
      .wr_en    (p00_user_wr),
      .full     (p00_wr_full),
@@ -63,7 +64,7 @@ module user_logic
      .rd_rst_busy()
    );
 
-   always @(posedge aclk) begin
+   always @(posedge kernel_clk) begin
       if(p00_wr_prog_full == 1'b0) begin
 	 p00_user_rd <= 1'b1;
       end else begin
