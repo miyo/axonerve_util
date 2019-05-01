@@ -226,12 +226,11 @@ end
 generate
 if (C_INCLUDE_DATA_FIFO == 1) begin : gen_fifo
 
-  // xpm_fifo_async: Asynchronous FIFO
+  // xpm_fifo_sync: Synchronous FIFO
   // Xilinx Parameterized Macro, Version 2017.4
-  xpm_fifo_async # (
+  xpm_fifo_sync # (
     .FIFO_MEMORY_TYPE    ( "distributed"        ) , // string; "auto", "block", "distributed", or "ultra";
     .ECC_MODE            ( "no_ecc"             ) , // string; "no_ecc" or "en_ecc";
-    .RELATED_CLOCKS      ( 0                    ) , // Must be 0 or 1
     .FIFO_WRITE_DEPTH    ( LP_FIFO_DEPTH        ) , // positive integer
     .WRITE_DATA_WIDTH    ( C_M_AXI_DATA_WIDTH   ) , // positive integer
     .WR_DATA_COUNT_WIDTH ( LP_FIFO_COUNT_WIDTH  ) , // positive integer, not used
@@ -246,10 +245,10 @@ if (C_INCLUDE_DATA_FIFO == 1) begin : gen_fifo
     .DOUT_RESET_VALUE    ( "0"                  ) , // string, don't care
     .WAKEUP_TIME         ( 0                    ) // positive integer; 0 or 2;
   )
-  inst_xpm_fifo (
+  inst_xpm_fifo_sync (
     .sleep         ( 1'b0                     ) ,
-    .rst           ( s_axis_areset            ) ,
-    .wr_clk        ( s_axis_aclk              ) ,
+    .rst           ( areset                   ) ,
+    .wr_clk        ( aclk                     ) ,
     .wr_en         ( s_axis_tvalid            ) ,
     .din           ( s_axis_tdata             ) ,
     .full          ( s_axis_tready_n          ) ,
@@ -259,7 +258,6 @@ if (C_INCLUDE_DATA_FIFO == 1) begin : gen_fifo
     .almost_full   (                          ) ,
     .wr_ack        (                          ) ,
     .wr_rst_busy   (                          ) ,
-    .rd_clk        ( aclk                     ) ,
     .rd_en         ( m_axi_wready & w_running ) ,
     .dout          ( m_axi_wdata              ) ,
     .empty         (                          ) ,

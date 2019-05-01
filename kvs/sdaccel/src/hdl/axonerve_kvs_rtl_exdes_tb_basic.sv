@@ -5,11 +5,6 @@
 `timescale 1 ps / 1 ps
 import axi_vip_pkg::*;
 import slv_m00_axi_vip_pkg::*;
-import slv_m01_axi_vip_pkg::*;
-import slv_m02_axi_vip_pkg::*;
-import slv_m03_axi_vip_pkg::*;
-import slv_m04_axi_vip_pkg::*;
-import slv_m05_axi_vip_pkg::*;
 import control_axonerve_kvs_rtl_vip_pkg::*;
 
 module axonerve_kvs_rtl_exdes_tb_basic ();
@@ -26,16 +21,6 @@ parameter integer C_S_AXI_CONTROL_ADDR_WIDTH = 12;
 parameter integer C_S_AXI_CONTROL_DATA_WIDTH = 32;
 parameter integer C_M00_AXI_ADDR_WIDTH = 64;
 parameter integer C_M00_AXI_DATA_WIDTH = 512;
-parameter integer C_M01_AXI_ADDR_WIDTH = 64;
-parameter integer C_M01_AXI_DATA_WIDTH = 512;
-parameter integer C_M02_AXI_ADDR_WIDTH = 64;
-parameter integer C_M02_AXI_DATA_WIDTH = 512;
-parameter integer C_M03_AXI_ADDR_WIDTH = 64;
-parameter integer C_M03_AXI_DATA_WIDTH = 512;
-parameter integer C_M04_AXI_ADDR_WIDTH = 64;
-parameter integer C_M04_AXI_DATA_WIDTH = 512;
-parameter integer C_M05_AXI_ADDR_WIDTH = 64;
-parameter integer C_M05_AXI_DATA_WIDTH = 512;
 
 parameter integer LP_CLK_PERIOD_PS = 4000; // 250 MHz
 
@@ -45,16 +30,6 @@ logic ap_clk = 0;
 initial begin: AP_CLK
   forever begin
     ap_clk = #(LP_CLK_PERIOD_PS/2) ~ap_clk;
-  end
-end
-
-parameter integer LP_CLK2_PERIOD_PS = 5000; // 200 MHz
-
-logic ap_clk_2 = 0;
-
-initial begin: AP_CLK_2
-  forever begin
-    ap_clk_2 = #(LP_CLK2_PERIOD_PS/2) ~ap_clk_2;
   end
 end
 //AXI4 master interface m00_axi
@@ -77,106 +52,6 @@ wire [1-1:0] m00_axi_rvalid;
 wire [1-1:0] m00_axi_rready;
 wire [C_M00_AXI_DATA_WIDTH-1:0] m00_axi_rdata;
 wire [1-1:0] m00_axi_rlast;
-//AXI4 master interface m01_axi
-wire [1-1:0] m01_axi_awvalid;
-wire [1-1:0] m01_axi_awready;
-wire [C_M01_AXI_ADDR_WIDTH-1:0] m01_axi_awaddr;
-wire [8-1:0] m01_axi_awlen;
-wire [1-1:0] m01_axi_wvalid;
-wire [1-1:0] m01_axi_wready;
-wire [C_M01_AXI_DATA_WIDTH-1:0] m01_axi_wdata;
-wire [C_M01_AXI_DATA_WIDTH/8-1:0] m01_axi_wstrb;
-wire [1-1:0] m01_axi_wlast;
-wire [1-1:0] m01_axi_bvalid;
-wire [1-1:0] m01_axi_bready;
-wire [1-1:0] m01_axi_arvalid;
-wire [1-1:0] m01_axi_arready;
-wire [C_M01_AXI_ADDR_WIDTH-1:0] m01_axi_araddr;
-wire [8-1:0] m01_axi_arlen;
-wire [1-1:0] m01_axi_rvalid;
-wire [1-1:0] m01_axi_rready;
-wire [C_M01_AXI_DATA_WIDTH-1:0] m01_axi_rdata;
-wire [1-1:0] m01_axi_rlast;
-//AXI4 master interface m02_axi
-wire [1-1:0] m02_axi_awvalid;
-wire [1-1:0] m02_axi_awready;
-wire [C_M02_AXI_ADDR_WIDTH-1:0] m02_axi_awaddr;
-wire [8-1:0] m02_axi_awlen;
-wire [1-1:0] m02_axi_wvalid;
-wire [1-1:0] m02_axi_wready;
-wire [C_M02_AXI_DATA_WIDTH-1:0] m02_axi_wdata;
-wire [C_M02_AXI_DATA_WIDTH/8-1:0] m02_axi_wstrb;
-wire [1-1:0] m02_axi_wlast;
-wire [1-1:0] m02_axi_bvalid;
-wire [1-1:0] m02_axi_bready;
-wire [1-1:0] m02_axi_arvalid;
-wire [1-1:0] m02_axi_arready;
-wire [C_M02_AXI_ADDR_WIDTH-1:0] m02_axi_araddr;
-wire [8-1:0] m02_axi_arlen;
-wire [1-1:0] m02_axi_rvalid;
-wire [1-1:0] m02_axi_rready;
-wire [C_M02_AXI_DATA_WIDTH-1:0] m02_axi_rdata;
-wire [1-1:0] m02_axi_rlast;
-//AXI4 master interface m03_axi
-wire [1-1:0] m03_axi_awvalid;
-wire [1-1:0] m03_axi_awready;
-wire [C_M03_AXI_ADDR_WIDTH-1:0] m03_axi_awaddr;
-wire [8-1:0] m03_axi_awlen;
-wire [1-1:0] m03_axi_wvalid;
-wire [1-1:0] m03_axi_wready;
-wire [C_M03_AXI_DATA_WIDTH-1:0] m03_axi_wdata;
-wire [C_M03_AXI_DATA_WIDTH/8-1:0] m03_axi_wstrb;
-wire [1-1:0] m03_axi_wlast;
-wire [1-1:0] m03_axi_bvalid;
-wire [1-1:0] m03_axi_bready;
-wire [1-1:0] m03_axi_arvalid;
-wire [1-1:0] m03_axi_arready;
-wire [C_M03_AXI_ADDR_WIDTH-1:0] m03_axi_araddr;
-wire [8-1:0] m03_axi_arlen;
-wire [1-1:0] m03_axi_rvalid;
-wire [1-1:0] m03_axi_rready;
-wire [C_M03_AXI_DATA_WIDTH-1:0] m03_axi_rdata;
-wire [1-1:0] m03_axi_rlast;
-//AXI4 master interface m04_axi
-wire [1-1:0] m04_axi_awvalid;
-wire [1-1:0] m04_axi_awready;
-wire [C_M04_AXI_ADDR_WIDTH-1:0] m04_axi_awaddr;
-wire [8-1:0] m04_axi_awlen;
-wire [1-1:0] m04_axi_wvalid;
-wire [1-1:0] m04_axi_wready;
-wire [C_M04_AXI_DATA_WIDTH-1:0] m04_axi_wdata;
-wire [C_M04_AXI_DATA_WIDTH/8-1:0] m04_axi_wstrb;
-wire [1-1:0] m04_axi_wlast;
-wire [1-1:0] m04_axi_bvalid;
-wire [1-1:0] m04_axi_bready;
-wire [1-1:0] m04_axi_arvalid;
-wire [1-1:0] m04_axi_arready;
-wire [C_M04_AXI_ADDR_WIDTH-1:0] m04_axi_araddr;
-wire [8-1:0] m04_axi_arlen;
-wire [1-1:0] m04_axi_rvalid;
-wire [1-1:0] m04_axi_rready;
-wire [C_M04_AXI_DATA_WIDTH-1:0] m04_axi_rdata;
-wire [1-1:0] m04_axi_rlast;
-//AXI4 master interface m05_axi
-wire [1-1:0] m05_axi_awvalid;
-wire [1-1:0] m05_axi_awready;
-wire [C_M05_AXI_ADDR_WIDTH-1:0] m05_axi_awaddr;
-wire [8-1:0] m05_axi_awlen;
-wire [1-1:0] m05_axi_wvalid;
-wire [1-1:0] m05_axi_wready;
-wire [C_M05_AXI_DATA_WIDTH-1:0] m05_axi_wdata;
-wire [C_M05_AXI_DATA_WIDTH/8-1:0] m05_axi_wstrb;
-wire [1-1:0] m05_axi_wlast;
-wire [1-1:0] m05_axi_bvalid;
-wire [1-1:0] m05_axi_bready;
-wire [1-1:0] m05_axi_arvalid;
-wire [1-1:0] m05_axi_arready;
-wire [C_M05_AXI_ADDR_WIDTH-1:0] m05_axi_araddr;
-wire [8-1:0] m05_axi_arlen;
-wire [1-1:0] m05_axi_rvalid;
-wire [1-1:0] m05_axi_rready;
-wire [C_M05_AXI_DATA_WIDTH-1:0] m05_axi_rdata;
-wire [1-1:0] m05_axi_rlast;
 //AXI4LITE control signals
 wire [1-1:0] s_axi_control_awvalid;
 wire [1-1:0] s_axi_control_awready;
@@ -202,21 +77,10 @@ axonerve_kvs_rtl #(
   .C_S_AXI_CONTROL_ADDR_WIDTH ( C_S_AXI_CONTROL_ADDR_WIDTH ),
   .C_S_AXI_CONTROL_DATA_WIDTH ( C_S_AXI_CONTROL_DATA_WIDTH ),
   .C_M00_AXI_ADDR_WIDTH       ( C_M00_AXI_ADDR_WIDTH       ),
-  .C_M00_AXI_DATA_WIDTH       ( C_M00_AXI_DATA_WIDTH       ),
-  .C_M01_AXI_ADDR_WIDTH       ( C_M01_AXI_ADDR_WIDTH       ),
-  .C_M01_AXI_DATA_WIDTH       ( C_M01_AXI_DATA_WIDTH       ),
-  .C_M02_AXI_ADDR_WIDTH       ( C_M02_AXI_ADDR_WIDTH       ),
-  .C_M02_AXI_DATA_WIDTH       ( C_M02_AXI_DATA_WIDTH       ),
-  .C_M03_AXI_ADDR_WIDTH       ( C_M03_AXI_ADDR_WIDTH       ),
-  .C_M03_AXI_DATA_WIDTH       ( C_M03_AXI_DATA_WIDTH       ),
-  .C_M04_AXI_ADDR_WIDTH       ( C_M04_AXI_ADDR_WIDTH       ),
-  .C_M04_AXI_DATA_WIDTH       ( C_M04_AXI_DATA_WIDTH       ),
-  .C_M05_AXI_ADDR_WIDTH       ( C_M05_AXI_ADDR_WIDTH       ),
-  .C_M05_AXI_DATA_WIDTH       ( C_M05_AXI_DATA_WIDTH       )
+  .C_M00_AXI_DATA_WIDTH       ( C_M00_AXI_DATA_WIDTH       )
 )
 inst_dut (
   .ap_clk                ( ap_clk                ),
-  .ap_clk_2              ( ap_clk_2              ),
   .m00_axi_awvalid       ( m00_axi_awvalid       ),
   .m00_axi_awready       ( m00_axi_awready       ),
   .m00_axi_awaddr        ( m00_axi_awaddr        ),
@@ -236,101 +100,6 @@ inst_dut (
   .m00_axi_rready        ( m00_axi_rready        ),
   .m00_axi_rdata         ( m00_axi_rdata         ),
   .m00_axi_rlast         ( m00_axi_rlast         ),
-  .m01_axi_awvalid       ( m01_axi_awvalid       ),
-  .m01_axi_awready       ( m01_axi_awready       ),
-  .m01_axi_awaddr        ( m01_axi_awaddr        ),
-  .m01_axi_awlen         ( m01_axi_awlen         ),
-  .m01_axi_wvalid        ( m01_axi_wvalid        ),
-  .m01_axi_wready        ( m01_axi_wready        ),
-  .m01_axi_wdata         ( m01_axi_wdata         ),
-  .m01_axi_wstrb         ( m01_axi_wstrb         ),
-  .m01_axi_wlast         ( m01_axi_wlast         ),
-  .m01_axi_bvalid        ( m01_axi_bvalid        ),
-  .m01_axi_bready        ( m01_axi_bready        ),
-  .m01_axi_arvalid       ( m01_axi_arvalid       ),
-  .m01_axi_arready       ( m01_axi_arready       ),
-  .m01_axi_araddr        ( m01_axi_araddr        ),
-  .m01_axi_arlen         ( m01_axi_arlen         ),
-  .m01_axi_rvalid        ( m01_axi_rvalid        ),
-  .m01_axi_rready        ( m01_axi_rready        ),
-  .m01_axi_rdata         ( m01_axi_rdata         ),
-  .m01_axi_rlast         ( m01_axi_rlast         ),
-  .m02_axi_awvalid       ( m02_axi_awvalid       ),
-  .m02_axi_awready       ( m02_axi_awready       ),
-  .m02_axi_awaddr        ( m02_axi_awaddr        ),
-  .m02_axi_awlen         ( m02_axi_awlen         ),
-  .m02_axi_wvalid        ( m02_axi_wvalid        ),
-  .m02_axi_wready        ( m02_axi_wready        ),
-  .m02_axi_wdata         ( m02_axi_wdata         ),
-  .m02_axi_wstrb         ( m02_axi_wstrb         ),
-  .m02_axi_wlast         ( m02_axi_wlast         ),
-  .m02_axi_bvalid        ( m02_axi_bvalid        ),
-  .m02_axi_bready        ( m02_axi_bready        ),
-  .m02_axi_arvalid       ( m02_axi_arvalid       ),
-  .m02_axi_arready       ( m02_axi_arready       ),
-  .m02_axi_araddr        ( m02_axi_araddr        ),
-  .m02_axi_arlen         ( m02_axi_arlen         ),
-  .m02_axi_rvalid        ( m02_axi_rvalid        ),
-  .m02_axi_rready        ( m02_axi_rready        ),
-  .m02_axi_rdata         ( m02_axi_rdata         ),
-  .m02_axi_rlast         ( m02_axi_rlast         ),
-  .m03_axi_awvalid       ( m03_axi_awvalid       ),
-  .m03_axi_awready       ( m03_axi_awready       ),
-  .m03_axi_awaddr        ( m03_axi_awaddr        ),
-  .m03_axi_awlen         ( m03_axi_awlen         ),
-  .m03_axi_wvalid        ( m03_axi_wvalid        ),
-  .m03_axi_wready        ( m03_axi_wready        ),
-  .m03_axi_wdata         ( m03_axi_wdata         ),
-  .m03_axi_wstrb         ( m03_axi_wstrb         ),
-  .m03_axi_wlast         ( m03_axi_wlast         ),
-  .m03_axi_bvalid        ( m03_axi_bvalid        ),
-  .m03_axi_bready        ( m03_axi_bready        ),
-  .m03_axi_arvalid       ( m03_axi_arvalid       ),
-  .m03_axi_arready       ( m03_axi_arready       ),
-  .m03_axi_araddr        ( m03_axi_araddr        ),
-  .m03_axi_arlen         ( m03_axi_arlen         ),
-  .m03_axi_rvalid        ( m03_axi_rvalid        ),
-  .m03_axi_rready        ( m03_axi_rready        ),
-  .m03_axi_rdata         ( m03_axi_rdata         ),
-  .m03_axi_rlast         ( m03_axi_rlast         ),
-  .m04_axi_awvalid       ( m04_axi_awvalid       ),
-  .m04_axi_awready       ( m04_axi_awready       ),
-  .m04_axi_awaddr        ( m04_axi_awaddr        ),
-  .m04_axi_awlen         ( m04_axi_awlen         ),
-  .m04_axi_wvalid        ( m04_axi_wvalid        ),
-  .m04_axi_wready        ( m04_axi_wready        ),
-  .m04_axi_wdata         ( m04_axi_wdata         ),
-  .m04_axi_wstrb         ( m04_axi_wstrb         ),
-  .m04_axi_wlast         ( m04_axi_wlast         ),
-  .m04_axi_bvalid        ( m04_axi_bvalid        ),
-  .m04_axi_bready        ( m04_axi_bready        ),
-  .m04_axi_arvalid       ( m04_axi_arvalid       ),
-  .m04_axi_arready       ( m04_axi_arready       ),
-  .m04_axi_araddr        ( m04_axi_araddr        ),
-  .m04_axi_arlen         ( m04_axi_arlen         ),
-  .m04_axi_rvalid        ( m04_axi_rvalid        ),
-  .m04_axi_rready        ( m04_axi_rready        ),
-  .m04_axi_rdata         ( m04_axi_rdata         ),
-  .m04_axi_rlast         ( m04_axi_rlast         ),
-  .m05_axi_awvalid       ( m05_axi_awvalid       ),
-  .m05_axi_awready       ( m05_axi_awready       ),
-  .m05_axi_awaddr        ( m05_axi_awaddr        ),
-  .m05_axi_awlen         ( m05_axi_awlen         ),
-  .m05_axi_wvalid        ( m05_axi_wvalid        ),
-  .m05_axi_wready        ( m05_axi_wready        ),
-  .m05_axi_wdata         ( m05_axi_wdata         ),
-  .m05_axi_wstrb         ( m05_axi_wstrb         ),
-  .m05_axi_wlast         ( m05_axi_wlast         ),
-  .m05_axi_bvalid        ( m05_axi_bvalid        ),
-  .m05_axi_bready        ( m05_axi_bready        ),
-  .m05_axi_arvalid       ( m05_axi_arvalid       ),
-  .m05_axi_arready       ( m05_axi_arready       ),
-  .m05_axi_araddr        ( m05_axi_araddr        ),
-  .m05_axi_arlen         ( m05_axi_arlen         ),
-  .m05_axi_rvalid        ( m05_axi_rvalid        ),
-  .m05_axi_rready        ( m05_axi_rready        ),
-  .m05_axi_rdata         ( m05_axi_rdata         ),
-  .m05_axi_rlast         ( m05_axi_rlast         ),
   .s_axi_control_awvalid ( s_axi_control_awvalid ),
   .s_axi_control_awready ( s_axi_control_awready ),
   .s_axi_control_awaddr  ( s_axi_control_awaddr  ),
@@ -403,169 +172,9 @@ slv_m00_axi_vip inst_slv_m00_axi_vip (
 slv_m00_axi_vip_slv_mem_t   m00_axi;
 slv_m00_axi_vip_slv_t   m00_axi_slv;
 
-// Slave MM VIP instantiation
-slv_m01_axi_vip inst_slv_m01_axi_vip (
-  .aclk          ( ap_clk          ),
-  .s_axi_awvalid ( m01_axi_awvalid ),
-  .s_axi_awready ( m01_axi_awready ),
-  .s_axi_awaddr  ( m01_axi_awaddr  ),
-  .s_axi_awlen   ( m01_axi_awlen   ),
-  .s_axi_wvalid  ( m01_axi_wvalid  ),
-  .s_axi_wready  ( m01_axi_wready  ),
-  .s_axi_wdata   ( m01_axi_wdata   ),
-  .s_axi_wstrb   ( m01_axi_wstrb   ),
-  .s_axi_wlast   ( m01_axi_wlast   ),
-  .s_axi_bvalid  ( m01_axi_bvalid  ),
-  .s_axi_bready  ( m01_axi_bready  ),
-  .s_axi_arvalid ( m01_axi_arvalid ),
-  .s_axi_arready ( m01_axi_arready ),
-  .s_axi_araddr  ( m01_axi_araddr  ),
-  .s_axi_arlen   ( m01_axi_arlen   ),
-  .s_axi_rvalid  ( m01_axi_rvalid  ),
-  .s_axi_rready  ( m01_axi_rready  ),
-  .s_axi_rdata   ( m01_axi_rdata   ),
-  .s_axi_rlast   ( m01_axi_rlast   )
-);
-
-
-slv_m01_axi_vip_slv_mem_t   m01_axi;
-slv_m01_axi_vip_slv_t   m01_axi_slv;
-
-// Slave MM VIP instantiation
-slv_m02_axi_vip inst_slv_m02_axi_vip (
-  .aclk          ( ap_clk          ),
-  .s_axi_awvalid ( m02_axi_awvalid ),
-  .s_axi_awready ( m02_axi_awready ),
-  .s_axi_awaddr  ( m02_axi_awaddr  ),
-  .s_axi_awlen   ( m02_axi_awlen   ),
-  .s_axi_wvalid  ( m02_axi_wvalid  ),
-  .s_axi_wready  ( m02_axi_wready  ),
-  .s_axi_wdata   ( m02_axi_wdata   ),
-  .s_axi_wstrb   ( m02_axi_wstrb   ),
-  .s_axi_wlast   ( m02_axi_wlast   ),
-  .s_axi_bvalid  ( m02_axi_bvalid  ),
-  .s_axi_bready  ( m02_axi_bready  ),
-  .s_axi_arvalid ( m02_axi_arvalid ),
-  .s_axi_arready ( m02_axi_arready ),
-  .s_axi_araddr  ( m02_axi_araddr  ),
-  .s_axi_arlen   ( m02_axi_arlen   ),
-  .s_axi_rvalid  ( m02_axi_rvalid  ),
-  .s_axi_rready  ( m02_axi_rready  ),
-  .s_axi_rdata   ( m02_axi_rdata   ),
-  .s_axi_rlast   ( m02_axi_rlast   )
-);
-
-
-slv_m02_axi_vip_slv_mem_t   m02_axi;
-slv_m02_axi_vip_slv_t   m02_axi_slv;
-
-// Slave MM VIP instantiation
-slv_m03_axi_vip inst_slv_m03_axi_vip (
-  .aclk          ( ap_clk          ),
-  .s_axi_awvalid ( m03_axi_awvalid ),
-  .s_axi_awready ( m03_axi_awready ),
-  .s_axi_awaddr  ( m03_axi_awaddr  ),
-  .s_axi_awlen   ( m03_axi_awlen   ),
-  .s_axi_wvalid  ( m03_axi_wvalid  ),
-  .s_axi_wready  ( m03_axi_wready  ),
-  .s_axi_wdata   ( m03_axi_wdata   ),
-  .s_axi_wstrb   ( m03_axi_wstrb   ),
-  .s_axi_wlast   ( m03_axi_wlast   ),
-  .s_axi_bvalid  ( m03_axi_bvalid  ),
-  .s_axi_bready  ( m03_axi_bready  ),
-  .s_axi_arvalid ( m03_axi_arvalid ),
-  .s_axi_arready ( m03_axi_arready ),
-  .s_axi_araddr  ( m03_axi_araddr  ),
-  .s_axi_arlen   ( m03_axi_arlen   ),
-  .s_axi_rvalid  ( m03_axi_rvalid  ),
-  .s_axi_rready  ( m03_axi_rready  ),
-  .s_axi_rdata   ( m03_axi_rdata   ),
-  .s_axi_rlast   ( m03_axi_rlast   )
-);
-
-
-slv_m03_axi_vip_slv_mem_t   m03_axi;
-slv_m03_axi_vip_slv_t   m03_axi_slv;
-
-// Slave MM VIP instantiation
-slv_m04_axi_vip inst_slv_m04_axi_vip (
-  .aclk          ( ap_clk          ),
-  .s_axi_awvalid ( m04_axi_awvalid ),
-  .s_axi_awready ( m04_axi_awready ),
-  .s_axi_awaddr  ( m04_axi_awaddr  ),
-  .s_axi_awlen   ( m04_axi_awlen   ),
-  .s_axi_wvalid  ( m04_axi_wvalid  ),
-  .s_axi_wready  ( m04_axi_wready  ),
-  .s_axi_wdata   ( m04_axi_wdata   ),
-  .s_axi_wstrb   ( m04_axi_wstrb   ),
-  .s_axi_wlast   ( m04_axi_wlast   ),
-  .s_axi_bvalid  ( m04_axi_bvalid  ),
-  .s_axi_bready  ( m04_axi_bready  ),
-  .s_axi_arvalid ( m04_axi_arvalid ),
-  .s_axi_arready ( m04_axi_arready ),
-  .s_axi_araddr  ( m04_axi_araddr  ),
-  .s_axi_arlen   ( m04_axi_arlen   ),
-  .s_axi_rvalid  ( m04_axi_rvalid  ),
-  .s_axi_rready  ( m04_axi_rready  ),
-  .s_axi_rdata   ( m04_axi_rdata   ),
-  .s_axi_rlast   ( m04_axi_rlast   )
-);
-
-
-slv_m04_axi_vip_slv_mem_t   m04_axi;
-slv_m04_axi_vip_slv_t   m04_axi_slv;
-
-// Slave MM VIP instantiation
-slv_m05_axi_vip inst_slv_m05_axi_vip (
-  .aclk          ( ap_clk          ),
-  .s_axi_awvalid ( m05_axi_awvalid ),
-  .s_axi_awready ( m05_axi_awready ),
-  .s_axi_awaddr  ( m05_axi_awaddr  ),
-  .s_axi_awlen   ( m05_axi_awlen   ),
-  .s_axi_wvalid  ( m05_axi_wvalid  ),
-  .s_axi_wready  ( m05_axi_wready  ),
-  .s_axi_wdata   ( m05_axi_wdata   ),
-  .s_axi_wstrb   ( m05_axi_wstrb   ),
-  .s_axi_wlast   ( m05_axi_wlast   ),
-  .s_axi_bvalid  ( m05_axi_bvalid  ),
-  .s_axi_bready  ( m05_axi_bready  ),
-  .s_axi_arvalid ( m05_axi_arvalid ),
-  .s_axi_arready ( m05_axi_arready ),
-  .s_axi_araddr  ( m05_axi_araddr  ),
-  .s_axi_arlen   ( m05_axi_arlen   ),
-  .s_axi_rvalid  ( m05_axi_rvalid  ),
-  .s_axi_rready  ( m05_axi_rready  ),
-  .s_axi_rdata   ( m05_axi_rdata   ),
-  .s_axi_rlast   ( m05_axi_rlast   )
-);
-
-
-slv_m05_axi_vip_slv_mem_t   m05_axi;
-slv_m05_axi_vip_slv_t   m05_axi_slv;
-
 ///////////////////////////////////////////////////////////////////////////
 // Pointer for interface : m00_axi
 bit [63:0] axi00_ptr0_ptr = 64'h0;
-
-///////////////////////////////////////////////////////////////////////////
-// Pointer for interface : m01_axi
-bit [63:0] axi01_ptr0_ptr = 64'h0;
-
-///////////////////////////////////////////////////////////////////////////
-// Pointer for interface : m02_axi
-bit [63:0] axi02_ptr0_ptr = 64'h0;
-
-///////////////////////////////////////////////////////////////////////////
-// Pointer for interface : m03_axi
-bit [63:0] axi03_ptr0_ptr = 64'h0;
-
-///////////////////////////////////////////////////////////////////////////
-// Pointer for interface : m04_axi
-bit [63:0] axi04_ptr0_ptr = 64'h0;
-
-///////////////////////////////////////////////////////////////////////////
-// Pointer for interface : m05_axi
-bit [63:0] axi05_ptr0_ptr = 64'h0;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Backdoor fill the m00_axi memory.
@@ -575,61 +184,6 @@ function void m00_axi_fill_memory(
 );
   for (longint unsigned slot = 0; slot < length; slot++) begin
     m00_axi.mem_model.backdoor_memory_write_4byte(ptr + (slot * 4), slot);
-  end
-endfunction
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-// Backdoor fill the m01_axi memory.
-function void m01_axi_fill_memory(
-  input bit [63:0] ptr,
-  input integer    length
-);
-  for (longint unsigned slot = 0; slot < length; slot++) begin
-    m01_axi.mem_model.backdoor_memory_write_4byte(ptr + (slot * 4), slot);
-  end
-endfunction
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-// Backdoor fill the m02_axi memory.
-function void m02_axi_fill_memory(
-  input bit [63:0] ptr,
-  input integer    length
-);
-  for (longint unsigned slot = 0; slot < length; slot++) begin
-    m02_axi.mem_model.backdoor_memory_write_4byte(ptr + (slot * 4), slot);
-  end
-endfunction
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-// Backdoor fill the m03_axi memory.
-function void m03_axi_fill_memory(
-  input bit [63:0] ptr,
-  input integer    length
-);
-  for (longint unsigned slot = 0; slot < length; slot++) begin
-    m03_axi.mem_model.backdoor_memory_write_4byte(ptr + (slot * 4), slot);
-  end
-endfunction
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-// Backdoor fill the m04_axi memory.
-function void m04_axi_fill_memory(
-  input bit [63:0] ptr,
-  input integer    length
-);
-  for (longint unsigned slot = 0; slot < length; slot++) begin
-    m04_axi.mem_model.backdoor_memory_write_4byte(ptr + (slot * 4), slot);
-  end
-endfunction
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-// Backdoor fill the m05_axi memory.
-function void m05_axi_fill_memory(
-  input bit [63:0] ptr,
-  input integer    length
-);
-  for (longint unsigned slot = 0; slot < length; slot++) begin
-    m05_axi.mem_model.backdoor_memory_write_4byte(ptr + (slot * 4), slot);
   end
 endfunction
 
@@ -760,31 +314,6 @@ task automatic start_vips();
   m00_axi = new("m00_axi", axonerve_kvs_rtl_exdes_tb_basic.inst_slv_m00_axi_vip.inst.IF);
   m00_axi.start_slave();
 
-  $display("///////////////////////////////////////////////////////////////////////////");
-  $display("Starting Memory slave: m01_axi");
-  m01_axi = new("m01_axi", axonerve_kvs_rtl_exdes_tb_basic.inst_slv_m01_axi_vip.inst.IF);
-  m01_axi.start_slave();
-
-  $display("///////////////////////////////////////////////////////////////////////////");
-  $display("Starting Memory slave: m02_axi");
-  m02_axi = new("m02_axi", axonerve_kvs_rtl_exdes_tb_basic.inst_slv_m02_axi_vip.inst.IF);
-  m02_axi.start_slave();
-
-  $display("///////////////////////////////////////////////////////////////////////////");
-  $display("Starting Memory slave: m03_axi");
-  m03_axi = new("m03_axi", axonerve_kvs_rtl_exdes_tb_basic.inst_slv_m03_axi_vip.inst.IF);
-  m03_axi.start_slave();
-
-  $display("///////////////////////////////////////////////////////////////////////////");
-  $display("Starting Memory slave: m04_axi");
-  m04_axi = new("m04_axi", axonerve_kvs_rtl_exdes_tb_basic.inst_slv_m04_axi_vip.inst.IF);
-  m04_axi.start_slave();
-
-  $display("///////////////////////////////////////////////////////////////////////////");
-  $display("Starting Memory slave: m05_axi");
-  m05_axi = new("m05_axi", axonerve_kvs_rtl_exdes_tb_basic.inst_slv_m05_axi_vip.inst.IF);
-  m05_axi.start_slave();
-
 endtask
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -797,26 +326,6 @@ task automatic slv_no_backpressure_wready();
   rgen = new("m00_axi_no_backpressure_wready");
   rgen.set_ready_policy(XIL_AXI_READY_GEN_NO_BACKPRESSURE);
   m00_axi.wr_driver.set_wready_gen(rgen);
-
-  rgen = new("m01_axi_no_backpressure_wready");
-  rgen.set_ready_policy(XIL_AXI_READY_GEN_NO_BACKPRESSURE);
-  m01_axi.wr_driver.set_wready_gen(rgen);
-
-  rgen = new("m02_axi_no_backpressure_wready");
-  rgen.set_ready_policy(XIL_AXI_READY_GEN_NO_BACKPRESSURE);
-  m02_axi.wr_driver.set_wready_gen(rgen);
-
-  rgen = new("m03_axi_no_backpressure_wready");
-  rgen.set_ready_policy(XIL_AXI_READY_GEN_NO_BACKPRESSURE);
-  m03_axi.wr_driver.set_wready_gen(rgen);
-
-  rgen = new("m04_axi_no_backpressure_wready");
-  rgen.set_ready_policy(XIL_AXI_READY_GEN_NO_BACKPRESSURE);
-  m04_axi.wr_driver.set_wready_gen(rgen);
-
-  rgen = new("m05_axi_no_backpressure_wready");
-  rgen.set_ready_policy(XIL_AXI_READY_GEN_NO_BACKPRESSURE);
-  m05_axi.wr_driver.set_wready_gen(rgen);
 
 endtask
 
@@ -834,41 +343,6 @@ task automatic slv_random_backpressure_wready();
   rgen.set_event_count_range(3,5);
   m00_axi.wr_driver.set_wready_gen(rgen);
 
-  rgen = new("m01_axi_random_backpressure_wready");
-  rgen.set_ready_policy(XIL_AXI_READY_GEN_RANDOM);
-  rgen.set_low_time_range(0,12);
-  rgen.set_high_time_range(1,12);
-  rgen.set_event_count_range(3,5);
-  m01_axi.wr_driver.set_wready_gen(rgen);
-
-  rgen = new("m02_axi_random_backpressure_wready");
-  rgen.set_ready_policy(XIL_AXI_READY_GEN_RANDOM);
-  rgen.set_low_time_range(0,12);
-  rgen.set_high_time_range(1,12);
-  rgen.set_event_count_range(3,5);
-  m02_axi.wr_driver.set_wready_gen(rgen);
-
-  rgen = new("m03_axi_random_backpressure_wready");
-  rgen.set_ready_policy(XIL_AXI_READY_GEN_RANDOM);
-  rgen.set_low_time_range(0,12);
-  rgen.set_high_time_range(1,12);
-  rgen.set_event_count_range(3,5);
-  m03_axi.wr_driver.set_wready_gen(rgen);
-
-  rgen = new("m04_axi_random_backpressure_wready");
-  rgen.set_ready_policy(XIL_AXI_READY_GEN_RANDOM);
-  rgen.set_low_time_range(0,12);
-  rgen.set_high_time_range(1,12);
-  rgen.set_event_count_range(3,5);
-  m04_axi.wr_driver.set_wready_gen(rgen);
-
-  rgen = new("m05_axi_random_backpressure_wready");
-  rgen.set_ready_policy(XIL_AXI_READY_GEN_RANDOM);
-  rgen.set_low_time_range(0,12);
-  rgen.set_high_time_range(1,12);
-  rgen.set_event_count_range(3,5);
-  m05_axi.wr_driver.set_wready_gen(rgen);
-
 endtask
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -880,21 +354,6 @@ task automatic slv_no_delay_rvalid();
   m00_axi.mem_model.set_inter_beat_gap_delay_policy(XIL_AXI_MEMORY_DELAY_FIXED);
   m00_axi.mem_model.set_inter_beat_gap(0);
 
-  m01_axi.mem_model.set_inter_beat_gap_delay_policy(XIL_AXI_MEMORY_DELAY_FIXED);
-  m01_axi.mem_model.set_inter_beat_gap(0);
-
-  m02_axi.mem_model.set_inter_beat_gap_delay_policy(XIL_AXI_MEMORY_DELAY_FIXED);
-  m02_axi.mem_model.set_inter_beat_gap(0);
-
-  m03_axi.mem_model.set_inter_beat_gap_delay_policy(XIL_AXI_MEMORY_DELAY_FIXED);
-  m03_axi.mem_model.set_inter_beat_gap(0);
-
-  m04_axi.mem_model.set_inter_beat_gap_delay_policy(XIL_AXI_MEMORY_DELAY_FIXED);
-  m04_axi.mem_model.set_inter_beat_gap(0);
-
-  m05_axi.mem_model.set_inter_beat_gap_delay_policy(XIL_AXI_MEMORY_DELAY_FIXED);
-  m05_axi.mem_model.set_inter_beat_gap(0);
-
 endtask
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -905,21 +364,6 @@ task automatic slv_random_delay_rvalid();
 
   m00_axi.mem_model.set_inter_beat_gap_delay_policy(XIL_AXI_MEMORY_DELAY_RANDOM);
   m00_axi.mem_model.set_inter_beat_gap_range(0,10);
-
-  m01_axi.mem_model.set_inter_beat_gap_delay_policy(XIL_AXI_MEMORY_DELAY_RANDOM);
-  m01_axi.mem_model.set_inter_beat_gap_range(0,10);
-
-  m02_axi.mem_model.set_inter_beat_gap_delay_policy(XIL_AXI_MEMORY_DELAY_RANDOM);
-  m02_axi.mem_model.set_inter_beat_gap_range(0,10);
-
-  m03_axi.mem_model.set_inter_beat_gap_delay_policy(XIL_AXI_MEMORY_DELAY_RANDOM);
-  m03_axi.mem_model.set_inter_beat_gap_range(0,10);
-
-  m04_axi.mem_model.set_inter_beat_gap_delay_policy(XIL_AXI_MEMORY_DELAY_RANDOM);
-  m04_axi.mem_model.set_inter_beat_gap_range(0,10);
-
-  m05_axi.mem_model.set_inter_beat_gap_delay_policy(XIL_AXI_MEMORY_DELAY_RANDOM);
-  m05_axi.mem_model.set_inter_beat_gap_range(0,10);
 
 endtask
 
@@ -970,8 +414,7 @@ task automatic set_scalar_registers();
 
   ///////////////////////////////////////////////////////////////////////////
   //Write ID 0: data_num (0x010) -> 32'hffffffff (scalar)
-  //write_register(32'h010, 32'hffffffff);
-  write_register(32'h010, 32'h16384);
+  write_register(32'h010, 32'hffffffff);
 
 endtask
 
@@ -991,67 +434,12 @@ task automatic check_pointer_registers(output bit error_found);
   check_register_value(32'h01c, 32, tmp_error_found);
   error_found |= tmp_error_found;
 
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 2: axi01_ptr0 (0x020)
-  check_register_value(32'h020, 32, tmp_error_found);
-  error_found |= tmp_error_found;
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 2: axi01_ptr0 (0x024)
-  check_register_value(32'h024, 32, tmp_error_found);
-  error_found |= tmp_error_found;
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 3: axi02_ptr0 (0x028)
-  check_register_value(32'h028, 32, tmp_error_found);
-  error_found |= tmp_error_found;
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 3: axi02_ptr0 (0x02c)
-  check_register_value(32'h02c, 32, tmp_error_found);
-  error_found |= tmp_error_found;
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 4: axi03_ptr0 (0x030)
-  check_register_value(32'h030, 32, tmp_error_found);
-  error_found |= tmp_error_found;
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 4: axi03_ptr0 (0x034)
-  check_register_value(32'h034, 32, tmp_error_found);
-  error_found |= tmp_error_found;
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 5: axi04_ptr0 (0x038)
-  check_register_value(32'h038, 32, tmp_error_found);
-  error_found |= tmp_error_found;
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 5: axi04_ptr0 (0x03c)
-  check_register_value(32'h03c, 32, tmp_error_found);
-  error_found |= tmp_error_found;
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 6: axi05_ptr0 (0x040)
-  check_register_value(32'h040, 32, tmp_error_found);
-  error_found |= tmp_error_found;
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 6: axi05_ptr0 (0x044)
-  check_register_value(32'h044, 32, tmp_error_found);
-  error_found |= tmp_error_found;
-
 endtask
 
 task automatic set_memory_pointers();
   ///////////////////////////////////////////////////////////////////////////
   //Randomly generate memory pointers.
   axi00_ptr0_ptr = get_random_ptr();
-  axi01_ptr0_ptr = get_random_ptr();
-  axi02_ptr0_ptr = get_random_ptr();
-  axi03_ptr0_ptr = get_random_ptr();
-  axi04_ptr0_ptr = get_random_ptr();
-  axi05_ptr0_ptr = get_random_ptr();
 
   ///////////////////////////////////////////////////////////////////////////
   //Write ID 1: axi00_ptr0 (0x018) -> Randomized 4k aligned address (Global memory, lower 32 bits)
@@ -1061,46 +449,6 @@ task automatic set_memory_pointers();
   //Write ID 1: axi00_ptr0 (0x01c) -> Randomized 4k aligned address (Global memory, upper 32 bits)
   write_register(32'h01c, axi00_ptr0_ptr[63:32]);
 
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 2: axi01_ptr0 (0x020) -> Randomized 4k aligned address (Global memory, lower 32 bits)
-  write_register(32'h020, axi01_ptr0_ptr[31:0]);
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 2: axi01_ptr0 (0x024) -> Randomized 4k aligned address (Global memory, upper 32 bits)
-  write_register(32'h024, axi01_ptr0_ptr[63:32]);
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 3: axi02_ptr0 (0x028) -> Randomized 4k aligned address (Global memory, lower 32 bits)
-  write_register(32'h028, axi02_ptr0_ptr[31:0]);
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 3: axi02_ptr0 (0x02c) -> Randomized 4k aligned address (Global memory, upper 32 bits)
-  write_register(32'h02c, axi02_ptr0_ptr[63:32]);
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 4: axi03_ptr0 (0x030) -> Randomized 4k aligned address (Global memory, lower 32 bits)
-  write_register(32'h030, axi03_ptr0_ptr[31:0]);
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 4: axi03_ptr0 (0x034) -> Randomized 4k aligned address (Global memory, upper 32 bits)
-  write_register(32'h034, axi03_ptr0_ptr[63:32]);
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 5: axi04_ptr0 (0x038) -> Randomized 4k aligned address (Global memory, lower 32 bits)
-  write_register(32'h038, axi04_ptr0_ptr[31:0]);
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 5: axi04_ptr0 (0x03c) -> Randomized 4k aligned address (Global memory, upper 32 bits)
-  write_register(32'h03c, axi04_ptr0_ptr[63:32]);
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 6: axi05_ptr0 (0x040) -> Randomized 4k aligned address (Global memory, lower 32 bits)
-  write_register(32'h040, axi05_ptr0_ptr[31:0]);
-
-  ///////////////////////////////////////////////////////////////////////////
-  //Write ID 6: axi05_ptr0 (0x044) -> Randomized 4k aligned address (Global memory, upper 32 bits)
-  write_register(32'h044, axi05_ptr0_ptr[63:32]);
-
 endtask
 
 task automatic backdoor_fill_memories();
@@ -1108,26 +456,6 @@ task automatic backdoor_fill_memories();
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Backdoor fill the memory with the content.
   m00_axi_fill_memory(axi00_ptr0_ptr, LP_MAX_LENGTH);
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Backdoor fill the memory with the content.
-  m01_axi_fill_memory(axi01_ptr0_ptr, LP_MAX_LENGTH);
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Backdoor fill the memory with the content.
-  m02_axi_fill_memory(axi02_ptr0_ptr, LP_MAX_LENGTH);
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Backdoor fill the memory with the content.
-  m03_axi_fill_memory(axi03_ptr0_ptr, LP_MAX_LENGTH);
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Backdoor fill the memory with the content.
-  m04_axi_fill_memory(axi04_ptr0_ptr, LP_MAX_LENGTH);
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Backdoor fill the memory with the content.
-  m05_axi_fill_memory(axi05_ptr0_ptr, LP_MAX_LENGTH);
 
 endtask
 
@@ -1156,126 +484,6 @@ function automatic bit check_kernel_result();
     end
     if (error_counter > 5) begin
       $display("Too many errors found. Exiting check of m00_axi.");
-      slot = LP_MAX_LENGTH;
-    end
-  end
-  error_counter = 0;
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Checking memory connected to m01_axi
-  for (longint unsigned slot = 0; slot < LP_MAX_LENGTH; slot++) begin
-    ret_rd_value = m01_axi.mem_model.backdoor_memory_read_4byte(axi01_ptr0_ptr + (slot * 4));
-    if (slot < LP_MAX_TRANSFER_LENGTH) begin
-      if (ret_rd_value != (slot + 1)) begin
-        $error("Memory Mismatch: m01_axi : @0x%x : Expected 0x%x -> Got 0x%x ", axi01_ptr0_ptr + (slot * 4), slot + 1, ret_rd_value);
-        error_found |= 1;
-        error_counter++;
-      end
-    end else begin
-      if (ret_rd_value != slot) begin
-        $error("Memory Mismatch: m01_axi : @0x%x : Expected 0x%x -> Got 0x%x ", axi01_ptr0_ptr + (slot * 4), slot, ret_rd_value);
-        error_found |= 1;
-        error_counter++;
-      end
-    end
-    if (error_counter > 5) begin
-      $display("Too many errors found. Exiting check of m01_axi.");
-      slot = LP_MAX_LENGTH;
-    end
-  end
-  error_counter = 0;
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Checking memory connected to m02_axi
-  for (longint unsigned slot = 0; slot < LP_MAX_LENGTH; slot++) begin
-    ret_rd_value = m02_axi.mem_model.backdoor_memory_read_4byte(axi02_ptr0_ptr + (slot * 4));
-    if (slot < LP_MAX_TRANSFER_LENGTH) begin
-      if (ret_rd_value != (slot + 1)) begin
-        $error("Memory Mismatch: m02_axi : @0x%x : Expected 0x%x -> Got 0x%x ", axi02_ptr0_ptr + (slot * 4), slot + 1, ret_rd_value);
-        error_found |= 1;
-        error_counter++;
-      end
-    end else begin
-      if (ret_rd_value != slot) begin
-        $error("Memory Mismatch: m02_axi : @0x%x : Expected 0x%x -> Got 0x%x ", axi02_ptr0_ptr + (slot * 4), slot, ret_rd_value);
-        error_found |= 1;
-        error_counter++;
-      end
-    end
-    if (error_counter > 5) begin
-      $display("Too many errors found. Exiting check of m02_axi.");
-      slot = LP_MAX_LENGTH;
-    end
-  end
-  error_counter = 0;
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Checking memory connected to m03_axi
-  for (longint unsigned slot = 0; slot < LP_MAX_LENGTH; slot++) begin
-    ret_rd_value = m03_axi.mem_model.backdoor_memory_read_4byte(axi03_ptr0_ptr + (slot * 4));
-    if (slot < LP_MAX_TRANSFER_LENGTH) begin
-      if (ret_rd_value != (slot + 1)) begin
-        $error("Memory Mismatch: m03_axi : @0x%x : Expected 0x%x -> Got 0x%x ", axi03_ptr0_ptr + (slot * 4), slot + 1, ret_rd_value);
-        error_found |= 1;
-        error_counter++;
-      end
-    end else begin
-      if (ret_rd_value != slot) begin
-        $error("Memory Mismatch: m03_axi : @0x%x : Expected 0x%x -> Got 0x%x ", axi03_ptr0_ptr + (slot * 4), slot, ret_rd_value);
-        error_found |= 1;
-        error_counter++;
-      end
-    end
-    if (error_counter > 5) begin
-      $display("Too many errors found. Exiting check of m03_axi.");
-      slot = LP_MAX_LENGTH;
-    end
-  end
-  error_counter = 0;
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Checking memory connected to m04_axi
-  for (longint unsigned slot = 0; slot < LP_MAX_LENGTH; slot++) begin
-    ret_rd_value = m04_axi.mem_model.backdoor_memory_read_4byte(axi04_ptr0_ptr + (slot * 4));
-    if (slot < LP_MAX_TRANSFER_LENGTH) begin
-      if (ret_rd_value != (slot + 1)) begin
-        $error("Memory Mismatch: m04_axi : @0x%x : Expected 0x%x -> Got 0x%x ", axi04_ptr0_ptr + (slot * 4), slot + 1, ret_rd_value);
-        error_found |= 1;
-        error_counter++;
-      end
-    end else begin
-      if (ret_rd_value != slot) begin
-        $error("Memory Mismatch: m04_axi : @0x%x : Expected 0x%x -> Got 0x%x ", axi04_ptr0_ptr + (slot * 4), slot, ret_rd_value);
-        error_found |= 1;
-        error_counter++;
-      end
-    end
-    if (error_counter > 5) begin
-      $display("Too many errors found. Exiting check of m04_axi.");
-      slot = LP_MAX_LENGTH;
-    end
-  end
-  error_counter = 0;
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Checking memory connected to m05_axi
-  for (longint unsigned slot = 0; slot < LP_MAX_LENGTH; slot++) begin
-    ret_rd_value = m05_axi.mem_model.backdoor_memory_read_4byte(axi05_ptr0_ptr + (slot * 4));
-    if (slot < LP_MAX_TRANSFER_LENGTH) begin
-      if (ret_rd_value != (slot + 1)) begin
-        $error("Memory Mismatch: m05_axi : @0x%x : Expected 0x%x -> Got 0x%x ", axi05_ptr0_ptr + (slot * 4), slot + 1, ret_rd_value);
-        error_found |= 1;
-        error_counter++;
-      end
-    end else begin
-      if (ret_rd_value != slot) begin
-        $error("Memory Mismatch: m05_axi : @0x%x : Expected 0x%x -> Got 0x%x ", axi05_ptr0_ptr + (slot * 4), slot, ret_rd_value);
-        error_found |= 1;
-        error_counter++;
-      end
-    end
-    if (error_counter > 5) begin
-      $display("Too many errors found. Exiting check of m05_axi.");
       slot = LP_MAX_LENGTH;
     end
   end

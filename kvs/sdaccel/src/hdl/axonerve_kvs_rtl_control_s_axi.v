@@ -36,12 +36,7 @@ module axonerve_kvs_rtl_control_s_axi #(
   input  wire                      ap_done   ,
   // User defined arguments
   output wire [32-1:0]             data_num  ,
-  output wire [64-1:0]             axi00_ptr0,
-  output wire [64-1:0]             axi01_ptr0,
-  output wire [64-1:0]             axi02_ptr0,
-  output wire [64-1:0]             axi03_ptr0,
-  output wire [64-1:0]             axi04_ptr0,
-  output wire [64-1:0]             axi05_ptr0
+  output wire [64-1:0]             axi00_ptr0
 );
 
 //------------------------Address Info-------------------
@@ -66,26 +61,6 @@ module axonerve_kvs_rtl_control_s_axi #(
 //         bit 31~0 - axi00_ptr0[31:0] (Read/Write)
 // 0x01c : Data signal of axi00_ptr0
 //         bit 31~0 - axi00_ptr0[63:32] (Read/Write)
-// 0x020 : Data signal of axi01_ptr0
-//         bit 31~0 - axi01_ptr0[31:0] (Read/Write)
-// 0x024 : Data signal of axi01_ptr0
-//         bit 31~0 - axi01_ptr0[63:32] (Read/Write)
-// 0x028 : Data signal of axi02_ptr0
-//         bit 31~0 - axi02_ptr0[31:0] (Read/Write)
-// 0x02c : Data signal of axi02_ptr0
-//         bit 31~0 - axi02_ptr0[63:32] (Read/Write)
-// 0x030 : Data signal of axi03_ptr0
-//         bit 31~0 - axi03_ptr0[31:0] (Read/Write)
-// 0x034 : Data signal of axi03_ptr0
-//         bit 31~0 - axi03_ptr0[63:32] (Read/Write)
-// 0x038 : Data signal of axi04_ptr0
-//         bit 31~0 - axi04_ptr0[31:0] (Read/Write)
-// 0x03c : Data signal of axi04_ptr0
-//         bit 31~0 - axi04_ptr0[63:32] (Read/Write)
-// 0x040 : Data signal of axi05_ptr0
-//         bit 31~0 - axi05_ptr0[31:0] (Read/Write)
-// 0x044 : Data signal of axi05_ptr0
-//         bit 31~0 - axi05_ptr0[63:32] (Read/Write)
 // (SC = Self Clear, COR = Clear on Read, TOW = Toggle on Write, COH = Clear on Handshake)
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -98,16 +73,6 @@ localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_ISR                    = 12'h00c;
 localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_DATA_NUM_0             = 12'h010;
 localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_axi00_ptr0_0           = 12'h018;
 localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_axi00_ptr0_1           = 12'h01c;
-localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_axi01_ptr0_0           = 12'h020;
-localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_axi01_ptr0_1           = 12'h024;
-localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_axi02_ptr0_0           = 12'h028;
-localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_axi02_ptr0_1           = 12'h02c;
-localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_axi03_ptr0_0           = 12'h030;
-localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_axi03_ptr0_1           = 12'h034;
-localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_axi04_ptr0_0           = 12'h038;
-localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_axi04_ptr0_1           = 12'h03c;
-localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_axi05_ptr0_0           = 12'h040;
-localparam [C_ADDR_WIDTH-1:0]       LP_ADDR_axi05_ptr0_1           = 12'h044;
 localparam integer                  LP_SM_WIDTH                    = 2;
 localparam [LP_SM_WIDTH-1:0]        SM_WRIDLE                      = 2'd0;
 localparam [LP_SM_WIDTH-1:0]        SM_WRDATA                      = 2'd1;
@@ -141,11 +106,6 @@ reg                                 int_isr                        = 1'b0;
 
 reg  [32-1:0]                       int_data_num                   = 32'd0;
 reg  [64-1:0]                       int_axi00_ptr0                 = 64'd0;
-reg  [64-1:0]                       int_axi01_ptr0                 = 64'd0;
-reg  [64-1:0]                       int_axi02_ptr0                 = 64'd0;
-reg  [64-1:0]                       int_axi03_ptr0                 = 64'd0;
-reg  [64-1:0]                       int_axi04_ptr0                 = 64'd0;
-reg  [64-1:0]                       int_axi05_ptr0                 = 64'd0;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Begin RTL
@@ -268,36 +228,6 @@ always @(posedge aclk) begin
         LP_ADDR_axi00_ptr0_1: begin
           rdata_r <= int_axi00_ptr0[32+:32];
         end
-        LP_ADDR_axi01_ptr0_0: begin
-          rdata_r <= int_axi01_ptr0[0+:32];
-        end
-        LP_ADDR_axi01_ptr0_1: begin
-          rdata_r <= int_axi01_ptr0[32+:32];
-        end
-        LP_ADDR_axi02_ptr0_0: begin
-          rdata_r <= int_axi02_ptr0[0+:32];
-        end
-        LP_ADDR_axi02_ptr0_1: begin
-          rdata_r <= int_axi02_ptr0[32+:32];
-        end
-        LP_ADDR_axi03_ptr0_0: begin
-          rdata_r <= int_axi03_ptr0[0+:32];
-        end
-        LP_ADDR_axi03_ptr0_1: begin
-          rdata_r <= int_axi03_ptr0[32+:32];
-        end
-        LP_ADDR_axi04_ptr0_0: begin
-          rdata_r <= int_axi04_ptr0[0+:32];
-        end
-        LP_ADDR_axi04_ptr0_1: begin
-          rdata_r <= int_axi04_ptr0[32+:32];
-        end
-        LP_ADDR_axi05_ptr0_0: begin
-          rdata_r <= int_axi05_ptr0[0+:32];
-        end
-        LP_ADDR_axi05_ptr0_1: begin
-          rdata_r <= int_axi05_ptr0[32+:32];
-        end
 
         default: begin
           rdata_r <= {C_DATA_WIDTH{1'b0}};
@@ -313,11 +243,6 @@ assign ap_start     = int_ap_start;
 assign int_ap_idle  = ap_idle;
 assign data_num = int_data_num;
 assign axi00_ptr0 = int_axi00_ptr0;
-assign axi01_ptr0 = int_axi01_ptr0;
-assign axi02_ptr0 = int_axi02_ptr0;
-assign axi03_ptr0 = int_axi03_ptr0;
-assign axi04_ptr0 = int_axi04_ptr0;
-assign axi05_ptr0 = int_axi05_ptr0;
 
 // int_ap_start
 always @(posedge aclk) begin
@@ -403,106 +328,6 @@ always @(posedge aclk) begin
   else if (aclk_en) begin
     if (w_hs && waddr == LP_ADDR_axi00_ptr0_1)
       int_axi00_ptr0[32+:32] <= (wdata[0+:32] & wmask[0+:32]) | (int_axi00_ptr0[32+:32] & ~wmask[0+:32]);
-  end
-end
-
-// int_axi01_ptr0[32-1:0]
-always @(posedge aclk) begin
-  if (areset)
-    int_axi01_ptr0[0+:32] <= 32'd0;
-  else if (aclk_en) begin
-    if (w_hs && waddr == LP_ADDR_axi01_ptr0_0)
-      int_axi01_ptr0[0+:32] <= (wdata[0+:32] & wmask[0+:32]) | (int_axi01_ptr0[0+:32] & ~wmask[0+:32]);
-  end
-end
-
-// int_axi01_ptr0[32-1:0]
-always @(posedge aclk) begin
-  if (areset)
-    int_axi01_ptr0[32+:32] <= 32'd0;
-  else if (aclk_en) begin
-    if (w_hs && waddr == LP_ADDR_axi01_ptr0_1)
-      int_axi01_ptr0[32+:32] <= (wdata[0+:32] & wmask[0+:32]) | (int_axi01_ptr0[32+:32] & ~wmask[0+:32]);
-  end
-end
-
-// int_axi02_ptr0[32-1:0]
-always @(posedge aclk) begin
-  if (areset)
-    int_axi02_ptr0[0+:32] <= 32'd0;
-  else if (aclk_en) begin
-    if (w_hs && waddr == LP_ADDR_axi02_ptr0_0)
-      int_axi02_ptr0[0+:32] <= (wdata[0+:32] & wmask[0+:32]) | (int_axi02_ptr0[0+:32] & ~wmask[0+:32]);
-  end
-end
-
-// int_axi02_ptr0[32-1:0]
-always @(posedge aclk) begin
-  if (areset)
-    int_axi02_ptr0[32+:32] <= 32'd0;
-  else if (aclk_en) begin
-    if (w_hs && waddr == LP_ADDR_axi02_ptr0_1)
-      int_axi02_ptr0[32+:32] <= (wdata[0+:32] & wmask[0+:32]) | (int_axi02_ptr0[32+:32] & ~wmask[0+:32]);
-  end
-end
-
-// int_axi03_ptr0[32-1:0]
-always @(posedge aclk) begin
-  if (areset)
-    int_axi03_ptr0[0+:32] <= 32'd0;
-  else if (aclk_en) begin
-    if (w_hs && waddr == LP_ADDR_axi03_ptr0_0)
-      int_axi03_ptr0[0+:32] <= (wdata[0+:32] & wmask[0+:32]) | (int_axi03_ptr0[0+:32] & ~wmask[0+:32]);
-  end
-end
-
-// int_axi03_ptr0[32-1:0]
-always @(posedge aclk) begin
-  if (areset)
-    int_axi03_ptr0[32+:32] <= 32'd0;
-  else if (aclk_en) begin
-    if (w_hs && waddr == LP_ADDR_axi03_ptr0_1)
-      int_axi03_ptr0[32+:32] <= (wdata[0+:32] & wmask[0+:32]) | (int_axi03_ptr0[32+:32] & ~wmask[0+:32]);
-  end
-end
-
-// int_axi04_ptr0[32-1:0]
-always @(posedge aclk) begin
-  if (areset)
-    int_axi04_ptr0[0+:32] <= 32'd0;
-  else if (aclk_en) begin
-    if (w_hs && waddr == LP_ADDR_axi04_ptr0_0)
-      int_axi04_ptr0[0+:32] <= (wdata[0+:32] & wmask[0+:32]) | (int_axi04_ptr0[0+:32] & ~wmask[0+:32]);
-  end
-end
-
-// int_axi04_ptr0[32-1:0]
-always @(posedge aclk) begin
-  if (areset)
-    int_axi04_ptr0[32+:32] <= 32'd0;
-  else if (aclk_en) begin
-    if (w_hs && waddr == LP_ADDR_axi04_ptr0_1)
-      int_axi04_ptr0[32+:32] <= (wdata[0+:32] & wmask[0+:32]) | (int_axi04_ptr0[32+:32] & ~wmask[0+:32]);
-  end
-end
-
-// int_axi05_ptr0[32-1:0]
-always @(posedge aclk) begin
-  if (areset)
-    int_axi05_ptr0[0+:32] <= 32'd0;
-  else if (aclk_en) begin
-    if (w_hs && waddr == LP_ADDR_axi05_ptr0_0)
-      int_axi05_ptr0[0+:32] <= (wdata[0+:32] & wmask[0+:32]) | (int_axi05_ptr0[0+:32] & ~wmask[0+:32]);
-  end
-end
-
-// int_axi05_ptr0[32-1:0]
-always @(posedge aclk) begin
-  if (areset)
-    int_axi05_ptr0[32+:32] <= 32'd0;
-  else if (aclk_en) begin
-    if (w_hs && waddr == LP_ADDR_axi05_ptr0_1)
-      int_axi05_ptr0[32+:32] <= (wdata[0+:32] & wmask[0+:32]) | (int_axi05_ptr0[32+:32] & ~wmask[0+:32]);
   end
 end
 
