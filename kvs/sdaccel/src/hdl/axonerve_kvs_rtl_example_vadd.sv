@@ -11,36 +11,50 @@ module axonerve_kvs_rtl_example_vadd #(
 )
 (
   // System Signals
-  input wire                                    aclk               ,
-  input wire                                    areset             ,
+  input wire 				 aclk ,
+  input wire 				 areset ,
   // Extra clocks
-  input wire                                    kernel_clk         ,
-  input wire                                    kernel_rst         ,
+  input wire 				 kernel_clk ,
+  input wire 				 kernel_rst ,
   // AXI4 master interface
-  output wire                                   m_axi_awvalid      ,
-  input wire                                    m_axi_awready      ,
-  output wire [C_M_AXI_ADDR_WIDTH-1:0]          m_axi_awaddr       ,
-  output wire [8-1:0]                           m_axi_awlen        ,
-  output wire                                   m_axi_wvalid       ,
-  input wire                                    m_axi_wready       ,
-  output wire [C_M_AXI_DATA_WIDTH-1:0]          m_axi_wdata        ,
-  output wire [C_M_AXI_DATA_WIDTH/8-1:0]        m_axi_wstrb        ,
-  output wire                                   m_axi_wlast        ,
-  output wire                                   m_axi_arvalid      ,
-  input wire                                    m_axi_arready      ,
-  output wire [C_M_AXI_ADDR_WIDTH-1:0]          m_axi_araddr       ,
-  output wire [8-1:0]                           m_axi_arlen        ,
-  input wire                                    m_axi_rvalid       ,
-  output wire                                   m_axi_rready       ,
-  input wire [C_M_AXI_DATA_WIDTH-1:0]           m_axi_rdata        ,
-  input wire                                    m_axi_rlast        ,
-  input wire                                    m_axi_bvalid       ,
-  output wire                                   m_axi_bready       ,
-  input wire                                    ap_start           ,
-  output wire                                   ap_done            ,
-  input wire [C_M_AXI_ADDR_WIDTH-1:0]           ctrl_addr_offset   ,
-  input wire [C_XFER_SIZE_WIDTH-1:0]            ctrl_xfer_size_in_bytes,
-  input wire [C_ADDER_BIT_WIDTH-1:0]            ctrl_constant
+  output wire 				 m_axi_awvalid ,
+  input wire 				 m_axi_awready ,
+  output wire [C_M_AXI_ADDR_WIDTH-1:0] 	 m_axi_awaddr ,
+  output wire [8-1:0] 			 m_axi_awlen ,
+  output wire 				 m_axi_wvalid ,
+  input wire 				 m_axi_wready ,
+  output wire [C_M_AXI_DATA_WIDTH-1:0] 	 m_axi_wdata ,
+  output wire [C_M_AXI_DATA_WIDTH/8-1:0] m_axi_wstrb ,
+  output wire 				 m_axi_wlast ,
+  output wire 				 m_axi_arvalid ,
+  input wire 				 m_axi_arready ,
+  output wire [C_M_AXI_ADDR_WIDTH-1:0] 	 m_axi_araddr ,
+  output wire [8-1:0] 			 m_axi_arlen ,
+  input wire 				 m_axi_rvalid ,
+  output wire 				 m_axi_rready ,
+  input wire [C_M_AXI_DATA_WIDTH-1:0] 	 m_axi_rdata ,
+  input wire 				 m_axi_rlast ,
+  input wire 				 m_axi_bvalid ,
+  output wire 				 m_axi_bready ,
+  input wire 				 ap_start ,
+  output wire 				 ap_done ,
+  input wire [C_M_AXI_ADDR_WIDTH-1:0] 	 ctrl_addr_offset ,
+  input wire [C_XFER_SIZE_WIDTH-1:0] 	 ctrl_xfer_size_in_bytes,
+  input wire [C_ADDER_BIT_WIDTH-1:0] 	 ctrl_constant,
+
+  ////////////////////////////////////////////////////////
+  //// for user logic stream I/Os
+  ////////////////////////////////////////////////////////
+  // Global memory -> user logic
+  output wire 				 rd_tvalid,
+  input wire 				 rd_tready,
+  output wire 				 rd_tlast,
+  output wire [C_M_AXI_DATA_WIDTH-1:0] 	 rd_tdata,
+  // user logic -> Global memory
+  input wire 				 wr_tvalid,
+  output wire 				 wr_tready,
+  input wire [C_M_AXI_DATA_WIDTH-1:0] 	 wr_tdata
+ 
 );
 
 timeunit 1ps;
@@ -65,10 +79,10 @@ localparam integer LP_WR_MAX_OUTSTANDING   = 32;
 logic                          done = 1'b0;
 // AXI read master stage
 logic                          read_done;
-logic                          rd_tvalid;
-logic                          rd_tready;
-logic                          rd_tlast;
-logic [C_M_AXI_DATA_WIDTH-1:0] rd_tdata;
+logic                          rd_tvalid_int;
+logic                          rd_tready_int;
+logic                          rd_tlast_int;
+logic [C_M_AXI_DATA_WIDTH-1:0] rd_tdata_int;
 // Adder stage
 logic                          adder_tvalid;
 logic                          adder_tready;
@@ -80,6 +94,11 @@ logic                          write_done;
 ///////////////////////////////////////////////////////////////////////////////
 // Begin RTL
 ///////////////////////////////////////////////////////////////////////////////
+
+   assign rd_tvalid = rd_tvalid_int;
+   assign rd_tlast  = rd_tlast_int;
+   assign rd_tdata  = rd_tdata_int;
+   assign rd_tready_int = rd_tready;
 
 // AXI4 Read Master, output format is an AXI4-Stream master, one stream per thread.
 axonerve_kvs_rtl_example_axi_read_master #(
@@ -104,12 +123,14 @@ inst_axi_read_master (
   .m_axi_rready            ( m_axi_rready            ) ,
   .m_axi_rdata             ( m_axi_rdata             ) ,
   .m_axi_rlast             ( m_axi_rlast             ) ,
-  .m_axis_aclk             ( kernel_clk              ) ,
-  .m_axis_areset           ( kernel_rst              ) ,
-  .m_axis_tvalid           ( rd_tvalid               ) ,
-  .m_axis_tready           ( rd_tready               ) ,
-  .m_axis_tlast            ( rd_tlast                ) ,
-  .m_axis_tdata            ( rd_tdata                )
+//  .m_axis_aclk             ( kernel_clk              ) ,
+//  .m_axis_areset           ( kernel_rst              ) ,
+  .m_axis_aclk             ( aclk                    ) ,
+  .m_axis_areset           ( areset                  ) ,
+  .m_axis_tvalid           ( rd_tvalid_int           ) ,
+  .m_axis_tready           ( rd_tready_int           ) ,
+  .m_axis_tlast            ( rd_tlast_int            ) ,
+  .m_axis_tdata            ( rd_tdata_int            )
 );
 
 xpm_cdc_array_single #(
@@ -126,6 +147,7 @@ inst_ctrl_constant_kernel_clk (
   .dest_clk ( kernel_clk               )
 );
 
+/*
 // Adder is combinatorial
 axonerve_kvs_rtl_example_adder #(
   .C_AXIS_TDATA_WIDTH ( C_M_AXI_DATA_WIDTH ) ,
@@ -135,17 +157,18 @@ inst_adder  (
   .aclk          ( kernel_clk                   ) ,
   .aresetn       ( ~kernel_rst                  ) ,
   .ctrl_constant ( ctrl_constant_kernel_clk   ) ,
-  .s_axis_tvalid ( rd_tvalid                    ) ,
-  .s_axis_tready ( rd_tready                    ) ,
-  .s_axis_tdata  ( rd_tdata                     ) ,
+  .s_axis_tvalid ( rd_tvalid_int                ) ,
+  .s_axis_tready ( rd_tready_int                ) ,
+  .s_axis_tdata  ( rd_tdata_int                 ) ,
   .s_axis_tkeep  ( {C_M_AXI_DATA_WIDTH/8{1'b1}} ) ,
-  .s_axis_tlast  ( rd_tlast                     ) ,
+  .s_axis_tlast  ( rd_tlast_int                 ) ,
   .m_axis_tvalid ( adder_tvalid                 ) ,
   .m_axis_tready ( adder_tready                 ) ,
   .m_axis_tdata  ( adder_tdata                  ) ,
   .m_axis_tkeep  (                              ) , // Not used
   .m_axis_tlast  (                              )   // Not used
 );
+*/
 
 // AXI4 Write Master
 axonerve_kvs_rtl_example_axi_write_master #(
@@ -173,11 +196,16 @@ inst_axi_write_master (
   .m_axi_wlast             ( m_axi_wlast             ) ,
   .m_axi_bvalid            ( m_axi_bvalid            ) ,
   .m_axi_bready            ( m_axi_bready            ) ,
-  .s_axis_aclk             ( kernel_clk              ) ,
-  .s_axis_areset           ( kernel_rst              ) ,
-  .s_axis_tvalid           ( adder_tvalid            ) ,
-  .s_axis_tready           ( adder_tready            ) ,
-  .s_axis_tdata            ( adder_tdata             )
+//  .s_axis_aclk             ( kernel_clk              ) ,
+//  .s_axis_areset           ( kernel_rst              ) ,
+//  .s_axis_tvalid           ( adder_tvalid            ) ,
+//  .s_axis_tready           ( adder_tready            ) ,
+//  .s_axis_tdata            ( adder_tdata             )
+  .s_axis_aclk             ( aclk                 ) ,
+  .s_axis_areset           ( areset               ) ,
+  .s_axis_tvalid           ( wr_tvalid            ) ,
+  .s_axis_tready           ( wr_tready            ) ,
+  .s_axis_tdata            ( wr_tdata             )
 );
 
 assign ap_done = write_done;

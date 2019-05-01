@@ -184,9 +184,13 @@ logic [32-1:0]                       ctrl_constant                  = 32'd1;
 // Begin RTL
 ///////////////////////////////////////////////////////////////////////////////
 
+//`define SIMULATION
+
+`ifndef SIMULATION
 always @(posedge ap_clk) begin
    ctrl_xfer_size_in_bytes <= data_num;
 end
+`endif
 
 // Register and invert reset signal.
 always @(posedge ap_clk) begin
@@ -235,6 +239,15 @@ always @(posedge ap_clk_2) begin
 end
 
 
+   logic                            m00_rd_tvalid;
+   logic                            m00_rd_tready;
+   logic                            m00_rd_tlast;
+   logic [C_M00_AXI_DATA_WIDTH-1:0] m00_rd_tdata;
+   logic                            m00_wr_tvalid;
+   logic                            m00_wr_tready;
+   logic [C_M00_AXI_DATA_WIDTH-1:0] m00_wr_tdata;
+   
+
 // Vadd example
 axonerve_kvs_rtl_example_vadd #(
   .C_M_AXI_ADDR_WIDTH ( C_M00_AXI_ADDR_WIDTH ),
@@ -270,9 +283,24 @@ inst_example_vadd_m00_axi (
   .m_axi_rvalid            ( m00_axi_rvalid          ),
   .m_axi_rready            ( m00_axi_rready          ),
   .m_axi_rdata             ( m00_axi_rdata           ),
-  .m_axi_rlast             ( m00_axi_rlast           )
+  .m_axi_rlast             ( m00_axi_rlast           ),
+			   
+  .rd_tvalid(m00_rd_tvalid),
+  .rd_tready(m00_rd_tready),
+  .rd_tlast (m00_rd_tlast),
+  .rd_tdata (m00_rd_tdata),
+  .wr_tvalid(m00_wr_tvalid),
+  .wr_tready(m00_wr_tready),
+  .wr_tdata (m00_wr_tdata)
 );
 
+   logic                            m01_rd_tvalid;
+   logic                            m01_rd_tready;
+   logic                            m01_rd_tlast;
+   logic [C_M01_AXI_DATA_WIDTH-1:0] m01_rd_tdata;
+   logic                            m01_wr_tvalid;
+   logic                            m01_wr_tready;
+   logic [C_M01_AXI_DATA_WIDTH-1:0] m01_wr_tdata;
 
 // Vadd example
 axonerve_kvs_rtl_example_vadd #(
@@ -309,9 +337,24 @@ inst_example_vadd_m01_axi (
   .m_axi_rvalid            ( m01_axi_rvalid          ),
   .m_axi_rready            ( m01_axi_rready          ),
   .m_axi_rdata             ( m01_axi_rdata           ),
-  .m_axi_rlast             ( m01_axi_rlast           )
+  .m_axi_rlast             ( m01_axi_rlast           ),
+
+  .rd_tvalid(m01_rd_tvalid),
+  .rd_tready(m01_rd_tready),
+  .rd_tlast (m01_rd_tlast),
+  .rd_tdata (m01_rd_tdata),
+  .wr_tvalid(m01_wr_tvalid),
+  .wr_tready(m01_wr_tready),
+  .wr_tdata (m01_wr_tdata)
 );
 
+   logic                            m02_rd_tvalid;
+   logic                            m02_rd_tready;
+   logic                            m02_rd_tlast;
+   logic [C_M02_AXI_DATA_WIDTH-1:0] m02_rd_tdata;
+   logic                            m02_wr_tvalid;
+   logic                            m02_wr_tready;
+   logic [C_M02_AXI_DATA_WIDTH-1:0] m02_wr_tdata;
 
 // Vadd example
 axonerve_kvs_rtl_example_vadd #(
@@ -348,9 +391,25 @@ inst_example_vadd_m02_axi (
   .m_axi_rvalid            ( m02_axi_rvalid          ),
   .m_axi_rready            ( m02_axi_rready          ),
   .m_axi_rdata             ( m02_axi_rdata           ),
-  .m_axi_rlast             ( m02_axi_rlast           )
+  .m_axi_rlast             ( m02_axi_rlast           ),
+
+  .rd_tvalid(m02_rd_tvalid),
+  .rd_tready(m02_rd_tready),
+  .rd_tlast (m02_rd_tlast),
+  .rd_tdata (m02_rd_tdata),
+  .wr_tvalid(m02_wr_tvalid),
+  .wr_tready(m02_wr_tready),
+  .wr_tdata (m02_wr_tdata)
+
 );
 
+   logic                            m03_rd_tvalid;
+   logic                            m03_rd_tready;
+   logic                            m03_rd_tlast;
+   logic [C_M03_AXI_DATA_WIDTH-1:0] m03_rd_tdata;
+   logic                            m03_wr_tvalid;
+   logic                            m03_wr_tready;
+   logic [C_M03_AXI_DATA_WIDTH-1:0] m03_wr_tdata;
 
 // Vadd example
 axonerve_kvs_rtl_example_vadd #(
@@ -387,9 +446,24 @@ inst_example_vadd_m03_axi (
   .m_axi_rvalid            ( m03_axi_rvalid          ),
   .m_axi_rready            ( m03_axi_rready          ),
   .m_axi_rdata             ( m03_axi_rdata           ),
-  .m_axi_rlast             ( m03_axi_rlast           )
+  .m_axi_rlast             ( m03_axi_rlast           ),
+
+  .rd_tvalid(m03_rd_tvalid),
+  .rd_tready(m03_rd_tready),
+  .rd_tlast (m03_rd_tlast),
+  .rd_tdata (m03_rd_tdata),
+  .wr_tvalid(m03_wr_tvalid),
+  .wr_tready(m03_wr_tready),
+  .wr_tdata (m03_wr_tdata)
 );
 
+   logic                            m04_rd_tvalid;
+   logic                            m04_rd_tready;
+   logic                            m04_rd_tlast;
+   logic [C_M04_AXI_DATA_WIDTH-1:0] m04_rd_tdata;
+   logic                            m04_wr_tvalid;
+   logic                            m04_wr_tready;
+   logic [C_M04_AXI_DATA_WIDTH-1:0] m04_wr_tdata;
 
 // Vadd example
 axonerve_kvs_rtl_example_vadd #(
@@ -426,9 +500,25 @@ inst_example_vadd_m04_axi (
   .m_axi_rvalid            ( m04_axi_rvalid          ),
   .m_axi_rready            ( m04_axi_rready          ),
   .m_axi_rdata             ( m04_axi_rdata           ),
-  .m_axi_rlast             ( m04_axi_rlast           )
+  .m_axi_rlast             ( m04_axi_rlast           ),
+
+  .rd_tvalid(m04_rd_tvalid),
+  .rd_tready(m04_rd_tready),
+  .rd_tlast (m04_rd_tlast),
+  .rd_tdata (m04_rd_tdata),
+  .wr_tvalid(m04_wr_tvalid),
+  .wr_tready(m04_wr_tready),
+  .wr_tdata (m04_wr_tdata)
+
 );
 
+   logic                            m05_rd_tvalid;
+   logic                            m05_rd_tready;
+   logic                            m05_rd_tlast;
+   logic [C_M05_AXI_DATA_WIDTH-1:0] m05_rd_tdata;
+   logic                            m05_wr_tvalid;
+   logic                            m05_wr_tready;
+   logic [C_M05_AXI_DATA_WIDTH-1:0] m05_wr_tdata;
 
 // Vadd example
 axonerve_kvs_rtl_example_vadd #(
@@ -465,9 +555,75 @@ inst_example_vadd_m05_axi (
   .m_axi_rvalid            ( m05_axi_rvalid          ),
   .m_axi_rready            ( m05_axi_rready          ),
   .m_axi_rdata             ( m05_axi_rdata           ),
-  .m_axi_rlast             ( m05_axi_rlast           )
+  .m_axi_rlast             ( m05_axi_rlast           ),
+
+  .rd_tvalid(m05_rd_tvalid),
+  .rd_tready(m05_rd_tready),
+  .rd_tlast (m05_rd_tlast),
+  .rd_tdata (m05_rd_tdata),
+  .wr_tvalid(m05_wr_tvalid),
+  .wr_tready(m05_wr_tready),
+  .wr_tdata (m05_wr_tdata)
 );
 
+user_logic#(
+	    .C_M_AXI_DATA_WIDTH(C_M00_AXI_DATA_WIDTH)
+	    )
+   inst_user_logic (
+		    .aclk      (ap_clk),
+		    .areset    (areset),
+		    .kernel_clk(ap_clk_2),
+		    .kernel_rst(kernel_rst),
+		    
+		    .p00_rd_tvalid(m00_rd_tvalid),
+		    .p00_rd_tready(m00_rd_tready),
+		    .p00_rd_tlast (m00_rd_tlast),
+		    .p00_rd_tdata (m00_rd_tdata),
+		    .p00_wr_tvalid(m00_wr_tvalid),
+		    .p00_wr_tready(m00_wr_tready),
+		    .p00_wr_tdata (m00_wr_tdata),
+		    
+		    .p01_rd_tvalid(m01_rd_tvalid),
+		    .p01_rd_tready(m01_rd_tready),
+		    .p01_rd_tlast (m01_rd_tlast),
+		    .p01_rd_tdata (m01_rd_tdata),
+		    .p01_wr_tvalid(m01_wr_tvalid),
+		    .p01_wr_tready(m01_wr_tready),
+		    .p01_wr_tdata (m01_wr_tdata),
+		    
+		    .p02_rd_tvalid(m02_rd_tvalid),
+		    .p02_rd_tready(m02_rd_tready),
+		    .p02_rd_tlast (m02_rd_tlast),
+		    .p02_rd_tdata (m02_rd_tdata),
+		    .p02_wr_tvalid(m02_wr_tvalid),
+		    .p02_wr_tready(m02_wr_tready),
+		    .p02_wr_tdata (m02_wr_tdata),
+		    
+		    .p03_rd_tvalid(m03_rd_tvalid),
+		    .p03_rd_tready(m03_rd_tready),
+		    .p03_rd_tlast (m03_rd_tlast),
+		    .p03_rd_tdata (m03_rd_tdata),
+		    .p03_wr_tvalid(m03_wr_tvalid),
+		    .p03_wr_tready(m03_wr_tready),
+		    .p03_wr_tdata (m03_wr_tdata),
+      
+		    .p04_rd_tvalid(m04_rd_tvalid),
+		    .p04_rd_tready(m04_rd_tready),
+		    .p04_rd_tlast (m04_rd_tlast),
+		    .p04_rd_tdata (m04_rd_tdata),
+		    .p04_wr_tvalid(m04_wr_tvalid),
+		    .p04_wr_tready(m04_wr_tready),
+		    .p04_wr_tdata (m04_wr_tdata),
+      
+		    .p05_rd_tvalid(m05_rd_tvalid),
+		    .p05_rd_tready(m05_rd_tready),
+		    .p05_rd_tlast (m05_rd_tlast),
+		    .p05_rd_tdata (m05_rd_tdata),
+		    .p05_wr_tvalid(m05_wr_tvalid),
+		    .p05_wr_tready(m05_wr_tready),
+		    .p05_wr_tdata (m05_wr_tdata)
+		    );
 
+  
 endmodule : axonerve_kvs_rtl_example
 `default_nettype wire

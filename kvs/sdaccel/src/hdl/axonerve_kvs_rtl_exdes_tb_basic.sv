@@ -971,7 +971,7 @@ task automatic set_scalar_registers();
   ///////////////////////////////////////////////////////////////////////////
   //Write ID 0: data_num (0x010) -> 32'hffffffff (scalar)
   //write_register(32'h010, 32'hffffffff);
-  write_register(32'h010, 32'h256);
+  write_register(32'h010, 32'h16384);
 
 endtask
 
