@@ -25,11 +25,11 @@ int main(int argc, char** argv)
     std::vector<axonerve_query,aligned_allocator<axonerve_query>> host_buffer1(size);
 
     // Create the test data and Software Result
-    host_buffer1[0].key[0] = 0x00000000;
-    host_buffer1[0].key[1] = 0x00000000;
-    host_buffer1[0].key[2] = 0x00000000;
-    host_buffer1[0].key[3] = 0x00000000;
-    host_buffer1[0].value = 0x34343434;
+    host_buffer1[0].key[0] = 0xDEADBEEF;
+    host_buffer1[0].key[1] = 0xDEADBEEF;
+    host_buffer1[0].key[2] = 0xDEADBEEF;
+    host_buffer1[0].key[3] = 0xDEADBEEF;
+    host_buffer1[0].value = 0xABADCAFE;
     host_buffer1[0].csr = 0x20; // UPDATE
     host_buffer1[0].priority = 0;
     host_buffer1[0].mask[0] = 0; // 0xFFFFFFFF;
@@ -39,10 +39,11 @@ int main(int argc, char** argv)
     host_buffer1[1].kernel_status = 0;
     host_buffer1[1].version = 0;
 
-    host_buffer1[1].key[0] = 0x00000000;
-    host_buffer1[1].key[1] = 0x00000000;
-    host_buffer1[1].key[2] = 0x00000000;
-    host_buffer1[1].key[3] = 0x00000000;
+    host_buffer1[1].key[0] = 0xDEADBEEF;
+    host_buffer1[1].key[1] = 0xDEADBEEF;
+    host_buffer1[1].key[2] = 0xDEADBEEF;
+    host_buffer1[1].key[3] = 0xDEADBEEF;
+    host_buffer1[1].value = 0x00000000;
     host_buffer1[1].csr = 0x10; // SEARCH
     host_buffer1[1].priority = 0;
     host_buffer1[1].mask[0] = 0; // 0xFFFFFFFF;
