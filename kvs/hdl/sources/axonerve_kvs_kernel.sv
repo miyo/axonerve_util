@@ -12,7 +12,7 @@ module axonerve_kvs_kernel (
 			    output logic 	 O_ACK,
 			    output logic 	 O_ENT_ERR,
 			    output logic 	 O_SINGLE_HIT,
-			    output logic 	 O_MULTIL_HIT,
+			    output logic 	 O_MULTI_HIT,
 			    output logic [127:0] O_KEY_DAT,
 			    output logic [127:0] O_EKEY_MSK,
 			    output logic [6:0] 	 O_KEY_PRI,
@@ -20,6 +20,7 @@ module axonerve_kvs_kernel (
 			    output logic 	 O_CMD_EMPTY,
 			    output logic 	 O_CMD_FULL,
 			    output logic 	 O_ENT_FULL,
+			    output logic [31:0]	 O_KERNEL_STATUS,
 
 			    input wire 		 I_CMD_INIT,
 			    input wire 		 I_CMD_VALID,
@@ -73,7 +74,8 @@ module axonerve_kvs_kernel (
 
    assign ICLK = I_CLK;
    assign ICLKX2 = I_CLKX2;
-   assign XRST = I_XRST && ~I_CMD_INIT;
+   //assign XRST = I_XRST && ~I_CMD_INIT;
+   assign XRST = I_XRST;
    
    AXONERVE_A01 U(
 		  .OACK(OACK),
@@ -263,13 +265,14 @@ module axonerve_kvs_kernel (
    end // always @ (posedge ICLK)
    
    assign READY = AXONERVE_READY && CMD_FIFO_READY && ENT_ADDR_FIFO_READY;
+   assign O_KERNEL_STATUS[11:8] = {I_CMD_INIT, AXONERVE_READY, CMD_FIFO_READY, ENT_ADDR_FIFO_READY};
 
    logic WAIT_FLAG = 1'b1;
    assign O_WAIT = WAIT_FLAG;
 
    logic [7:0] state_counter;
    logic [15:0] ent_addr_fifo_init_addr;
-   logic [8:0] 	request_counter;
+   logic [7:0] 	request_counter;
 
    localparam IDLE             = 8'd0;
    localparam INTERNAL_INIT    = 8'd1;
@@ -300,22 +303,25 @@ module axonerve_kvs_kernel (
 	 O_ACK        <= 1'b0;
 	 O_ENT_ERR    <= 1'b0;
 	 O_SINGLE_HIT <= 1'b0;
-	 O_MULTIL_HIT <= 1'b0;
+	 O_MULTI_HIT <= 1'b0;
 	 O_KEY_DAT    <= 128'd0;
 	 O_EKEY_MSK   <= 128'd0;
 	 O_KEY_PRI    <= 7'd0;
 	 O_KEY_VALUE  <= 32'd0;
 
+	 O_KERNEL_STATUS[7:0] <= 8'hFF;
+
       end else begin // if (XRST = 1'b0)
 
 	 O_ENT_ERR    <= OENT_ERR;
 	 O_SINGLE_HIT <= OSHIT;
-	 O_MULTIL_HIT <= OMHIT;
+	 O_MULTI_HIT <= OMHIT;
 	 O_KEY_DAT    <= OKEY_DAT;
 	 O_EKEY_MSK   <= OENT_ERR;
 	 O_KEY_PRI    <= OKEY_PRI;
 	 O_KEY_VALUE  <= OKEY_VALUE;
-	 
+	 O_KERNEL_STATUS[7:0] <= state_counter;
+
 	 case(state_counter)
 	   
 	   8'd0: begin // wait for reset of ent_addr_fifo 
@@ -369,8 +375,6 @@ module axonerve_kvs_kernel (
 		 IEKEY_MSK  <= ekey_msk;
 		 state_counter <= OP_ERASE;
 		 request_counter = request_counter + 1; // block
-	      end else if(cmd_valid == 1'b1 && cmd_read == 1'b1) begin
-		 // pass
 	      end else if(cmd_valid == 1'b1 && cmd_update == 1'b1) begin
 		 {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b0001;
 		 IKEY_DAT <= key_data;
@@ -379,9 +383,18 @@ module axonerve_kvs_kernel (
 		 IKEY_VALUE <= key_value;
 		 state_counter <= OP_UPDATE;
 		 request_counter = request_counter + 1; // block
+	      end else if(cmd_valid == 1'b1) begin
+		 // undefined operation
+		 //{ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b0000;
+		 {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b0001;
+		 IKEY_DAT <= 128'd0;
+		 IKEY_PRI <= 7'd0;
+		 IEKEY_MSK  <= 128'd0;
+		 request_counter = request_counter + 1; // block
 	      end else begin
 		 {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b0000;
 	      end
+	      
 	   end // case: MAIN_LOOP
 
 	   WAIT_FOR_ACK: begin // wait ACK
@@ -436,27 +449,29 @@ module axonerve_kvs_kernel (
 	      ent_addr_we <= 1'b0;
 	      if(OACK == 1'b1 && request_counter == 8'd1) begin
 		 if(OENT_ERR == 1'b0 && (OSHIT == 1'b1 || OMHIT == 1'b1)) begin
-		    {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b1100;
+		    // update the found entry
 		    IENT_ADD <= OSRCH_ENT_ADD;
-		    request_counter = request_counter + 1; // block
-		    O_ACK <= 1'b0; // this OACK consumes only for update interanl
-		    state_counter <= WAIT_FOR_ACK;
+		    {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b1100;
 		 end else begin
 		    // nothing to update, instead write
-		    IKEY_DAT   <= IKEY_DAT;
-		    IKEY_PRI   <= IKEY_PRI;
-		    IEKEY_MSK  <= IEKEY_MSK;
-		    IKEY_VALUE <= IKEY_VALUE;
-		    IENT_ADD   <= ent_addr_q;
+		    IENT_ADD <= ent_addr_q;
 	      	    {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b0100;
-		    request_counter = request_counter + 1; // block
-		    O_ACK <= 1'b0; // this OACK consumes only for update interanl
-		    state_counter <= WAIT_FOR_ACK;
 		 end
+		 IKEY_DAT   <= IKEY_DAT;
+		 IKEY_PRI   <= IKEY_PRI;
+		 IEKEY_MSK  <= IEKEY_MSK;
+		 IKEY_VALUE <= IKEY_VALUE;
+		 request_counter = request_counter + 1; // block
+		 O_ACK <= 1'b0; // this OACK consumes only for update interanl
+		 state_counter <= WAIT_FOR_ACK;
 	      end else begin
 		 {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b0000;
 		 O_ACK <= OACK;
 	      end
+	   end // case: OP_UPDATE
+
+	   default: begin
+	      state_counter <= MAIN_LOOP;
 	   end
 
 	 endcase // case (state_counter)

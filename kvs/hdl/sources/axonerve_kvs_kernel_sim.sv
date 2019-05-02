@@ -11,7 +11,7 @@ module axonerve_kvs_kernel_sim ( );
    logic 	O_ACK;
    logic 	O_ENT_ERR;
    logic 	O_SINGLE_HIT;
-   logic 	O_MULTIL_HIT;
+   logic 	O_MULTI_HIT;
    logic [127:0] O_KEY_DAT;
    logic [127:0] O_EKEY_MSK;
    logic [6:0] 	 O_KEY_PRI;
@@ -19,6 +19,7 @@ module axonerve_kvs_kernel_sim ( );
    logic 	 O_CMD_EMPTY;
    logic 	 O_CMD_FULL;
    logic 	 O_ENT_FULL;
+   logic [31:0] O_KERNEL_STATUS;
 
    logic 	 I_CMD_INIT = 1'b0;
    logic 	 I_CMD_VALID = 1'b0;
@@ -43,7 +44,7 @@ module axonerve_kvs_kernel_sim ( );
 		  .O_ACK(O_ACK),
 		  .O_ENT_ERR(O_ENT_ERR),
 		  .O_SINGLE_HIT(O_SINGLE_HIT),
-		  .O_MULTIL_HIT(O_MULTIL_HIT),
+		  .O_MULTI_HIT(O_MULTI_HIT),
 		  .O_KEY_DAT(O_KEY_DAT),
 		  .O_EKEY_MSK(O_EKEY_MSK),
 		  .O_KEY_PRI(O_KEY_PRI),
@@ -51,6 +52,7 @@ module axonerve_kvs_kernel_sim ( );
 		  .O_CMD_EMPTY(O_CMD_EMPTY),
 		  .O_CMD_FULL(O_CMD_FULL),
 		  .O_ENT_FULL(O_ENT_FULL),
+		  .O_KERNEL_STATUS(O_KERNEL_STATUS),
 
 		  .I_CMD_INIT(I_CMD_INIT),
 		  .I_CMD_VALID(I_CMD_VALID),

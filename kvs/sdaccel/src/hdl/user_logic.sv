@@ -42,7 +42,7 @@ module user_logic
    logic 		 O_ACK;
    logic 		 O_ENT_ERR;
    logic 		 O_SINGLE_HIT;
-   logic 		 O_MULTIL_HIT;
+   logic 		 O_MULTI_HIT;
    logic [127:0] 	 O_KEY_DAT;
    logic [127:0] 	 O_EKEY_MSK;
    logic [6:0] 		 O_KEY_PRI;
@@ -50,6 +50,7 @@ module user_logic
    logic 		 O_CMD_EMPTY;
    logic 		 O_CMD_FULL;
    logic 		 O_ENT_FULL;
+   logic [31:0]		 O_KERNEL_STATUS;
 
    logic 		 I_CMD_INIT;
    logic 		 I_CMD_VALID;
@@ -64,7 +65,7 @@ module user_logic
    logic [31:0] 	 I_KEY_VALUE;
    
 
-   assign p00_rd_tready = ~p00_rd_prog_full;
+   assign p00_rd_tready = ~O_CMD_FULL;
    fifo_512_512_ft inst_fifo_p00_rd (
      .clk (aclk),
      .srst(areset),
@@ -107,7 +108,8 @@ module user_logic
 	 
 	 I_KEY_DAT[127:0]  <= p00_user_din[127:0];
 	 I_KEY_VALUE[31:0] <= p00_user_din[159:128];
-	 I_CMD_INIT   <= p00_user_din[160];
+	 //I_CMD_INIT   <= p00_user_din[160];
+	 I_CMD_INIT   <= 1'b0;
 	 I_CMD_ERASE  <= p00_user_din[161];
 	 I_CMD_WRITE  <= p00_user_din[162];
 	 I_CMD_READ   <= p00_user_din[163];
@@ -126,11 +128,12 @@ module user_logic
 	 p00_user_dout[127:0] <= O_KEY_DAT[127:0];
 	 p00_user_dout[159:128] <= O_KEY_VALUE[31:0];
 	 p00_user_dout[160] <= O_SINGLE_HIT;
-	 p00_user_dout[161] <= O_MULTIL_HIT;
+	 p00_user_dout[161] <= O_MULTI_HIT;
 	 p00_user_dout[162] <= O_ENT_ERR;
 	 p00_user_dout[163] <= O_ENT_FULL;
 	 p00_user_dout[198:192] <= O_KEY_PRI[6:0];
 	 p00_user_dout[351:224] <= O_EKEY_MSK;
+	 p00_user_dout[479:448] <= O_KERNEL_STATUS;
 	 p00_user_dout[511:480] <= O_VERSION;
 	 
       end else begin
@@ -155,7 +158,7 @@ module user_logic
 			      .O_ACK(O_ACK),
 			      .O_ENT_ERR(O_ENT_ERR),
 			      .O_SINGLE_HIT(O_SINGLE_HIT),
-			      .O_MULTIL_HIT(O_MULTIL_HIT),
+			      .O_MULTI_HIT(O_MULTI_HIT),
 			      .O_KEY_DAT(O_KEY_DAT),
 			      .O_EKEY_MSK(O_EKEY_MSK),
 			      .O_KEY_PRI(O_KEY_PRI),
@@ -163,6 +166,7 @@ module user_logic
 			      .O_CMD_EMPTY(O_CMD_EMPTY),
 			      .O_CMD_FULL(O_CMD_FULL),
 			      .O_ENT_FULL(O_ENT_FULL),
+			      .O_KERNEL_STATUS(O_KERNEL_STATUS),
 
 			      .I_CMD_INIT(I_CMD_INIT),
 			      .I_CMD_VALID(I_CMD_VALID),
