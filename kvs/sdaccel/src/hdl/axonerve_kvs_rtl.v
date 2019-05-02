@@ -13,7 +13,9 @@ module axonerve_kvs_rtl #(
 (
   // System Signals
   input  wire                                    ap_clk               ,
+  input  wire                                    ap_rst_n             ,
   input  wire                                    ap_clk_2             ,
+  input  wire                                    ap_rst_n_2           ,
   //  Note: A minimum subset of AXI4 memory mapped signals are declared.  AXI
   // signals omitted from these interfaces are automatically inferred with the
   // optimal values for Xilinx SDx systems.  This allows Xilinx AXI4 Interconnects
@@ -88,11 +90,18 @@ module axonerve_kvs_rtl #(
 ///////////////////////////////////////////////////////////////////////////////
 // Wires and Variables
 ///////////////////////////////////////////////////////////////////////////////
+(* DONT_TOUCH = "yes" *)
+reg                                 areset                         = 1'b0;
 wire                                ap_start                      ;
 wire                                ap_idle                       ;
 wire                                ap_done                       ;
 wire [32-1:0]                       data_num                      ;
 wire [64-1:0]                       axi00_ptr0                    ;
+
+// Register and invert reset signal.
+always @(posedge ap_clk) begin
+  areset <= ~ap_rst_n;
+end
 
 ///////////////////////////////////////////////////////////////////////////////
 // Begin control interface RTL.  Modifying not recommended.
@@ -106,7 +115,7 @@ axonerve_kvs_rtl_control_s_axi #(
 )
 inst_control_s_axi (
   .aclk       ( ap_clk                ),
-  .areset     ( 1'b0                  ),
+  .areset     ( areset                ),
   .aclk_en    ( 1'b1                  ),
   .awvalid    ( s_axi_control_awvalid ),
   .awready    ( s_axi_control_awready ),
@@ -144,9 +153,9 @@ axonerve_kvs_rtl_example #(
 )
 inst_example (
   .ap_clk          ( ap_clk          ),
-  .ap_rst_n        ( 1'b1            ),
+  .ap_rst_n        ( ap_rst_n        ),
   .ap_clk_2        ( ap_clk_2        ),
-  .ap_rst_n_2      ( 1'b1            ),
+  .ap_rst_n_2      ( ap_rst_n_2      ),
   .m00_axi_awvalid ( m00_axi_awvalid ),
   .m00_axi_awready ( m00_axi_awready ),
   .m00_axi_awaddr  ( m00_axi_awaddr  ),

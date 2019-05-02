@@ -42,6 +42,44 @@ initial begin: AP_CLK_2
     ap_clk_2 = #(LP_CLK2_PERIOD_PS/2) ~ap_clk_2;
   end
 end
+ 
+//System Signals
+logic ap_rst_n = 0;
+
+task automatic ap_rst_n_sequence(input integer unsigned width = 20);
+  @(posedge ap_clk);
+  #1ps;
+  ap_rst_n = 0;
+  repeat (width) @(posedge ap_clk);
+  #1ps;
+  ap_rst_n = 1;
+endtask
+
+initial begin: AP_RST
+  ap_rst_n_sequence(50);
+end
+ logic ap_rst_n_2 = 0;
+
+task automatic ap_rst_n_2_sequence(input integer unsigned width = 20);
+  @(posedge ap_clk_2);
+  #1ps;
+  ap_rst_n_2 = 0;
+  repeat (width) @(posedge ap_clk_2);
+  #1ps;
+  ap_rst_n_2 = 1;
+endtask
+
+initial begin: AP_RST_2
+  ap_rst_n_2_sequence(50);
+end
+ task automatic system_reset_sequence(input integer unsigned width = 20);
+  $display("%t : Starting System Reset Sequence", $time);
+  fork
+    ap_rst_n_sequence(25);
+     ap_rst_n_2_sequence(25);
+   join
+endtask
+
 //AXI4 master interface m00_axi
 wire [1-1:0] m00_axi_awvalid;
 wire [1-1:0] m00_axi_awready;
@@ -92,6 +130,8 @@ axonerve_kvs_rtl #(
 inst_dut (
   .ap_clk                ( ap_clk                ),
   .ap_clk_2              ( ap_clk_2              ),
+  .ap_rst_n              ( ap_rst_n              ),
+  .ap_rst_n_2            ( ap_rst_n_2            ),
   .m00_axi_awvalid       ( m00_axi_awvalid       ),
   .m00_axi_awready       ( m00_axi_awready       ),
   .m00_axi_awaddr        ( m00_axi_awaddr        ),
@@ -134,6 +174,7 @@ inst_dut (
 // Master Control instantiation
 control_axonerve_kvs_rtl_vip inst_control_axonerve_kvs_rtl_vip (
   .aclk          ( ap_clk                ),
+  .aresetn       ( ap_rst_n              ),
   .m_axi_awvalid ( s_axi_control_awvalid ),
   .m_axi_awready ( s_axi_control_awready ),
   .m_axi_awaddr  ( s_axi_control_awaddr  ),
@@ -158,6 +199,7 @@ control_axonerve_kvs_rtl_vip_mst_t  ctrl;
 // Slave MM VIP instantiation
 slv_m00_axi_vip inst_slv_m00_axi_vip (
   .aclk          ( ap_clk          ),
+  .aresetn       ( ap_rst_n        ),
   .s_axi_awvalid ( m00_axi_awvalid ),
   .s_axi_awready ( m00_axi_awready ),
   .s_axi_awaddr  ( m00_axi_awaddr  ),
@@ -567,6 +609,26 @@ initial begin : STIMULUS
     $finish();
   end
   multiple_iteration(5, error_found);
+
+  if (error_found == 1) begin
+    $display( "Test Failed!");
+    $finish();
+  end
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Reset Recovery testing
+  system_reset_sequence();
+  check_scalar_registers(error_found);
+  if (error_found == 1) begin
+    $display( "Test Failed!");
+    $finish();
+  end
+  check_pointer_registers(error_found);
+  if (error_found == 1) begin
+    $display( "Test Failed!");
+    $finish();
+  end
+  enable_interrupts();
+  multiple_iteration(1, error_found);
 
   if (error_found == 1) begin
     $display( "Test Failed!");
