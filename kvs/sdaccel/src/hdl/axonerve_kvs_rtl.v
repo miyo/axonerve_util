@@ -13,6 +13,7 @@ module axonerve_kvs_rtl #(
 (
   // System Signals
   input  wire                                    ap_clk               ,
+  input  wire                                    ap_clk_2             ,
   //  Note: A minimum subset of AXI4 memory mapped signals are declared.  AXI
   // signals omitted from these interfaces are automatically inferred with the
   // optimal values for Xilinx SDx systems.  This allows Xilinx AXI4 Interconnects
@@ -144,6 +145,8 @@ axonerve_kvs_rtl_example #(
 inst_example (
   .ap_clk          ( ap_clk          ),
   .ap_rst_n        ( 1'b1            ),
+  .ap_clk_2        ( ap_clk_2        ),
+  .ap_rst_n_2      ( 1'b1            ),
   .m00_axi_awvalid ( m00_axi_awvalid ),
   .m00_axi_awready ( m00_axi_awready ),
   .m00_axi_awaddr  ( m00_axi_awaddr  ),

@@ -3,13 +3,15 @@
 // default_nettype of none prevents implicit wire declaration.
 `default_nettype none
 module axonerve_kvs_rtl_example #(
-  parameter integer C_M00_AXI_ADDR_WIDTH = 64  ,
+  parameter integer C_M00_AXI_ADDR_WIDTH = 64 ,
   parameter integer C_M00_AXI_DATA_WIDTH = 512
 )
 (
   // System Signals
   input  wire                              ap_clk         ,
   input  wire                              ap_rst_n       ,
+  input  wire                              ap_clk_2       ,
+  input  wire                              ap_rst_n_2     ,
   // AXI4 master interface m00_axi
   output wire                              m00_axi_awvalid,
   input  wire                              m00_axi_awready,
@@ -54,6 +56,7 @@ localparam integer  LP_NUM_EXAMPLES    = 1;
 ///////////////////////////////////////////////////////////////////////////////
 (* KEEP = "yes" *)
 logic                                areset                         = 1'b0;
+logic                                kernel_rst                     = 1'b0;
 logic                                ap_start_r                     = 1'b0;
 logic                                ap_idle_r                      = 1'b1;
 logic                                ap_start_pulse                ;
@@ -65,14 +68,6 @@ logic [32-1:0]                       ctrl_constant                  = 32'd1;
 ///////////////////////////////////////////////////////////////////////////////
 // Begin RTL
 ///////////////////////////////////////////////////////////////////////////////
-
-//`define SIMULATION
-
-`ifndef SIMULATION
-always @(posedge ap_clk) begin
-   ctrl_xfer_size_in_bytes <= data_num;
-end
-`endif
 
 // Register and invert reset signal.
 always @(posedge ap_clk) begin
@@ -114,29 +109,20 @@ end
 
 assign ap_done = &ap_done_r;
 
-   logic clk_100mhz, clk_200mhz;
-   logic reset_100mhz = 1'b1;
-   logic [7:0] reset_counter_100mhz = 8'd0;
 
-   always @(posedge clk_100mhz) begin
-      if(reset_counter_100mhz < 8'd10) begin
-	 reset_counter_100mhz <= reset_counter_100mhz + 1;
-	 reset_100mhz <= 1'b1;
-      end else begin
-	 reset_100mhz <= 1'b0;
-      end
+// Register and invert kernel reset signal.
+always @(posedge ap_clk_2) begin
+  kernel_rst <= ~ap_rst_n_2;
+end
+
+
+//`define WITH_ORIGINAL_TESTBENCH
+   
+`ifndef WITH_ORIGINAL_TESTBENCH
+   always @(posedge ap_clk) begin
+      ctrl_xfer_size_in_bytes <= data_num;
    end
-
-   clk_wiz_0 inst_clk_wiz_0
-     (
-      // Clock out ports
-      .clk_out1(clk_100mhz),
-      .clk_out2(clk_200mhz),
-      // Status and control signals
-      .reset(areset),
-      .locked(),
-      .clk_in1(ap_clk)
-      );
+`endif
 
    logic                            p00_rd_tvalid;
    logic                            p00_rd_tready;
@@ -156,8 +142,8 @@ axonerve_kvs_rtl_example_vadd #(
 inst_example_vadd_m00_axi (
   .aclk                    ( ap_clk                  ),
   .areset                  ( areset                  ),
-  .kernel_clk              ( clk_100mhz              ),
-  .kernel_rst              ( reset_100mhz            ),
+  .kernel_clk              ( ap_clk_2                ),
+  .kernel_rst              ( kernel_rst              ),
   .ctrl_addr_offset        ( axi00_ptr0              ),
   .ctrl_xfer_size_in_bytes ( ctrl_xfer_size_in_bytes ),
   .ctrl_constant           ( 32'b1                   ),
@@ -199,9 +185,8 @@ user_logic #(
    inst_user_logic (
 		    .aclk       (ap_clk),
 		    .areset     (areset),
-		    .kernel_clk (clk_100mhz),
-		    .kernel_rst (reset_100mhz),
-		    .kernel_clk_2x (clk_200mhz),
+		    .kernel_clk (ap_clk_2),
+		    .kernel_rst (kernel_rst),
     
 		    .p00_rd_tvalid(p00_rd_tvalid),
 		    .p00_rd_tready(p00_rd_tready),

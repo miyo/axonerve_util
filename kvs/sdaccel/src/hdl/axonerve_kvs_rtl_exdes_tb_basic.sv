@@ -32,6 +32,16 @@ initial begin: AP_CLK
     ap_clk = #(LP_CLK_PERIOD_PS/2) ~ap_clk;
   end
 end
+
+parameter integer LP_CLK2_PERIOD_PS = 5000; // 200 MHz
+
+logic ap_clk_2 = 0;
+
+initial begin: AP_CLK_2
+  forever begin
+    ap_clk_2 = #(LP_CLK2_PERIOD_PS/2) ~ap_clk_2;
+  end
+end
 //AXI4 master interface m00_axi
 wire [1-1:0] m00_axi_awvalid;
 wire [1-1:0] m00_axi_awready;
@@ -81,6 +91,7 @@ axonerve_kvs_rtl #(
 )
 inst_dut (
   .ap_clk                ( ap_clk                ),
+  .ap_clk_2              ( ap_clk_2              ),
   .m00_axi_awvalid       ( m00_axi_awvalid       ),
   .m00_axi_awready       ( m00_axi_awready       ),
   .m00_axi_awaddr        ( m00_axi_awaddr        ),

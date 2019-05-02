@@ -114,7 +114,7 @@ module axonerve_kvs_kernel (
    logic [299:0] 				 cmd_din;
    logic 					 cmd_we;
    logic 					 cmd_rd = 1'b0;
-   logic [299:0] 				 cmd_q = 300'd0;
+   logic [299:0] 				 cmd_q;
    logic 					 cmd_full;
    logic 					 cmd_empty;
    logic 					 cmd_valid;
@@ -185,7 +185,7 @@ module axonerve_kvs_kernel (
    logic [15:0] 	  ent_addr_din = 16'd0;
    logic 		  ent_addr_we = 1'b0;
    logic 		  ent_addr_rd = 1'b0;
-   logic [15:0] 	  ent_addr_q = 16'd0;
+   logic [15:0] 	  ent_addr_q;
    logic 		  ent_addr_full;
    logic 		  ent_addr_empty;
    logic 		  ent_addr_valid;
