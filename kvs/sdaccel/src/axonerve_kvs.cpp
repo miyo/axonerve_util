@@ -1,5 +1,3 @@
-#include "xcl2.hpp"
-
 #include <iostream>
 #include <iomanip>
 #include <memory>
@@ -67,7 +65,7 @@ void AxonerveKVS::init(){
     
     std::string device_name = device.getInfo<CL_DEVICE_NAME>(); 
     //std::string binaryFile = xcl::find_binary_file(device_name,"axonerve");
-    std::string binaryFile = "./binary_container_1.xclbin";
+    //std::string binaryFile = "./binary_container_1.xclbin";
     cl::Program::Binaries bins = xcl::import_binary_file(binaryFile);
     devices.resize(1);
     program = new cl::Program(*context, devices, bins);
@@ -78,7 +76,7 @@ void AxonerveKVS::init(){
     std::cerr << "done." << std::endl;
 }
 
-AxonerveKVS::AxonerveKVS(){
+AxonerveKVS::AxonerveKVS(std::string binaryFile) : binaryFile(binaryFile){
     init();
 }
 

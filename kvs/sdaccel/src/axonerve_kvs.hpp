@@ -1,6 +1,8 @@
 #ifndef AXONERVE_KVS_HPP
 #define AXONERVE_KVS_HPP
 
+#include "xcl2.hpp"
+
 class AxonerveKVS{
 
 private:
@@ -8,6 +10,7 @@ private:
     cl::CommandQueue* q;
     cl::Program* program;
     cl::Kernel* axonerve_kvs_rtl;
+    std::string binaryFile;
 
     void init();
 
@@ -28,7 +31,7 @@ private:
 
  public:
     
-    AxonerveKVS();
+    AxonerveKVS(std::string binaryFile);
     void reset();
     void put(unsigned int key[4], unsigned int value);
     bool get(unsigned int key[4], unsigned int& value);
