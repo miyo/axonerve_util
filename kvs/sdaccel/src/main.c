@@ -1,13 +1,3 @@
-// This is a generated file. Use and modify at your own risk.
-////////////////////////////////////////////////////////////////////////////////
-
-/*******************************************************************************
-Vendor: Xilinx
-Associated Filename: main.c
-#Purpose: This example shows a basic vector add +1 (constant) by manipulating
-#         memory inplace.
-*******************************************************************************/
-
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,10 +13,6 @@ Associated Filename: main.c
 #include <CL/cl_ext.h>
 
 ////////////////////////////////////////////////////////////////////////////////
-
-#define NUM_WORKGROUPS (1)
-#define WORKGROUP_SIZE (256)
-#define MAX_LENGTH 8192
 
 #if defined(SDX_PLATFORM) && !defined(TARGET_DEVICE)
 #define STR_VALUE(arg)      #arg
@@ -68,12 +54,14 @@ struct axonerve_query{
     unsigned int version;
 };
 
+#define ALIGNMENT_VAL (4*1024)
+
 int main(int argc, char** argv)
 {
 
     int err;                            // error code returned from api calls
     int check_status = 0;
-    const uint number_of_words = 1; // 16KB of data
+    const uint number_of_words = 7;
 
 
     cl_platform_id platform_id;         // platform id
@@ -86,8 +74,17 @@ int main(int argc, char** argv)
     char cl_platform_vendor[1001];
     char target_device_name[1001] = TARGET_DEVICE;
 
-    struct axonerve_query queries[MAX_LENGTH];
-    struct axonerve_query results[MAX_LENGTH];
+    struct axonerve_query *queries;
+    struct axonerve_query *results;
+
+    if (posix_memalign((void**)&queries, ALIGNMENT_VAL, sizeof(struct axonerve_query)*number_of_words) != 0){
+        return EXIT_FAILURE;
+    }
+    if (posix_memalign((void**)&results, ALIGNMENT_VAL, sizeof(struct axonerve_query)*number_of_words) != 0){
+        return EXIT_FAILURE; // error.
+    }
+
+    
     cl_mem d_axi00_ptr0;                         // device memory used for a vector
 
     if (argc != 2) {
@@ -109,10 +106,115 @@ int main(int argc, char** argv)
     queries[query_id].mask[1] = 0;
     queries[query_id].mask[2] = 0;
     queries[query_id].mask[3] = 0;
+    queries[query_id].dummy[0] = 0;
+    queries[query_id].dummy[1] = 0;
+    queries[query_id].dummy[2] = 0;
+    queries[query_id].dummy[3] = 0;
     query_id++;
     
+    queries[query_id].key[0] = 0xdeadbeef;
+    queries[query_id].key[1] = 0xdeadbeef;
+    queries[query_id].key[2] = 0xdeadbeef;
+    queries[query_id].key[3] = 0xdeadbeef;
+    queries[query_id].value = 0x34343434;
+    queries[query_id].csr = 0x20; // SEARCH
+    queries[query_id].priority = 0;
+    queries[query_id].mask[0] = 0;
+    queries[query_id].mask[1] = 0;
+    queries[query_id].mask[2] = 0;
+    queries[query_id].mask[3] = 0;
+    queries[query_id].dummy[0] = 0;
+    queries[query_id].dummy[1] = 0;
+    queries[query_id].dummy[2] = 0;
+    queries[query_id].dummy[3] = 0;
+    query_id++;
+    
+    queries[query_id].key[0] = 0xdeadbeef;
+    queries[query_id].key[1] = 0xdeadbeef;
+    queries[query_id].key[2] = 0xdeadbeef;
+    queries[query_id].key[3] = 0xdeadbeef;
+    queries[query_id].value = 0x34343434;
+    queries[query_id].csr = 0x10; // SEARCH
+    queries[query_id].priority = 0;
+    queries[query_id].mask[0] = 0;
+    queries[query_id].mask[1] = 0;
+    queries[query_id].mask[2] = 0;
+    queries[query_id].mask[3] = 0;
+    queries[query_id].dummy[0] = 0;
+    queries[query_id].dummy[1] = 0;
+    queries[query_id].dummy[2] = 0;
+    queries[query_id].dummy[3] = 0;
+    query_id++;
+    
+    queries[query_id].key[0] = 0xdeadbeef;
+    queries[query_id].key[1] = 0xdeadbeef;
+    queries[query_id].key[2] = 0xdeadbeef;
+    queries[query_id].key[3] = 0xdeadbeef;
+    queries[query_id].value = 0xabababab;
+    queries[query_id].csr = 0x20; // SEARCH
+    queries[query_id].priority = 0;
+    queries[query_id].mask[0] = 0;
+    queries[query_id].mask[1] = 0;
+    queries[query_id].mask[2] = 0;
+    queries[query_id].mask[3] = 0;
+    queries[query_id].dummy[0] = 0;
+    queries[query_id].dummy[1] = 0;
+    queries[query_id].dummy[2] = 0;
+    queries[query_id].dummy[3] = 0;
+    query_id++;
+    
+    queries[query_id].key[0] = 0xdeadbeef;
+    queries[query_id].key[1] = 0xdeadbeef;
+    queries[query_id].key[2] = 0xdeadbeef;
+    queries[query_id].key[3] = 0xdeadbeef;
+    queries[query_id].value = 0x34343434;
+    queries[query_id].csr = 0x10; // SEARCH
+    queries[query_id].priority = 0;
+    queries[query_id].mask[0] = 0;
+    queries[query_id].mask[1] = 0;
+    queries[query_id].mask[2] = 0;
+    queries[query_id].mask[3] = 0;
+    queries[query_id].dummy[0] = 0;
+    queries[query_id].dummy[1] = 0;
+    queries[query_id].dummy[2] = 0;
+    queries[query_id].dummy[3] = 0;
+    query_id++;
 
-   // Get all platforms and then select Xilinx platform
+    queries[query_id].key[0] = 0xdeadbeef;
+    queries[query_id].key[1] = 0xdeadbeef;
+    queries[query_id].key[2] = 0xdeadbeef;
+    queries[query_id].key[3] = 0xdeadbeef;
+    queries[query_id].value = 0xabababab;
+    queries[query_id].csr = 0x02; // ERASE
+    queries[query_id].priority = 0;
+    queries[query_id].mask[0] = 0;
+    queries[query_id].mask[1] = 0;
+    queries[query_id].mask[2] = 0;
+    queries[query_id].mask[3] = 0;
+    queries[query_id].dummy[0] = 0;
+    queries[query_id].dummy[1] = 0;
+    queries[query_id].dummy[2] = 0;
+    queries[query_id].dummy[3] = 0;
+    query_id++;
+    
+    queries[query_id].key[0] = 0xdeadbeef;
+    queries[query_id].key[1] = 0xdeadbeef;
+    queries[query_id].key[2] = 0xdeadbeef;
+    queries[query_id].key[3] = 0xdeadbeef;
+    queries[query_id].value = 0x34343434;
+    queries[query_id].csr = 0x10; // SEARCH
+    queries[query_id].priority = 0;
+    queries[query_id].mask[0] = 0;
+    queries[query_id].mask[1] = 0;
+    queries[query_id].mask[2] = 0;
+    queries[query_id].mask[3] = 0;
+    queries[query_id].dummy[0] = 0;
+    queries[query_id].dummy[1] = 0;
+    queries[query_id].dummy[2] = 0;
+    queries[query_id].dummy[3] = 0;
+    query_id++;
+
+    // Get all platforms and then select Xilinx platform
     cl_platform_id platforms[16];       // platform id
     cl_uint platform_count;
     int platform_found = 0;
@@ -143,7 +245,7 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-   // Get Accelerator compute device
+    // Get Accelerator compute device
     cl_uint num_devices;
     unsigned int device_found = 0;
     cl_device_id devices[16];  // compute device id
@@ -169,7 +271,7 @@ int main(int argc, char** argv)
             device_id = devices[i];
             device_found = 1;
             printf("Selected %s as the target device\n", cl_device_name);
-       }
+	}
     }
 
     if (!device_found) {
@@ -241,7 +343,7 @@ int main(int argc, char** argv)
 
     // Create the compute kernel in the program we wish to run
     //
-     kernel = clCreateKernel(program, "axonerve_kvs_rtl", &err);
+    kernel = clCreateKernel(program, "axonerve_kvs_rtl", &err);
     if (!kernel || err != CL_SUCCESS) {
         printf("Error: Failed to create compute kernel!\n");
         printf("Test failed\n");
@@ -249,7 +351,7 @@ int main(int argc, char** argv)
     }
 
     printf("kernel created.\n");
-    sleep(10);
+    sleep(1);
     printf("wait done.\n");
     
     // Create structs to define memory bank mapping
@@ -274,6 +376,7 @@ int main(int argc, char** argv)
 
 
 
+    //d_axi00_ptr0 = clCreateBuffer(context,  CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,  sizeof(struct axonerve_query)*number_of_words, (void*)queries, NULL);
     d_axi00_ptr0 = clCreateBuffer(context,  CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX,  sizeof(struct axonerve_query) * number_of_words, &d_bank_ext[0], NULL);
 
 
@@ -297,7 +400,6 @@ int main(int argc, char** argv)
 
 
     // Set the arguments to our compute kernel
-    // int vector_length = MAX_LENGTH;
     err = 0;
     cl_uint d_data_num = sizeof(struct axonerve_query) * number_of_words;
     printf("bytes = %d\n", d_data_num);
@@ -316,30 +418,31 @@ int main(int argc, char** argv)
     cl_event kernelevent;
     err = clEnqueueTask(commands, kernel, 0, NULL, &kernelevent);
     if (err) {
-            printf("Error: Failed to execute kernel! %d\n", err);
-            printf("Test failed\n");
-            return EXIT_FAILURE;
-        }
+	printf("Error: Failed to execute kernel! %d\n", err);
+	printf("Test failed\n");
+	return EXIT_FAILURE;
+    }
     //clWaitForEvents(1, &kernelevent);
 
     // Read back the results from the device to verify the output
     //
     cl_event readevent;
-    clFinish(commands);
 
     err = 0;
-    err |= clEnqueueReadBuffer( commands, d_axi00_ptr0, CL_TRUE, 0, sizeof(int) * number_of_words, results, 0, NULL, &readevent );
+    err |= clEnqueueReadBuffer( commands, d_axi00_ptr0, CL_TRUE, 0, sizeof(struct axonerve_query) * number_of_words, results, 0, NULL, &readevent );
 
 
     if (err != CL_SUCCESS) {
-            printf("Error: Failed to read output array! %d\n", err);
-            printf("Test failed\n");
-            return EXIT_FAILURE;
-        }
+	printf("Error: Failed to read output array! %d\n", err);
+	printf("Test failed\n");
+	return EXIT_FAILURE;
+    }
     clWaitForEvents(1, &readevent);
+
     // Check Results
 
     for (uint i = 0; i < number_of_words; i++) {
+	/*
 	printf("query: %d\n", i);
 	printf("KEY: %08x %08x %08x %08x\n", queries[i].key[0],queries[i].key[1],queries[i].key[2],queries[i].key[3]);
 	printf("VALUE: %08x\n", queries[i].value);
@@ -351,7 +454,7 @@ int main(int argc, char** argv)
 	printf("PRI: %08x\n", queries[i].priority);
 	printf("MASK: %08x %08x %08x %08x\n", queries[i].mask[0],queries[i].mask[1],queries[i].mask[2],queries[i].mask[3]);
 	printf("VERSION: %08x\n", queries[i].version);
-	
+	*/
 	printf("result: %d\n", i);
 	printf("KEY: %08x %08x %08x %08x\n", results[i].key[0],results[i].key[1],results[i].key[2],results[i].key[3]);
 	printf("VALUE: %08x\n", results[i].value);
@@ -368,11 +471,14 @@ int main(int argc, char** argv)
     //--------------------------------------------------------------------------
     // Shutdown and cleanup
     //-------------------------------------------------------------------------- 
-    clReleaseMemObject(d_axi00_ptr0);
+    free(queries);
+    free(results);
 
-
-    clReleaseProgram(program);
+    clFlush(commands);
+    clFinish(commands);
     clReleaseKernel(kernel);
+    clReleaseProgram(program);
+    clReleaseMemObject(d_axi00_ptr0);
     clReleaseCommandQueue(commands);
     clReleaseContext(context);
 
