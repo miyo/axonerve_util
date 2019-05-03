@@ -9,5 +9,3 @@
 # high reset fanouts.  To ensure the reset register is not optimized out, add a DONT_TOUCH = "yes"
 # or KEEP = "yes" attribute to the register inside the RTL code.
 # set_multicycle_path -setup 3 -hold 2 [get_cells inst_example/areset_reg]
-create_clock -period 11.000 [get_ports ap_clk]
-create_clock -period 5.500 [get_ports ap_clk_2]

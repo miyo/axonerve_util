@@ -4,6 +4,8 @@
 #include <vector>
 #include <unistd.h>
 
+#define VERBOSE (0)
+
 #include "axonerve_kvs.hpp"
     
 void AxonerveKVS::emit_task(std::vector<axonerve_query,aligned_allocator<axonerve_query>>& buf){
@@ -41,6 +43,7 @@ void AxonerveKVS::dump(std::vector<axonerve_query,aligned_allocator<axonerve_que
 	}
 	std::cout << std::endl;
 	std::cout << "0x" << std::hex << std::setw(8) << std::setfill('0') << buf[i].value << std::endl;
+	std::cout << "0x" << std::hex << std::setw(8) << std::setfill('0') << buf[i].csr << std::endl;
 	std::cout << "  SINGLE_HIT: " << ((buf[i].csr & 0x00000001) >> 0) << std::endl;
 	std::cout << "  MULTI_HIT: "  << ((buf[i].csr & 0x00000002) >> 1) << std::endl;
 	std::cout << "  ENT_ERR: "    << ((buf[i].csr & 0x00000004) >> 2) << std::endl;
@@ -148,6 +151,37 @@ bool AxonerveKVS::get(unsigned int key[4], unsigned int& value){
 #endif
     value = host_buffer1[0].value;
     return (host_buffer1[0].csr & 0x03);
+}
+
+void AxonerveKVS::remove(unsigned int key[4]){
+    //Allocate Memory in Host Memory
+    std::vector<axonerve_query,aligned_allocator<axonerve_query>> host_buffer1(1);
+
+    // Create the test data and Software Result
+    host_buffer1[0].key[0] = key[0];
+    host_buffer1[0].key[1] = key[1];
+    host_buffer1[0].key[2] = key[2];
+    host_buffer1[0].key[3] = key[3];
+    host_buffer1[0].value = 0;
+    host_buffer1[0].csr = 0x02;
+    host_buffer1[0].priority = 0;
+    host_buffer1[0].mask[0] = 0;
+    host_buffer1[0].mask[1] = 0;
+    host_buffer1[0].mask[2] = 0;
+    host_buffer1[0].mask[3] = 0;
+    host_buffer1[0].kernel_status = 0;
+    host_buffer1[0].version = 0;
+	
+#if VERBOSE > 1
+    std::cerr << "Queries" << std::endl;
+    dump(host_buffer1);
+#endif
+    emit_task(host_buffer1);
+#if VERBOSE > 1
+    std::cerr << "Results" << std::endl;
+    dump(host_buffer1);
+#endif
+    return;
 }
 
 AxonerveKVS::~AxonerveKVS(){

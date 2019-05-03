@@ -77,15 +77,15 @@ binary_container_1.xclbin: $(BINARY_CONTAINER_1_OBJS)
 # host rules
 #
 
-src/axonerve_kvs.o: ../src/axonerve_kvs.cpp ../src/xcl2.hpp ../src/axonerve_kvs.hpp
+axonerve_kvs.o: ./axonerve_kvs.cpp ./axonerve_kvs.hpp
 	@mkdir -p $(@D)
 	$(SDX_CXX) $(CXXFLAGS) -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.2/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.2/include/ -O2 -Wall -c -fmessage-length=0 -o "$@" "$<"
 
-src/host.o: ../src/host.cpp ../src/xcl2.hpp ../src/axonerve_kvs.hpp
+host.o: ./host.cpp ./axonerve_kvs.hpp
 	@mkdir -p $(@D)
 	$(SDX_CXX) $(CXXFLAGS) -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.2/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.2/include/ -O2 -Wall -c -fmessage-length=0 -o "$@" "$<"
 
-src/xcl2.o: ../src/xcl2.cpp ../src/xcl2.hpp
+xcl2.o: ./xcl2.cpp ./xcl2.hpp
 	@mkdir -p $(@D)
 	$(SDX_CXX) $(CXXFLAGS) -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.2/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.2/include/ -O2 -Wall -c -fmessage-length=0 -o "$@" "$<"
 
