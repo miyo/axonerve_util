@@ -155,7 +155,12 @@ void server_run(AxonerveKVS& kvs){
 
 int main(int argc, char** argv)
 {
-    AxonerveKVS kvs("./binary_container_1.xclbin");
+    if(argc < 2){
+        std::cout << "usage: " << argv[0] << " xclbin" << std::endl;
+        return EXIT_FAILURE;
+    }
+    std::string bin = std::string(argv[1]); 
+    AxonerveKVS kvs(bin);
     int num_error = 0;
 
     {
@@ -257,6 +262,7 @@ int main(int argc, char** argv)
     }
     std::cout << "Error: " << num_error << std::endl;
 
+    kvs.reset();
     server_run(kvs);
 
     return (num_error == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
