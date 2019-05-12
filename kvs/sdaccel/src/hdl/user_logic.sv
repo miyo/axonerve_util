@@ -64,11 +64,39 @@ module user_logic
    logic [6:0] 		 I_KEY_PRI;
    logic [31:0] 	 I_KEY_VALUE;
    
+   logic [511:0]      p00_rd_tdata_d;
+   logic              p00_rd_we_d;
+
+   logic reset_int = 1'b1;
+   logic [7:0] reset_counter = 8'h0;
+   always @(posedge aclk) begin
+     if(areset == 1'b1) begin
+       reset_int <= 1'b1;
+       reset_counter <= 8'h0;
+     end else begin
+       if(reset_counter < 100) begin
+         reset_int <= 1'b1;
+         reset_counter <= reset_counter + 1;
+       end else begin
+         reset_int <= 1'b0;
+       end
+     end
+   end
+
+   always @(posedge aclk)
+   begin
+      if(reset_int == 1'b1) begin
+        p00_rd_we_d <= 1'b0;
+      end else begin
+        p00_rd_tdata_d <= p00_rd_tdata;
+        p00_rd_we_d    <= p00_rd_tvalid && ~O_CMD_FULL;
+      end
+   end
 
    assign p00_rd_tready = ~O_CMD_FULL;
    fifo_512_512_ft inst_fifo_p00_rd (
      .clk (aclk),
-     .srst(areset),
+     .srst(reset_int),
      .din      (p00_rd_tdata),
      .wr_en    (p00_rd_tvalid && ~O_CMD_FULL),
      .full     (p00_rd_full),
@@ -81,9 +109,22 @@ module user_logic
      .rd_rst_busy()
    );
 
+   logic [511:0]      p00_user_dout_d;
+   logic              p00_user_wr_d;
+
+   always @(posedge aclk)
+   begin
+      if(reset_int == 1'b1) begin
+        p00_user_wr_d <= 1'b0;
+      end else begin
+        p00_user_dout_d <= p00_user_dout;
+        p00_user_wr_d <= p00_user_wr;
+      end
+   end
+
    fifo_512_512_ft inst_fifo_p00_wr (
      .clk (aclk),
-     .srst(areset),
+     .srst(reset_int),
      .din      (p00_user_dout),
      .wr_en    (p00_user_wr),
      .full     (p00_wr_full),
@@ -144,7 +185,7 @@ module user_logic
 
    assign I_CLK = aclk;
    assign I_CLKX2 = kernel_clk;
-   assign I_XRST = ~areset;
+   assign I_XRST = ~reset_int;
    
    axonerve_kvs_kernel
      inst_axonerve_kvs_kernel(

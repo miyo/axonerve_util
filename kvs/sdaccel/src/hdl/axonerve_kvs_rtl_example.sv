@@ -179,7 +179,16 @@ inst_example_vadd_m00_axi (
 			   
 );
 
-user_logic #(
+   logic                            p00_rd_tvalid_int;
+   logic                            p00_rd_tready_int;
+   logic [C_M00_AXI_DATA_WIDTH-1:0] p00_rd_tdata_int;
+   logic                            p00_rd_full_int;
+   logic 			    p00_wr_tvalid_int;
+   logic 			    p00_wr_tready_int;
+   logic [C_M00_AXI_DATA_WIDTH-1:0] p00_wr_tdata_int;
+   logic                            p00_wr_full_int;
+
+   user_logic #(
 	     .C_M_AXI_DATA_WIDTH(C_M00_AXI_DATA_WIDTH)
 	     )
    inst_user_logic (
@@ -188,14 +197,47 @@ user_logic #(
 		    .kernel_clk (ap_clk_2),
 		    .kernel_rst (kernel_rst),
     
-		    .p00_rd_tvalid(p00_rd_tvalid),
-		    .p00_rd_tready(p00_rd_tready),
-		    .p00_rd_tlast (p00_rd_tlast),
-		    .p00_rd_tdata (p00_rd_tdata),
-		    .p00_wr_tvalid(p00_wr_tvalid),
-		    .p00_wr_tready(p00_wr_tready),
-		    .p00_wr_tdata (p00_wr_tdata)
+		    .p00_rd_tvalid(p00_rd_tvalid_int),
+		    .p00_rd_tready(p00_rd_tready_int),
+		    .p00_rd_tlast (),
+		    .p00_rd_tdata (p00_rd_tdata_int),
+		    .p00_wr_tvalid(p00_wr_tvalid_int),
+		    .p00_wr_tready(p00_wr_tready_int),
+		    .p00_wr_tdata (p00_wr_tdata_int)
     );
+
+   assign p00_rd_tready = ~p00_rd_full_int;
+   assign p00_wr_tready_int = ~p00_wr_full_int;
+   
+   fifo_512_512_ft buf_0 (
+     .clk (ap_clk),
+     .srst(areset),
+     .din      (p00_rd_tdata),
+     .wr_en    (p00_rd_tvalid && ~p00_rd_full_int),
+     .full     (),
+     .empty    (),
+     .prog_full(p00_rd_full_int),
+     .rd_en    (p00_rd_tready_int),
+     .dout     (p00_rd_tdata_int),
+     .valid    (p00_rd_tvalid_int),
+     .wr_rst_busy(),
+     .rd_rst_busy()
+   );
+
+   fifo_512_512_ft buf_1 (
+     .clk (ap_clk),
+     .srst(areset),
+     .din      (p00_wr_tdata_int),
+     .wr_en    (p00_wr_tvalid_int && ~p00_wr_full_int),
+     .full     (),
+     .empty    (),
+     .prog_full(p00_wr_full_int),
+     .rd_en    (p00_wr_tready),
+     .dout     (p00_wr_tdata),
+     .valid    (p00_wr_tvalid),
+     .wr_rst_busy(),
+     .rd_rst_busy()
+   );
 
 endmodule : axonerve_kvs_rtl_example
 `default_nettype wire

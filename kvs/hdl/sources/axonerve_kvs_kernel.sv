@@ -51,7 +51,7 @@ module axonerve_kvs_kernel (
    
    logic 					 XRST;
    logic 					 ICLK;
-   logic 					 ICLKX2;
+   //logic 					 ICLKX2;
    logic 					 ICAM_IE = 1'b0;
    logic 					 ICAM_WE = 1'b0;
    logic 					 ICAM_RE = 1'b0;
@@ -73,7 +73,7 @@ module axonerve_kvs_kernel (
    assign O_VERSION = OVERSION;
 
    assign ICLK = I_CLK;
-   assign ICLKX2 = I_CLKX2;
+   //assign ICLKX2 = I_CLKX2;
    //assign XRST = I_XRST && ~I_CMD_INIT;
    assign XRST = I_XRST;
    
@@ -93,7 +93,7 @@ module axonerve_kvs_kernel (
 		  .OFIFO_FULL(OFIFO_FULL),
 		  .IXRST(XRST),
 		  .ICLK(ICLK),
-		  .ICLKX2(ICLKX2),
+		  //.ICLKX2(ICLKX2),
 		  .ICAM_IE(ICAM_IE),
 		  .ICAM_WE(ICAM_WE),
 		  .ICAM_RE(ICAM_RE),
