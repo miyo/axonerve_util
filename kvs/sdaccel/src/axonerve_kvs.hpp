@@ -35,6 +35,7 @@ private:
     void reset();
     void put(unsigned int key[4], unsigned int value);
     bool get(unsigned int key[4], unsigned int& value);
+    void remove(unsigned int key[4]);
     ~AxonerveKVS();
     
 };

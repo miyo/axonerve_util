@@ -118,6 +118,12 @@ void server_run(AxonerveKVS& kvs){
 		    kvs.put(k, v);
 		    mesg.clear();
 		    mesg.push_back('P');
+		}else if(mesg[0] == 'r' && mesg.size() > 17){
+		    unsigned int k[4] = {to_uint(mesg, 1), to_uint(mesg, 5), to_uint(mesg, 9), to_uint(mesg, 13)};
+		    std::cout << "remove key=" << k[0] << k[1] << k[2] << k[3] << std::endl;
+		    kvs.remove(k);
+		    mesg.clear();
+		    mesg.push_back('R');
 		}else if(mesg[0] == 'g' && mesg.size() > 17){
 		    unsigned int k[4] = {to_uint(mesg, 1), to_uint(mesg, 5), to_uint(mesg, 9), to_uint(mesg, 13)};
 		    unsigned int v = 0;
@@ -161,6 +167,7 @@ int main(int argc, char** argv)
     }
     std::string bin = std::string(argv[1]); 
     AxonerveKVS kvs(bin);
+    //AxonerveKVS kvs("./binary_container_1.xclbin");
     int num_error = 0;
 
     {
