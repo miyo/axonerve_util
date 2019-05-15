@@ -3,12 +3,12 @@
 - S3バケットを作成．(たとえば名前はaws-f1-axonerve-kvs)
 - フォルダを作成．(たとえば名前はaxonerve-kvs-20190503)
 
-## F1インスタンスの用意
+## 合成用のインスタンスの用意
 
 - c4.4xlargeで作成．$0.796/時間
 - ストレージはルートを100GB程度あると安心．二つ目のストレージは不要．
 
-## F1インスタンス起動後の設定
+## インスタンス起動後の設定
 
 - `aws configure` を して Keyをセット
 - `/home/centos` の下で `git clone https://github.com/aws/aws-fpga.git $AWS_FPGA_REPO_DIR` をする
@@ -32,7 +32,7 @@ cd ~/
 sdx -workspace build
 ```
 - "Create a Xilinx(R) SDx(TM) Application project"をクリック
-- プロジェクト名を axonerve_kvs としてプロジェクト作成
+  - プロジェクト名を axonerve_kvs としてプロジェクト作成
 - Platformは，aws-vu9p-f1...を選択
   - 候補がでないときは，Platformで Add Custom Platform... から，`/home/centos/src/project_data/aws-fpga/SDAccel/aws_platform` を追加
 - Empty Applicationを選択
@@ -64,10 +64,10 @@ sdx -workspace build
   - SourecesペインのLibrariesタブに切り替えると作業しやすい
   - Design Sources → SystemVerilog → xil_defaultlib の `axonerve_kvs_rtl_example.sv` と `axonerve_kvs_rtl_example_vadd.sv` を取り除く
   - Design Sourcesで右クリックして，コンテクステメニューからAdd Sourcesを選択．"Add or create design sources"を選択してNext
-  - `/home/centos/axonerve_util/kvs/sdaccel/src/hdl` の 下の `axonerve_kvs_rtl_example.sv`，`axonerve_kvs_rtl_example_vadd.sv`，`user_logic.sv` を 追加
-  - `/home/centos/axonerve_util/kvs/hdl/sources` の 下の `axonerve_kvs_kernel.sv` を 追加
-  - `/home/centos/axonerve_util/kvs/sdaccel/src/xilinx-ip/aws-f1-vu9p` の 下の xciファイルを追加(これはプロジェクトにコピーする - Copy sources into projectへのチェックを忘れない)
-  - アップロードした Axonerveネットリスト を 追加
+    - `/home/centos/axonerve_util/kvs/sdaccel/src/hdl` の 下の `axonerve_kvs_rtl_example.sv`，`axonerve_kvs_rtl_example_vadd.sv`，`user_logic.sv` を 追加
+    - `/home/centos/axonerve_util/kvs/hdl/sources` の 下の `axonerve_kvs_kernel.sv` を 追加
+    - `/home/centos/axonerve_util/kvs/sdaccel/src/xilinx-ip/aws-f1-vu9p` の 下の xciファイルを追加(これはプロジェクトにコピーする - Copy sources into projectへのチェックを忘れない)
+    - アップロードした Axonerveネットリスト を 追加
   - Constraints → constrs_1 の `axonerve_kvs_rtl_ooc.xdc` と `axonerve_kvs_rtl_user.xdc` を 取り除く
   - "Add or create constraints"を選択してNext
   - `/home/centos/axonerve_util/kvs/sdaccel/src/xdc/vu9p` の 下の `axonerve_kvs_rtl_ooc.xdc` と `axonerve_kvs_rtl_user.xdc` を 追加
@@ -145,7 +145,8 @@ scp -i pemファイル centos@AWSインスタンスのIP:binary_container_1.awsx
   - AMIでFPGAを検索．今度はf1.2xlargeで作成．
 - (作成後初回のみ)インスタンスの設定
   - 起動したら `aws configure` を 実行
-  - /home/centos の下で `git clone https://github.com/aws/aws-fpga.git $AWS_FPGA_REPO_DIR`
+  - `/home/centos` の下で `git clone https://github.com/aws/aws-fpga.git $AWS_FPGA_REPO_DIR`
+- 環境変数を読み込む
 ```
 cd $AWS_FPGA_REPO_DIR; source sdaccel_setup.sh
 ```
