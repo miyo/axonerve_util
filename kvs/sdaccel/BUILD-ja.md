@@ -35,7 +35,7 @@ sdx -workspace build
 - "Create a Xilinx(R) SDx(TM) Application projectをクリック
 - プロジェクト名を axonerve_kvs としてプロジェクト作成
 - Platformは，aws-vu9p-f1...を選択
- - 候補がでないときは，Platformで Add Custom Platform... から，/home/centos/src/project_data/aws-fpga/SDAccel/aws_platform を追加
+-- 候補がでないときは，Platformで Add Custom Platform... から，/home/centos/src/project_data/aws-fpga/SDAccel/aws_platform を追加
 - Empty Applicationを選択
 
 ## RTLカーネルの用意
