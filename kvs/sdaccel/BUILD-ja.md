@@ -44,36 +44,37 @@ sdx -workspace build
 
 - メニューのXilinxからRTL Kernel Wizardを選択
 - General Settings
- - kernel name を axonerve_kvs_rtl，kernel vendor を wasalabo と設定してNext．
- - クロック数を2，Has Resetを1に設定
+  - kernel name を axonerve_kvs_rtl，kernel vendor を wasalabo と設定してNext．
+  - クロック数を2，Has Resetを1に設定
 - Scalars
- - 数は1のまま．Argument nameをdata_numに変更して，Next．
+  - 数は1のまま．Argument nameをdata_numに変更して，Next．
 - Global Memory
- - そのままNext
+  - そのままNext
 
 ### ファイルの置換と追加
 
 - 取り除く
- - axonerve_kvs_rtl_example.sv，axonerve_kvs_rtl_example_vadd.sv，axonerve_kvs_rtl_ooc.xdc と axonerve_kvs_rtl_user.xdc
+  - axonerve_kvs_rtl_example.sv，axonerve_kvs_rtl_example_vadd.sv，axonerve_kvs_rtl_ooc.xdc と axonerve_kvs_rtl_user.xdc
 - 追加
- - /home/centos/axonerve_util/kvs/sdaccel/src/hdl の 下の axonerve_kvs_rtl_example.sv，axonerve_kvs_rtl_example_vadd.sv，user_logic.sv
- - /home/centos/axonerve_util/kvs/hdl/sources の 下の axonerve_kvs_kernel.sv
- - /home/centos/axonerve_util/kvs/sdaccel/src/xilinx-ip/aws-f1-vu9p の 下の xciファイル．これはプロジェクトにコピー
- - アップロードした Axonerveネットリスト
- - /home/centos/axonerve_util/kvs/sdaccel/src/xdc/vu9p の 下の axonerve_kvs_rtl_ooc.xdc と axonerve_kvs_rtl_user.xdc
+  - /home/centos/axonerve_util/kvs/sdaccel/src/hdl の 下の axonerve_kvs_rtl_example.sv，axonerve_kvs_rtl_example_vadd.sv，user_logic.sv
+  - /home/centos/axonerve_util/kvs/hdl/sources の 下の axonerve_kvs_kernel.sv
+  - /home/centos/axonerve_util/kvs/sdaccel/src/xilinx-ip/aws-f1-vu9p の 下の xciファイル．これはプロジェクトにコピー
+  - アップロードした Axonerveネットリスト
+  - /home/centos/axonerve_util/kvs/sdaccel/src/xdc/vu9p の 下の axonerve_kvs_rtl_ooc.xdc と axonerve_kvs_rtl_user.xdc
 - 詳しい手順
- - SourecesペインのLibrariesタブに切り替えると作業しやすい
- - Design Sources → SystemVerilog → xil_defaultlib の axonerve_kvs_rtl_example.sv と axonerve_kvs_rtl_example_vadd.sv を取り除く
- - Design Sourcesで右クリックして，コンテクステメニューからAdd Sourcesを選択．"Add or create design sources"を選択してNext
- - /home/centos/axonerve_util/kvs/sdaccel/src/hdl の 下の axonerve_kvs_rtl_example.sv，axonerve_kvs_rtl_example_vadd.sv，user_logic.sv を 追加
- - /home/centos/axonerve_util/kvs/hdl/sources の 下の axonerve_kvs_kernel.sv を 追加
- - /home/centos/axonerve_util/kvs/sdaccel/src/xilinx-ip/aws-f1-vu9p の 下の xciファイルを追加(これはプロジェクトにコピーする - Copy sources into projectへのチェックを忘れない)
- - アップロードした Axonerveネットリスト を 追加
- - Constraints → constrs_1 の axonerve_kvs_rtl_ooc.xdc と axonerve_kvs_rtl_user.xdc を 取り除く
- - "Add or create constraints"を選択してNext
- - /home/centos/axonerve_util/kvs/sdaccel/src/xdc/vu9p の 下の axonerve_kvs_rtl_ooc.xdc と axonerve_kvs_rtl_user.xdc を 追加
+  - SourecesペインのLibrariesタブに切り替えると作業しやすい
+  - Design Sources → SystemVerilog → xil_defaultlib の axonerve_kvs_rtl_example.sv と axonerve_kvs_rtl_example_vadd.sv を取り除く
+  - Design Sourcesで右クリックして，コンテクステメニューからAdd Sourcesを選択．"Add or create design sources"を選択してNext
+  - /home/centos/axonerve_util/kvs/sdaccel/src/hdl の 下の axonerve_kvs_rtl_example.sv，axonerve_kvs_rtl_example_vadd.sv，user_logic.sv を 追加
+  - /home/centos/axonerve_util/kvs/hdl/sources の 下の axonerve_kvs_kernel.sv を 追加
+  - /home/centos/axonerve_util/kvs/sdaccel/src/xilinx-ip/aws-f1-vu9p の 下の xciファイルを追加(これはプロジェクトにコピーする - Copy sources into projectへのチェックを忘れない)
+  - アップロードした Axonerveネットリスト を 追加
+  - Constraints → constrs_1 の axonerve_kvs_rtl_ooc.xdc と axonerve_kvs_rtl_user.xdc を 取り除く
+  - "Add or create constraints"を選択してNext
+  - /home/centos/axonerve_util/kvs/sdaccel/src/xdc/vu9p の 下の axonerve_kvs_rtl_ooc.xdc と axonerve_kvs_rtl_user.xdc を 追加
 
 ### Generate RTL Kernelを実行
+
 - source-only kernel を 選択
 
 ## SDxでシステム全体のビルド
@@ -81,32 +82,32 @@ sdx -workspace build
 ### ファイルの削除と追加
 
 - host_example.cppを削除．axonerve_kvs.cpp，axonerve_kvs.hpp，host.cpp，xcl2.cpp，xcl2.hppを追加
- - Project Explorer の src → sdx_rtl_kernel → axonerve_kvs_rtl の 下の host_example.cpp (2018.2以前のバージョンなら main.c だった) は 削除
- - Project Explorer の トップ の axonerve_kvsで右クリック．コンテクストメニューからImport Sources...を選択
- - Browse...で/home/centos/axonerve_util/kvs/sdaccel/src を 選択
- - axonerve_kvs.cpp，axonerve_kvs.hpp，host.cpp，xcl2.cpp，xcl2.hppを選択してFinish
+  - Project Explorer の src → sdx_rtl_kernel → axonerve_kvs_rtl の 下の host_example.cpp (2018.2以前のバージョンなら main.c だった) は 削除
+  - Project Explorer の トップ の axonerve_kvsで右クリック．コンテクストメニューからImport Sources...を選択
+  - Browse...で/home/centos/axonerve_util/kvs/sdaccel/src を 選択
+  - axonerve_kvs.cpp，axonerve_kvs.hpp，host.cpp，xcl2.cpp，xcl2.hppを選択してFinish
 
 ### ビルドオプションの設定
 
 - ターゲットをSystemに変更
- - 右ペイン，右上のActive build configurationでSystemを選択
+  - 右ペイン，右上のActive build configurationでSystemを選択
 - コンパイルオプションに--kernel_frequncy "0:150|1:300"を追加．
- - Project Explorer の トップ の axonerve_kvsで右クリック．
- - コンテクストメニューから，C/C++ Build Settingsを選択．
- - 左ペインのSettingsをクリック
- - Configuration タブ を System にセット(この手順ならセットされているはず)
- - Tool Settingsタブを開く
- - SDx XOCC Kernel Compiler → Miscellaneos で --kernel_frequency "0:150|1:3000" を追加
- - SDx XOCC Kernel Linker → Miscellaneos で --kernel_frequency "0:150|1:300" を追加
- - Apply and Closeで閉じる
+  - Project Explorer の トップ の axonerve_kvsで右クリック．
+  - コンテクストメニューから，C/C++ Build Settingsを選択．
+  - 左ペインのSettingsをクリック
+  - Configuration タブ を System にセット(この手順ならセットされているはず)
+  - Tool Settingsタブを開く
+  - SDx XOCC Kernel Compiler → Miscellaneos で --kernel_frequency "0:150|1:3000" を追加
+  - SDx XOCC Kernel Linker → Miscellaneos で --kernel_frequency "0:150|1:300" を追加
+  - Apply and Closeで閉じる
 - Hardware Functions(ハードウェア側の関数)としてaxonerve_kvs_rtlを設定
- - 右ペインの Hardware Functions の右にある Add Hardware Function...ボタン(稲妻みたいなアイコン)をクリック
- - axonerve_kvs_rtlを選択してOK
+  - 右ペインの Hardware Functions の右にある Add Hardware Function...ボタン(稲妻みたいなアイコン)をクリック
+  - axonerve_kvs_rtlを選択してOK
 
 ### ビルド
 
 - メニューの Project → Build Project で ビルド
- - ツールバーのハンマーみたいなアイコンをクリックしてもいい
+  - ツールバーのハンマーみたいなアイコンをクリックしてもいい
 
 ## AFIイメージを作る
 
@@ -138,14 +139,14 @@ aws ec2 describe-fpga-images --fpga-image-ids 確認したFpgaImageId
 ## AWS-F1で実行
 
 - AWS-F1インスタンスを作成
- - AMIでFPGAを検索．今度はf1.2xlargeで作成．
+  - AMIでFPGAを検索．今度はf1.2xlargeで作成．
 - (作成後初回のみ)
- - 起動したら aws configure を 実行
- - /home/centos の下で git clone https://github.com/aws/aws-fpga.git $AWS_FPGA_REPO_DIR
+  - 起動したら aws configure を 実行
+  - /home/centos の下で git clone https://github.com/aws/aws-fpga.git $AWS_FPGA_REPO_DIR
 ```
 cd $AWS_FPGA_REPO_DIR; source sdaccel_setup.sh
 ```
- - axonerve_kvs.exeとbinary_container_1.awsxclbinをアップロードする
+  - axonerve_kvs.exeとbinary_container_1.awsxclbinをアップロードする
 - 実行する
 ```
 sudo -s
