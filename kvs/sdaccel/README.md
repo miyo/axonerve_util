@@ -2,7 +2,7 @@
 
 This is an implementation to use Axonerve with SDAccel. Using Axonerve with OpenCL host program reduces implementation cost of bridge between software and hardware. This implementation provides a simple TCP server to use Axonerve as a simple KVS. In addition to that, this design provides interfaes for RTL designers and C++ programmers.
 
-![overview](https://github.com/miyo/axonerve_util/kvs/sdaccel/fig/overview.png)
+![overview](https://github.com/miyo/axonerve_util/raw/master/kvs/sdaccel/fig/overview.png)
 
 ## Application guide
 As an application example, a simple server for Axonerve-KVS is implemented.
