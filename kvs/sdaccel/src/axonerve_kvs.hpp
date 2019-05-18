@@ -5,8 +5,10 @@
 
 namespace Axonerve{
 
-class Data{
-}
+struct Data{
+    unsigned int key[4];
+    unsigned int value;
+};
 
 class AxonerveKVS{
 

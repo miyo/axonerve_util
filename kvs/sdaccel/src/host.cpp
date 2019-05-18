@@ -14,6 +14,8 @@
 const int SERVER_PORT = 0x4000;
 const int MAX_RQUEUE = 1024;
 
+using namespace Axonerve;
+
 unsigned to_uint(std::vector<char> vec, int pos){
     unsigned int ret = 0;
     for(int i = 0; i < 4; i++){
