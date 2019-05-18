@@ -41,8 +41,9 @@ private:
     AxonerveKVS(std::string binaryFile);
     void reset();
     void put(unsigned int key[4], unsigned int value);
-    void put_all(std::vector<Data> d);
     bool get(unsigned int key[4], unsigned int& value);
+    void put_all(std::vector<Data>& d);
+    void get_all(std::vector<Data>& d);
     void remove(unsigned int key[4]);
     ~AxonerveKVS();
     
