@@ -3,6 +3,11 @@
 
 #include "xcl2.hpp"
 
+namespace Axonerve{
+
+class Data{
+}
+
 class AxonerveKVS{
 
 private:
@@ -34,10 +39,13 @@ private:
     AxonerveKVS(std::string binaryFile);
     void reset();
     void put(unsigned int key[4], unsigned int value);
+    void put_all(std::vector<Data> d);
     bool get(unsigned int key[4], unsigned int& value);
     void remove(unsigned int key[4]);
     ~AxonerveKVS();
     
 };
+
+}
 
 #endif /* AXONERVE_KVS_HPP */
