@@ -43,7 +43,7 @@ private:
     void put(unsigned int key[4], unsigned int value);
     bool get(unsigned int key[4], unsigned int& value);
     void put_all(std::vector<Data>& d);
-    void get_all(std::vector<Data>& d);
+    void get_all(std::vector<Data>& d, std::vector<unsigned int>& v, std::vector<bool>& f);
     void remove(unsigned int key[4]);
     ~AxonerveKVS();
     
