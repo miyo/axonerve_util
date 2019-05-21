@@ -4,6 +4,35 @@ This is an implementation to use Axonerve with SDAccel. Using Axonerve with Open
 
 ![overview](https://github.com/miyo/axonerve_util/raw/master/kvs/sdaccel/fig/overview.png)
 
+## Quick Start Guide
+
+### Create F1-instance with FPGA AMI
+
+### setup environment
+
+```
+git clone https://github.com/aws/aws-fpga.git $AWS_FPGA_REPO_DIR
+wget https://github.com/miyo/axonerve_util/releases/download/v20190516/axonerve_kvs.exe
+wget https://github.com/miyo/axonerve_util/releases/download/v20190516/binary_container_1.awsxclbin
+chmod 755 axonerve_kvs.exe
+```
+
+### run
+
+```
+sudo -s
+source $AWS_FPGA_REPO_DIR/sdaccel_runtime_setup.sh
+./axonerve_kvs.exe binary_container_1.awsxclbin
+```
+
+### after execution
+
+Do not forget to stop the instance.
+
+```
+sudo halt -p
+```
+
 ## Application guide
 As an application example, a simple server for Axonerve-KVS is implemented.
 To run the server, execute the following command.
@@ -129,32 +158,3 @@ A programmer can access Axonerve-KVS by using C++ APIs. the provided APIs are fo
 |`bool get(unsigned int key[4], unsigned int& value)`|search value with `key[4]`. the return value is the entry exists or not. found value is stored into `value`|
 |`void remove(unsigned int key[4])`    | remove the entry with `key[4]`
 |`~AxonerveKVS()`                      | close Axonerver-KVS                                               |
-
-# Quick Start Guide
-
-## Create F1-instance with FPGA AMI
-
-## setup environment
-
-```
-git clone https://github.com/aws/aws-fpga.git $AWS_FPGA_REPO_DIR
-wget https://github.com/miyo/axonerve_util/releases/download/v20190516/axonerve_kvs.exe
-wget https://github.com/miyo/axonerve_util/releases/download/v20190516/binary_container_1.awsxclbin
-chmod 755 axonerve_kvs.exe
-```
-
-## run
-
-```
-sudo -s
-source $AWS_FPGA_REPO_DIR/sdaccel_runtime_setup.sh
-./axonerve_kvs.exe binary_container_1.awsxclbin
-```
-
-## after execution
-
-Do not forget to stop the instance.
-
-```
-sudo halt -p
-```
