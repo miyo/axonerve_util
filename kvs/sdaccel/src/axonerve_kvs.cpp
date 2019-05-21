@@ -123,12 +123,12 @@ void AxonerveKVS::put(unsigned int key[4], unsigned int value){
 #endif
 }
 
-void AxonerveKVS::put_all(std::vector<Data> data){
+void AxonerveKVS::put_all(std::vector<Data>& data){
     //Allocate Memory in Host Memory
     std::vector<axonerve_query,aligned_allocator<axonerve_query>> host_buffer1(1);
 
     // Create the test data and Software Result
-    for(int i = 0; i < data.size(); i++){
+    for(unsigned int i = 0; i < data.size(); i++){
 	Data d = data.at(i);
 	host_buffer1[i].key[0] = d.key[0];
 	host_buffer1[i].key[1] = d.key[1];
@@ -154,6 +154,44 @@ void AxonerveKVS::put_all(std::vector<Data> data){
     std::cerr << "Results" << std::endl;
     dump(host_buffer1);
 #endif
+}
+
+void AxonerveKVS::get_all(std::vector<Data>& data, std::vector<unsigned int>& values, std::vector<bool>& flags){
+    //Allocate Memory in Host Memory
+    std::vector<axonerve_query,aligned_allocator<axonerve_query>> host_buffer1(1);
+
+    // Create the test data and Software Result
+    for(unsigned int i = 0; i < data.size(); i++){
+	Data d = data.at(i);
+	host_buffer1[i].key[0] = d.key[0];
+	host_buffer1[i].key[1] = d.key[1];
+	host_buffer1[i].key[2] = d.key[2];
+	host_buffer1[i].key[3] = d.key[3];
+	host_buffer1[i].value = d.value;
+	host_buffer1[i].csr = 0x10;
+	host_buffer1[i].priority = 0;
+	host_buffer1[i].mask[0] = 0;
+	host_buffer1[i].mask[1] = 0;
+	host_buffer1[i].mask[2] = 0;
+	host_buffer1[i].mask[3] = 0;
+	host_buffer1[i].kernel_status = 0;
+	host_buffer1[i].version = 0;
+    }
+	
+#if VERBOSE > 1
+    std::cerr << "Queries" << std::endl;
+    dump(host_buffer1);
+#endif
+    emit_task(host_buffer1);
+#if VERBOSE > 1
+    std::cerr << "Results" << std::endl;
+    dump(host_buffer1);
+#endif
+    for(unsigned int i = 0; i < data.size(); i++){
+        values.at(i) = host_buffer1[i].value;
+        flags.at(i) = (host_buffer1[i].csr & 0x03);
+    }
+    return;
 }
 
 bool AxonerveKVS::get(unsigned int key[4], unsigned int& value){

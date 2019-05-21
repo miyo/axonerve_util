@@ -13,7 +13,7 @@ RMDIR = rm -rf
 SDX_PLATFORM = xilinx_kcu1500_dynamic_5_0
 
 # host compiler global settings
-CXXFLAGS += -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.2/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.2/include/ -O2 -Wall -c -fmessage-length=0 -std=c++14
+CXXFLAGS += -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.2/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.2/include/ -O2 -Wall -fmessage-length=0 -std=c++14
 LDFLAGS += -lxilinxopencl -lpthread -lrt -lstdc++ -L/opt/Xilinx/SDx/2018.2/runtime/lib/x86_64
 
 # kernel compiler global settings
@@ -58,6 +58,7 @@ clean:
 	-$(RMDIR) $(BUILD_SUBDIRS)
 	-$(RMDIR) _xocc*
 	-$(RMDIR) .Xil
+	-$(RMDIR) .so
 
 .PHONY: incremental
 incremental: all
@@ -77,17 +78,23 @@ binary_container_1.xclbin: $(BINARY_CONTAINER_1_OBJS)
 # host rules
 #
 
+host.exe: libaxonerve_kvs.so host.o
+	g++ host.o -o host -L. -laxonerve_kvs -lxilinxopencl -lpthread -lrt -lstdc++ -L/opt/Xilinx/SDx/2018.2/runtime/lib/x86_64
+
+libaxonerve_kvs.so: ./axonerve_kvs.o ./xcl2.o
+	$(SDX_CXX) $(CXXFLAGS) -shared -fPIC -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.2/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.2/include/ -O2 -Wall -fmessage-length=0 -o "$@" -Wl,-soname,libaxonerve_kvs.so axonerve_kvs.o xcl2.o
+
 axonerve_kvs.o: ./axonerve_kvs.cpp ./axonerve_kvs.hpp
 	@mkdir -p $(@D)
-	$(SDX_CXX) $(CXXFLAGS) -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.2/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.2/include/ -O2 -Wall -c -fmessage-length=0 -o "$@" "$<"
+	$(SDX_CXX) $(CXXFLAGS) -fPIC -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.2/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.2/include/ -O2 -Wall -c -fmessage-length=0 -o "$@" "$<"
 
 host.o: ./host.cpp ./axonerve_kvs.hpp
 	@mkdir -p $(@D)
-	$(SDX_CXX) $(CXXFLAGS) -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.2/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.2/include/ -O2 -Wall -c -fmessage-length=0 -o "$@" "$<"
+	$(SDX_CXX) $(CXXFLAGS) -fPIC -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.2/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.2/include/ -O2 -Wall -c -fmessage-length=0 -o "$@" "$<"
 
 xcl2.o: ./xcl2.cpp ./xcl2.hpp
 	@mkdir -p $(@D)
-	$(SDX_CXX) $(CXXFLAGS) -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.2/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.2/include/ -O2 -Wall -c -fmessage-length=0 -o "$@" "$<"
+	$(SDX_CXX) $(CXXFLAGS) -fPIC -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.2/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.2/include/ -O2 -Wall -c -fmessage-length=0 -o "$@" "$<"
 
 $(HOST_EXE): $(HOST_OBJECTS)
 	$(SDX_CXX) -o "$@" $(+) $(LDFLAGS) -lxilinxopencl -lpthread -lrt -lstdc++ -L/opt/Xilinx/SDx/2018.2/runtime/lib/x86_64 -Wl,-rpath,$(XILINX_VIVADO)/lnx64/lib/csim -L $(XILINX_VIVADO)/lnx64/lib/csim -lhlsmc++-GCC46 -Wl,-rpath,$(XILINX_VIVADO)/lnx64/tools/fpo_v7_0 -L $(XILINX_VIVADO)/lnx64/tools/fpo_v7_0 -lgmp -lmpfr -lIp_floating_point_v7_0_bitacc_cmodel -Wl,-rpath,$(XILINX_VIVADO)/lnx64/tools/fft_v9_1 -L $(XILINX_VIVADO)/lnx64/tools/fft_v9_1 -lIp_xfft_v9_1_bitacc_cmodel -Wl,-rpath,$(XILINX_VIVADO)/lnx64/tools/fir_v7_0 -L $(XILINX_VIVADO)/lnx64/tools/fir_v7_0 -lgmp -lIp_fir_compiler_v7_2_bitacc_cmodel -Wl,-rpath,$(XILINX_VIVADO)/lnx64/tools/dds_v6_0 -L $(XILINX_VIVADO)/lnx64/tools/dds_v6_0 -lIp_dds_compiler_v6_0_bitacc_cmodel 

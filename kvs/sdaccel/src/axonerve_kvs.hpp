@@ -5,8 +5,10 @@
 
 namespace Axonerve{
 
-class Data{
-}
+struct Data{
+    unsigned int key[4];
+    unsigned int value;
+};
 
 class AxonerveKVS{
 
@@ -39,8 +41,9 @@ private:
     AxonerveKVS(std::string binaryFile);
     void reset();
     void put(unsigned int key[4], unsigned int value);
-    void put_all(std::vector<Data> d);
     bool get(unsigned int key[4], unsigned int& value);
+    void put_all(std::vector<Data>& d);
+    void get_all(std::vector<Data>& d, std::vector<unsigned int>& v, std::vector<bool>& f);
     void remove(unsigned int key[4]);
     ~AxonerveKVS();
     
