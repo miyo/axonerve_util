@@ -81,8 +81,20 @@ binary_container_1.xclbin: $(BINARY_CONTAINER_1_OBJS)
 host.exe: libaxonerve_kvs.so host.o
 	g++ host.o -o host -L. -laxonerve_kvs -lxilinxopencl -lpthread -lrt -lstdc++ -L/opt/Xilinx/SDx/2018.2/runtime/lib/x86_64
 
+libaxonerve_kvs_jni.so: ./axonerve_kvs.o ./xcl2.o ./axonerve_kvs_jni.o 
+	$(SDX_CXX) $(CXXFLAGS) -shared -fPIC -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.2/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.2/include/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/linux/ -O2 -Wall -fmessage-length=0 -o "$@" -Wl,-soname,libaxonerve_kvs_jni.so axonerve_kvs_jni.o xcl2.o axonerve_kvs.o -lxilinxopencl -lpthread -lrt -lstdc++ -L/opt/Xilinx/SDx/2018.2/runtime/lib/x86_64
+
 libaxonerve_kvs.so: ./axonerve_kvs.o ./xcl2.o
 	$(SDX_CXX) $(CXXFLAGS) -shared -fPIC -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.2/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.2/include/ -O2 -Wall -fmessage-length=0 -o "$@" -Wl,-soname,libaxonerve_kvs.so axonerve_kvs.o xcl2.o
+
+AxonerveKVS.h: ./AxonerveKVS.java 
+	javac AxonerveKVS.java
+	javah -jni AxonerveKVS
+
+
+axonerve_kvs_jni.o: ./axonerve_kvs_jni.cpp ./AxonerveKVS.h ./axonerve_kvs.hpp
+	@mkdir -p $(@D)
+	$(SDX_CXX) $(CXXFLAGS) -fPIC -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.2/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.2/include/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/linux/ -O2 -Wall -c -fmessage-length=0 -o "$@" "$<"
 
 axonerve_kvs.o: ./axonerve_kvs.cpp ./axonerve_kvs.hpp
 	@mkdir -p $(@D)
