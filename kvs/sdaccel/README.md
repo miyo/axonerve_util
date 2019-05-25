@@ -8,6 +8,8 @@ This is an implementation to use Axonerve with SDAccel. Using Axonerve with Open
 
 ### Create F1-instance with FPGA AMI
 
+Region us-east-1 and us-west-2 are available to use our AFI.
+
 ### setup environment
 
 ```
