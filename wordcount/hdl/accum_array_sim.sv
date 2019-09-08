@@ -101,6 +101,18 @@ module accum_array_sim( );
 	   we <= 1'b1;
 	end
 	110: begin
+	   addr <= 32'd3;
+	   din[63:32] <= 32'h34343434;
+	   din[31:0] <= 32'd1;
+	   we <= 1'b1;
+	end
+	111: begin
+	   addr <= 32'd0;
+	   din[63:32] <= 32'hDEADBEEF;
+	   din[31:0] <= 32'd1;
+	   we <= 1'b1;
+	end
+	112: begin
 	   addr <= 32'd0;
 	   din[63:32] <= 32'hDEADBEEF;
 	   din[31:0] <= 32'd1;

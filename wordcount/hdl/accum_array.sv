@@ -41,27 +41,32 @@ module accum_array
    assign ram_addra = addr[13:0];
    assign q = ram_douta;
 
-   logic 	       we_d0, we_d1;
-   logic [31:0]        addr_d0, addr_d1;
+   logic 	       we_d0, we_d1, we_d2;
+   logic [31:0]        addr_d0, addr_d1, addr_d2;
    logic [63:0]        din_d0;
-   logic [31:0]        bypass;
+   logic [31:0]        bypass, bypass_d1;
 
-   logic 	       use_bypass;
+   logic 	       use_bypass, use_bypass_d1;
    
    always @(posedge clk) begin
       
       if(reset == 1'b1) begin
 	 we_d0 <= 1'b0;
 	 we_d1 <= 1'b0;
+	 we_d2 <= 1'b0;
 	 
       end else begin
 	 we_d0 <= we;
 	 we_d1 <= we_d0;
+	 we_d2 <= we_d1;
 	 
 	 addr_d0 <= addr;
 	 addr_d1 <= addr_d0;
+	 addr_d2 <= addr_d1;
 	 
 	 din_d0 <= din;
+
+	 bypass_d1 <= bypass;
 	 
 	 if(we_d0 == 1'b1) begin
 	    ram_web <= 1'b1;
@@ -71,11 +76,19 @@ module accum_array
 	       ram_dinb[31:0] <= bypass + din_d0[31:0];
 	       bypass <= bypass + din_d0[31:0];
 	       use_bypass <= 1'b1;
+	       use_bypass_d1 <= 1'b0;
+	    end else if(addr_d0 == addr_d2 && we_d2 == 1'b1) begin
+	       ram_dinb[63:32] <= din_d0[63:32];
+	       ram_dinb[31:0] <= bypass_d1 + din_d0[31:0];
+	       bypass <= bypass_d1 + din_d0[31:0];
+	       use_bypass <= 1'b0;
+	       use_bypass_d1 <= 1'b1;
 	    end else begin
 	       ram_dinb[63:32] <= din_d0[63:32];
 	       ram_dinb[31:0] <= ram_douta[31:0] + din_d0[31:0];
 	       bypass <= ram_douta + din_d0[31:0];
 	       use_bypass <= 1'b0;
+	       use_bypass_d1 <= 1'b0;
 	    end
 	 end else begin
 	    ram_web <= 1'b0;
