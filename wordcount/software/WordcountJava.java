@@ -13,25 +13,34 @@ public class WordcountJava {
 
 	private Hashtable<String, Integer> tbl;
 	private ArrayList<String> uniqWords;
+	private String textData;
 	private String[] words;
 
 	public WordcountJava(){
+		init();
+	}
+
+	public void init(){
+		tbl = new Hashtable<>();
+		uniqWords = new ArrayList<>();
+		textData = "";
+		words = new String[]{};
 	}
 	
 	public void load(String srcFileName){
-		tbl = new Hashtable<>();
-		uniqWords = new ArrayList<>();
-        String str = "";
 		try{
-			str = Files.readString(Path.of(srcFileName), Charset.forName("UTF-8"));
+			textData = Files.readString(Path.of(srcFileName), Charset.forName("UTF-8"));
 		}catch(IOException e){
 			e.printStackTrace();
 			System.exit(0);
 		}
-		words = str.split("\\s+");
 	}
 	
-	public void count(String srcFileName){
+	public void split(){
+		words = textData.split("\\s+");
+	}
+	
+	public void count(){
 		for(String s: words){
 			Integer v = tbl.get(s);
 			if(v == null){
@@ -48,8 +57,10 @@ public class WordcountJava {
 	}
 	
 	public void dump(){
+		int i = 0;
 		for(String w: uniqWords){
-			System.out.println(w + " => " + tbl.get(w));
+			System.out.println(i + " " + w + " => " + tbl.get(w));
+			i++;
 		}
 	}
 
@@ -91,20 +102,23 @@ public class WordcountJava {
 		long t0 = System.currentTimeMillis();
 		obj.load(args[0]);
 		long t1 = System.currentTimeMillis();
-		obj.count(args[0]);
+		obj.split();
 		long t2 = System.currentTimeMillis();
+		obj.count();
+		long t3 = System.currentTimeMillis();
 		obj.sort();
-		//obj.dump();
+		obj.dump();
 		System.out.println("----");
-		System.out.println("elapsed tiem for WordcountJava.load(): " + (t1-t0) + " ms.");
-		System.out.println("elapsed tiem for WordcountJava.count(): " + (t2-t1) + " ms.");
+		System.out.println("elapsed tiem for WordcountJava.load(): "  + (t1-t0) + " ms.");
+		System.out.println("elapsed tiem for WordcountJava.split(): " + (t2-t1) + " ms.");
+		System.out.println("elapsed tiem for WordcountJava.count(): " + (t3-t2) + " ms.");
 		System.out.println("#. of unique words: " + obj.getNumOfUniqWords());
 		System.out.println("#. of words: " + obj.getNumOfWords());
 		long bytes = (new File(args[0])).length();
 		System.out.println("File size: " + bytes + " Bytes");
 		System.out.printf("Throughput: %.3f Mwords/s, %.3f MB/s",
-						  (((double)obj.getNumOfWords())/((double)(t2-t0)))/1000.0,
-						  (((double)bytes)/((double)(t2-t0)))/1000.0);
+						  (((double)obj.getNumOfWords())/((double)(t3-t0)))/1000.0,
+						  (((double)bytes)/((double)(t3-t0)))/1000.0);
 		System.out.println();
 	}
 	
