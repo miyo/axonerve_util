@@ -51,7 +51,7 @@ module search_and_add_sim();
 
 	20: begin
 	    we <= 1'b1;
-            din <= X"DEADBEEF" & X"ABADCAFE" & X"FEFEFEFE" & X"34343434" & X"5a5a5a5a";
+            din <= {32'hDEADBEEF, 32'hABADCAFE, 32'hFEFEFEFE, 32'h34343434, 32'h5a5a5a5a};
 	   counter <= counter + 1;
 	end
 
