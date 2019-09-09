@@ -4,6 +4,7 @@ module search_and_add
    (
     input wire 		    clk,
     input wire 		    reset,
+    output wire 	    ready,
     
     input wire 		    kick,
     output wire 	    busy,
@@ -246,7 +247,7 @@ module search_and_add
       end
    end
 
-   
+   assign ready = O_READY;
    
    axonerve_kvs_kernel AXONERVE(
 				.I_CLK(clk),
