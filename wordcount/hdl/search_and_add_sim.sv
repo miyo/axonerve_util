@@ -1,15 +1,16 @@
+`timescale 1ns/1ps
 `default_nettype none
 
 module search_and_add_sim();
 
-   logic clk;
+   logic clk = 1'b0;
    logic reset;
    
    logic kick;
    logic busy;
 
    logic [128+32-1:0] din;
-   logic 	      we;
+   logic 	      we = 1'b0;
    logic 	      full;
 
    logic [31:0]       accum_addr;
@@ -33,10 +34,16 @@ module search_and_add_sim();
 	
 	0: begin
 	   reset <= 1'b1;
+           we <= 1'b0;
 	end
 
 	10: begin
 	   reset <= 1'b0;
+	end
+
+	20: begin
+	    we <= 1'b1;
+            din <= X"DEADBEEF" & X"ABADCAFE" & X"FEFEFEFE" & X"34343434" & X"5a5a5a5a";
 	end
 
 	100: begin
@@ -45,6 +52,7 @@ module search_and_add_sim();
 	
 	default: begin
 	   kick <= 1'b0;
+           we <= 1'b0;
 	end
 	
       endcase;
