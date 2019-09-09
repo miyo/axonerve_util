@@ -17,6 +17,7 @@ module search_and_add_sim();
    logic 	      accum_we;
 
    initial begin
+      clk <= 1'b0;
       forever begin
 	 clk <= ~clk;
 	 #5;
