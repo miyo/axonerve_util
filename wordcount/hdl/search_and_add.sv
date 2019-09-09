@@ -56,6 +56,7 @@ module search_and_add
    logic 		    O_ENT_FULL;
    logic [31:0] 	    O_KERNEL_STATUS;
    logic [15:0] 	    O_ENT_ADDR;
+   logic [15:0] 	    O_IENT_ADD;
 
    logic 		    I_CMD_INIT;
    logic 		    I_CMD_VALID;
@@ -197,7 +198,8 @@ module search_and_add
 	      end
 
 	      if(O_ACK == 1'b1) begin
-		 accum_addr_reg[15:0] <= O_ENT_ADDR[15:0];
+		 //accum_addr_reg[15:0] <= O_ENT_ADDR[15:0];
+		 accum_addr_reg[15:0] <= O_IENT_ADD[15:0]; // should be in order
 		 accum_din_reg[63:32] <= check_dout[128+32-1:128];
 		 accum_din_reg[31:0] <= 32'h1;
 		 accum_we_reg <= 1'b1;
@@ -259,6 +261,7 @@ module search_and_add
 				.O_ENT_FULL(O_ENT_FULL),
 				.O_KERNEL_STATUS(O_KERNEL_STATUS),
 				.O_ENT_ADDR(O_ENT_ADDR),
+				.O_IENT_ADD(O_IENT_ADD),
 
 				.I_CMD_INIT(I_CMD_INIT),
 				.I_CMD_VALID(I_CMD_VALID),
