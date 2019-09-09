@@ -86,7 +86,7 @@ module search_and_add
 
    assign input_rd = state_counter == 1 && input_valid == 1 ? 1 : 0;
    assign rest_rd  = state_counter == 2 && rest_valid == 1 ? 1 : 0;
-   assign check_rd = state_counter == 1 && O_ACK == 1 ? 1 : 0;
+   assign check_rd = (state_counter == 1 || state_counter == 2) && O_ACK == 1 ? 1 : 0;
    
    always @(posedge clk) begin
       if(reset == 1'b1) begin
@@ -190,7 +190,6 @@ module search_and_add
 	   // add new data
 	   2 : begin
 	      rest_we <= 1'b0;
-	      check_we <= 1'b0;
 
 	      if(rest_empty == 1'b1 && rest_counter == 0) begin
 		 state_counter <= 0; // done
@@ -199,7 +198,7 @@ module search_and_add
 
 	      if(O_ACK == 1'b1) begin
 		 accum_addr_reg[15:0] <= O_ENT_ADDR[15:0];
-		 accum_din_reg[63:32] <= O_KEY_VALUE[31:0];
+		 accum_din_reg[63:32] <= check_dout[128+32-1:128];
 		 accum_din_reg[31:0] <= 32'h1;
 		 accum_we_reg <= 1'b1;
 		 rest_counter <= rest_counter - 1;
@@ -214,7 +213,10 @@ module search_and_add
 		 I_CMD_UPDATE <= 1'b1;
 		 I_KEY_DAT <= rest_dout[128-1:0];
 		 I_KEY_VALUE <= rest_dout[128+32-1:128];
+		 check_we <= 1'b1;
+		 check_din <= rest_dout;
 	      end else begin
+		 check_we <= 1'b0;
 		 I_CMD_VALID <= 1'b0;
 	      end // else: !if(rest_valid == 1'b1)
 
