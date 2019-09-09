@@ -21,7 +21,8 @@ module axonerve_kvs_kernel (
 			    output logic 	 O_CMD_FULL,
 			    output logic 	 O_ENT_FULL,
 			    output logic [31:0]  O_KERNEL_STATUS,
-			    output logic [15:0]	 O_ENT_ADDR,
+			    output logic [15:0]  O_ENT_ADDR,
+			    output logic [15:0]  O_IENT_ADD,
 
 			    input wire 		 I_CMD_INIT,
 			    input wire 		 I_CMD_VALID,
@@ -316,13 +317,14 @@ module axonerve_kvs_kernel (
 
 	 O_ENT_ERR    <= OENT_ERR;
 	 O_SINGLE_HIT <= OSHIT;
-	 O_MULTI_HIT <= OMHIT;
+	 O_MULTI_HIT  <= OMHIT;
 	 O_KEY_DAT    <= OKEY_DAT;
 	 O_EKEY_MSK   <= OENT_ERR;
 	 O_KEY_PRI    <= OKEY_PRI;
 	 O_KEY_VALUE  <= OKEY_VALUE;
 	 O_KERNEL_STATUS[7:0] <= state_counter;
 	 O_ENT_ADDR <= OSRCH_ENT_ADD;
+	 O_IENT_ADD <= IENT_ADD;
 
 	 case(state_counter)
 	   
