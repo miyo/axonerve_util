@@ -83,17 +83,18 @@ module search_and_add
    assign accum_din = accum_din_reg;
    assign accum_we = accum_we_reg;
 
+   assign input_rd = state_counter == 1 && input_valid == 1 ? 1 : 0;
+   assign rest_rd  = state_counter == 2 && rest_valid == 1 ? 1 : 0;
+   assign check_rd = state_counter == 1 && O_ACK == 1 ? 1 : 0;
+   
    always @(posedge clk) begin
       if(reset == 1'b1) begin
 	 busy_reg <= 1'b0;
 	 state_counter <= 8'd0;
 	 input_counter <= 8'd0;
 
-	 input_rd <= 1'b0;
 	 check_we <= 1'b0;
-	 check_rd <= 1'b0;
 	 rest_we <= 1'b0;
-	 rest_rd <= 1'b0;
 	 
 	 I_CMD_INIT <= 1'b0;
 	 I_CMD_VALID <= 1'b0;
@@ -126,16 +127,12 @@ module search_and_add
 	      input_counter <= 8'd0;
 	      accum_we_reg <= 1'b0;
 	      I_CMD_VALID <= 1'b0;
-	      input_rd <= 1'b0;
 	      rest_we <= 1'b0;
-	      rest_rd <= 1'b0;
 	      check_we <= 1'b0;
-	      check_rd <= 1'b0;
 	   end
 	   
 	   // emit all input data
 	   1 : begin
-	      rest_rd <= 1'b0;
 
 	      // for all input data
 	      if(input_empty == 1'b1 && input_counter == 0) begin
@@ -144,7 +141,6 @@ module search_and_add
 
 	      // emit valid input data to Axonerve
 	      if(input_valid == 1'b1) begin
-		 input_rd <= 1'b1;
 		 I_CMD_VALID <= 1'b1;
 		 I_CMD_SEARCH <= 1'b1;
 		 I_KEY_DAT <= input_dout[128-1:0];
@@ -152,14 +148,12 @@ module search_and_add
 		 check_we <= 1'b1;
 		 check_din <= input_dout;
 	      end else begin
-		 input_rd <= 1'b0;
 		 I_CMD_VALID <= 1'b0;
 		 check_we <= 1'b0;
 	      end
 
 	      // treat response returned from Axonerve
 	      if(O_ACK == 1'b1) begin
-		 check_rd <= 1'b1; // consume a check entry
 		 if(O_SINGLE_HIT == 1'b1 || O_MULTI_HIT == 1'b1) begin
 		    // hit 
 		    accum_addr_reg[15:0] <= O_ENT_ADDR[15:0];
@@ -176,7 +170,6 @@ module search_and_add
 	      end else begin // if (O_ACK == 1'b1)
 		 accum_we_reg <= 1'b0;
 		 rest_we <= 1'b0;
-		 check_rd <= 1'b0;
 	      end
 
 	      if(O_ACK == 1'b0 && input_valid == 1'b1) begin
@@ -191,10 +184,8 @@ module search_and_add
 
 	   // add new data
 	   2 : begin
-	      input_rd <= 1'b0;
 	      rest_we <= 1'b0;
 	      check_we <= 1'b0;
-	      check_rd <= 1'b0;
 
 	      if(rest_empty == 1'b1 && input_counter == 0) begin
 		 state_counter <= 0; // done
@@ -212,13 +203,11 @@ module search_and_add
 
 	      // emit valid input data to Axonerve
 	      if(rest_valid == 1'b1) begin
-		 rest_rd <= 1'b1;
 		 I_CMD_VALID <= 1'b1;
 		 I_CMD_UPDATE <= 1'b1;
 		 I_KEY_DAT <= rest_dout[128-1:0];
 		 I_KEY_VALUE <= rest_dout[128+32-1:128];
 	      end else begin
-		 rest_rd <= 1'b0;
 		 I_CMD_VALID <= 1'b0;
 	      end // else: !if(rest_valid == 1'b1)
 
@@ -235,11 +224,8 @@ module search_and_add
 	      input_counter <= 0;
 	      accum_we_reg <= 1'b0;
 	      I_CMD_VALID <= 1'b0;
-	      input_rd <= 1'b0;
 	      rest_we <= 1'b0;
-	      rest_rd <= 1'b0;
 	      check_we <= 1'b0;
-	      check_rd <= 1'b0;
 	   end // case: default
 	   
 	 endcase // case (state_counter)
