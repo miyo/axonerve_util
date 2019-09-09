@@ -71,6 +71,7 @@ module search_and_add
 
    logic [7:0] 		    state_counter = 8'd0;
    logic [7:0] 		    input_counter = 8'd0;
+   logic [7:0] 		    rest_counter = 8'd0;
 
    logic 		    busy_reg;
    logic [31:0] 	    accum_addr_reg;
@@ -92,6 +93,7 @@ module search_and_add
 	 busy_reg <= 1'b0;
 	 state_counter <= 8'd0;
 	 input_counter <= 8'd0;
+	 rest_counter <= 8'd0;
 
 	 check_we <= 1'b0;
 	 rest_we <= 1'b0;
@@ -125,6 +127,7 @@ module search_and_add
 		 busy_reg <= 1'b0;
 	      end
 	      input_counter <= 8'd0;
+	      rest_counter <= 8'd0;
 	      accum_we_reg <= 1'b0;
 	      I_CMD_VALID <= 1'b0;
 	      rest_we <= 1'b0;
@@ -165,6 +168,7 @@ module search_and_add
 		    // no such data, add them
 		    accum_we_reg <= 1'b0;
 		    rest_we <= 1'b1;
+		    rest_counter <= rest_counter + 1;
 		    rest_din <= check_dout;
 		 end
 	      end else begin // if (O_ACK == 1'b1)
@@ -187,7 +191,7 @@ module search_and_add
 	      rest_we <= 1'b0;
 	      check_we <= 1'b0;
 
-	      if(rest_empty == 1'b1 && input_counter == 0) begin
+	      if(rest_empty == 1'b1 && rest_counter == 0) begin
 		 state_counter <= 0; // done
 		 busy_reg <= 1'b0;
 	      end
@@ -197,6 +201,7 @@ module search_and_add
 		 accum_din_reg[63:32] <= O_KEY_VALUE[31:0];
 		 accum_din_reg[31:0] <= 32'h1;
 		 accum_we_reg <= 1'b1;
+		 rest_counter <= rest_counter - 1;
 	      end else begin
 		 accum_we_reg <= 1'b0;
 	      end
@@ -211,12 +216,6 @@ module search_and_add
 		 I_CMD_VALID <= 1'b0;
 	      end // else: !if(rest_valid == 1'b1)
 
-	      if(rest_valid == 1'b1 && O_ACK == 1'b0) begin
-		 input_counter <= input_counter + 1;
-	      end else if(rest_valid == 1'b0 && O_ACK == 1'b1) begin
-		 input_counter <= input_counter - 1;
-	      end
-	      
 	   end // case: 2
 	   
 	   default: begin
