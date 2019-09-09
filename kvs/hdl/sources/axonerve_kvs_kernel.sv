@@ -361,6 +361,7 @@ module axonerve_kvs_kernel (
 		 IKEY_DAT <= key_data;
 		 IKEY_PRI <= key_pri;
 		 IEKEY_MSK  <= ekey_msk;
+		 IKEY_VALUE <= key_value;
 		 request_counter = request_counter + 1; // block
 	      end else if(cmd_valid == 1'b1 && cmd_write == 1'b1) begin
 		 {ICAM_IE, ICAM_WE, ICAM_RE, ICAM_SE} <= 4'b0000; // ICAM_WE will be asserted at next state

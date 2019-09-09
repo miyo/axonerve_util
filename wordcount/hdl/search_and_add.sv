@@ -146,6 +146,7 @@ module search_and_add
 	      if(input_valid == 1'b1) begin
 		 I_CMD_VALID <= 1'b1;
 		 I_CMD_SEARCH <= 1'b1;
+		 I_CMD_UPDATE <= 1'b0;
 		 I_KEY_DAT <= input_dout[128-1:0];
 		 I_KEY_VALUE <= input_dout[128+32-1:128];
 		 check_we <= 1'b1;
@@ -209,6 +210,7 @@ module search_and_add
 	      // emit valid input data to Axonerve
 	      if(rest_valid == 1'b1) begin
 		 I_CMD_VALID <= 1'b1;
+		 I_CMD_SEARCH <= 1'b0;
 		 I_CMD_UPDATE <= 1'b1;
 		 I_KEY_DAT <= rest_dout[128-1:0];
 		 I_KEY_VALUE <= rest_dout[128+32-1:128];
