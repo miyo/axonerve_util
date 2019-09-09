@@ -15,7 +15,7 @@ module search_and_add_sim();
    logic 	      full;
 
    logic [31:0]       accum_addr;
-   logic [64:0]       accum_din;
+   logic [63:0]       accum_din;
    logic 	      accum_we;
 
    initial begin
@@ -60,11 +60,32 @@ module search_and_add_sim();
 	   counter <= counter + 1;
 	end
 
-	100: begin
+	22: begin
+	   we <= 1'b0;
 	   kick <= 1'b1;
 	   counter <= counter + 1;
 	end
+
+	23: begin
+	   we <= 1'b0;
+	   kick <= 1'b0;
+           if(kick == 0 && busy == 0) begin
+	       counter <= counter + 1;
+           end 
+	end
 	
+	30: begin
+	    we <= 1'b1;
+            din <= {32'hDEADBA11, 32'hABADCAFE, 32'hFEFEFEFE, 32'h34343434, 32'h5a5a5a5a};
+	   counter <= counter + 1;
+	end
+	//31: begin
+	33: begin
+	   we <= 1'b0;
+	   kick <= 1'b1;
+	   counter <= counter + 1;
+	end
+
 	default: begin
 	   kick <= 1'b0;
            we <= 1'b0;
