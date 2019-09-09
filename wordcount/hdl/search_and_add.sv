@@ -12,6 +12,7 @@ module search_and_add
     input wire [128+32-1:0] din,
     input wire 		    we,
     output wire 	    full,
+    input wire [7:0]        data_num,
 
     output wire [31:0] 	    accum_addr,
     output wire [63:0] 	    accum_din,
@@ -127,7 +128,7 @@ module search_and_add
 	      end else begin
 		 busy_reg <= 1'b0;
 	      end
-	      input_counter <= 8'd0;
+	      input_counter <= data_num;
 	      rest_counter <= 8'd0;
 	      accum_we_reg <= 1'b0;
 	      I_CMD_VALID <= 1'b0;
@@ -139,7 +140,7 @@ module search_and_add
 	   1 : begin
 
 	      // for all input data
-	      if(input_empty == 1'b1 && input_counter == 0) begin
+	      if(input_counter == 0) begin
 		 state_counter <= state_counter + 1;
 	      end
 
@@ -178,11 +179,7 @@ module search_and_add
 		 rest_we <= 1'b0;
 	      end
 
-	      if(O_ACK == 1'b0 && input_valid == 1'b1) begin
-		 // increase the counter to receive
-		 input_counter <= input_counter + 1;
-	      end else if(O_ACK == 1'b1 && input_valid == 1'b0) begin
-		 // decrease the counter to receive
+	      if(O_ACK == 1'b1) begin
 		 input_counter <= input_counter - 1;
 	      end
 	      

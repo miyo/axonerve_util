@@ -13,10 +13,12 @@ module search_and_add_sim();
    logic [128+32-1:0] din;
    logic 	      we = 1'b0;
    logic 	      full;
+   logic [7:0] 	      data_num = 8'd0;
 
    logic [31:0]       accum_addr;
    logic [63:0]       accum_din;
    logic 	      accum_we;
+
 
    initial begin
       clk <= 1'b0;
@@ -63,6 +65,7 @@ module search_and_add_sim();
 	22: begin
 	   we <= 1'b0;
 	   kick <= 1'b1;
+	   data_num <= 2;
 	   counter <= counter + 1;
 	end
 
@@ -79,10 +82,34 @@ module search_and_add_sim();
             din <= {32'hDEADBA11, 32'hABADCAFE, 32'hFEFEFEFE, 32'h34343434, 32'h5a5a5a5a};
 	   counter <= counter + 1;
 	end
-	//31: begin
-	33: begin
+	31: begin
 	   we <= 1'b0;
 	   kick <= 1'b1;
+	   data_num <= 1;
+	   counter <= counter + 1;
+	end
+	32: begin
+	   we <= 1'b0;
+	   kick <= 1'b0;
+           if(kick == 0 && busy == 0) begin
+	       counter <= counter + 1;
+           end 
+	end
+
+	40: begin
+	   we <= 1'b1;
+           din <= {32'h11C0FFEE, 32'h01234567, 32'h89abcdef, 32'h01234567, 32'h89abcdef};
+	   counter <= counter + 1;
+	end
+	41: begin
+	   we <= 1'b1;
+           din <= {32'hDEADBEEF, 32'hABADCAFE, 32'hFEFEFEFE, 32'h34343434, 32'h5a5a5a5a};
+	   counter <= counter + 1;
+	end
+	42: begin
+	   we <= 1'b0;
+	   kick <= 1'b1;
+	   data_num <= 2;
 	   counter <= counter + 1;
 	end
 
@@ -109,6 +136,7 @@ module search_and_add_sim();
 		     .din(din),
 		     .we(we),
 		     .full(full),
+		     .data_num(data_num),
 		     
 		     .accum_addr(accum_addr),
 		     .accum_din(accum_din),
