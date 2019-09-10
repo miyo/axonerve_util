@@ -78,6 +78,7 @@
 		 busy_reg <= 1;
 		 num_of_words_reg <= num_of_words;
 		 memory_offset_reg <= memory_offset;
+		 state_counter <= state_counter + 1;
 	      end else begin
 		 busy_reg <= 0;
 	      end

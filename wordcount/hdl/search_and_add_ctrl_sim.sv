@@ -40,6 +40,7 @@ module search_and_add_ctrl_sim ();
 
 	0: begin
 	   reset = 1'b1;
+	   kick <= 1'b0;
 	   counter <= counter + 1;
 	end
 
@@ -62,6 +63,7 @@ module search_and_add_ctrl_sim ();
 	
 	default: begin
 	   counter <= counter + 1;
+	   kick <= 1'b0;
 	end
 	
       endcase
