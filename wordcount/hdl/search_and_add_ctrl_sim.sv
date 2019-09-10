@@ -9,6 +9,7 @@ module search_and_add_ctrl_sim ();
    logic           busy;
    logic [31:0]    num_of_words;
    logic [64-1:0]  memory_offset;
+   logic 	   axonerve_ready;
 
    logic 	   ctrl_start;
    logic 	   ctrl_done;
@@ -19,9 +20,9 @@ module search_and_add_ctrl_sim ();
    logic [512-1:0] m_axis_tdata;
    logic 	   m_axis_tlast;
 
-   logic wire [31:0] accum_addr;
-   logic wire [63:0] accum_din;
-   logic wire 	     accum_we;
+   logic [31:0] accum_addr;
+   logic [63:0] accum_din;
+   logic        accum_we;
 
    initial begin
       clk <= 1'b0;
@@ -39,6 +40,7 @@ module search_and_add_ctrl_sim ();
 
 	0: begin
 	   reset = 1'b1;
+	   kick <= 1'b0;
 	   counter <= counter + 1;
 	end
 
@@ -61,18 +63,19 @@ module search_and_add_ctrl_sim ();
 	
 	default: begin
 	   counter <= counter + 1;
+	   kick <= 1'b0;
 	end
 	
       endcase
       
    end
    
-   m_axis_tvalid = 1;
-   m_axis_tdata = { 32'h01234567, 32'h89abcdef, 32'h01234567, 32'h89abcdef,
-                    32'hdeadbeef, 32'hdeadbeef, 32'hdeadbeef, 32'hdeadbeef,
-                    32'habadcafe, 32'habadcafe, 32'habadcafe, 32'habadcafe,
-                    32'h11c0ffee, 32'h11c0ffee, 32'h11c0ffee, 32'h11c0ffee };
-   m_axis_tlast = 1;
+   assign m_axis_tvalid = 1;
+   assign m_axis_tdata = { 32'h01234567, 32'h89abcdef, 32'h01234567, 32'h89abcdef,
+                           32'hdeadbeef, 32'hdeadbeef, 32'hdeadbeef, 32'hdeadbeef,
+                           32'habadcafe, 32'habadcafe, 32'habadcafe, 32'habadcafe,
+                           32'h11c0ffee, 32'h11c0ffee, 32'h11c0ffee, 32'h11c0ffee };
+   assign m_axis_tlast = 1;
 
    search_and_add_ctrl DUT (
 			    .clk(clk),
@@ -82,6 +85,7 @@ module search_and_add_ctrl_sim ();
 			    .busy(busy),
 			    .num_of_words(num_of_words),
 			    .memory_offset(memory_offset),
+			    .axonerve_ready(axonerve_ready),
 			    
 			    .ctrl_start(ctrl_start),
 			    .ctrl_done(ctrl_done),

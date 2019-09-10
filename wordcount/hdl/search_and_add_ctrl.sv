@@ -1,75 +1,70 @@
 `default_nettype none
 
-module search_and_add_ctrl
-  #(
-    parameter integer MAX_WORDS = 16
-    )
-  (
-   input wire 		clk,
-   input wire 		reset,
+  module search_and_add_ctrl
+    #(
+      parameter integer MAX_WORDS = 16
+      )
+   (
+    input wire 		 clk,
+    input wire 		 reset,
    
-   input wire 		kick,
-   output wire 		busy,
-   input wire [31:0] 	num_of_words,
-   input wire [64-1:0] 	memory_offset,
-   output wire 		axonerve_ready,
+    input wire 		 kick,
+    output wire 	 busy,
+    input wire [31:0] 	 num_of_words,
+    input wire [64-1:0]  memory_offset,
+    output wire 	 axonerve_ready,
    
-   // to/from axonerve_kvs_rtl_example_axi_read_master
-   output wire 		ctrl_start,
-   input wire 		ctrl_done,
-   output wire [64-1:0] ctrl_addr_offset,
-   output wire [64-1:0] ctrl_xfer_size_in_bytes,
-   input wire 		m_axis_tvalid,
-   output wire 		m_axis_tready,
-   input wire [512-1:0] m_axis_tdata,
-   input wire 		m_axis_tlast,
+    // to/from axonerve_kvs_rtl_example_axi_read_master
+    output wire 	 ctrl_start,
+    input wire 		 ctrl_done,
+    output wire [64-1:0] ctrl_addr_offset,
+    output wire [64-1:0] ctrl_xfer_size_in_bytes,
+    input wire 		 m_axis_tvalid,
+    output wire 	 m_axis_tready,
+    input wire [512-1:0] m_axis_tdata,
+    input wire 		 m_axis_tlast,
    
-   // output to accum_array
-   output wire [31:0] 	accum_addr,
-   output wire [63:0] 	accum_din,
-   output wire 		accum_we
-   );
+    // output to accum_array
+    output wire [31:0] 	 accum_addr,
+    output wire [63:0] 	 accum_din,
+    output wire 	 accum_we
+    );
    
-   logic 	      ctrl_start_reg;
-   logic [64-1:0]     ctrl_addr_offset_reg;
-   logic [512-1:0]    ctrl_xfer_size_in_bytes_reg;
+   logic 		 ctrl_start_reg;
+   logic [64-1:0] 	 ctrl_addr_offset_reg;
+   logic [512-1:0] 	 ctrl_xfer_size_in_bytes_reg;
 
    assign ctrl_start = ctrl_start_reg;
    assign ctrl_addr_offset = ctrl_addr_offset_reg;
    assign ctrl_xfer_size_in_bytes = ctrl_xfer_size_in_bytes_reg;
 
-   // AXI4-Stream master interface
-   logic 			      m_axis_tvalid;
-   logic 			      m_axis_tready;
-   logic [64-1:0] 		      m_axis_tdata;
-   logic 			      m_axis_tlast;
-
-   logic 			      search_and_add_kick;
-   logic 			      search_and_add_busy;
-   logic [128+32-1:0] 		      search_and_add_din;
-   logic 			      search_and_add_we;
-   logic 			      search_and_add_full;
-   logic [7:0] 			      search_and_add_data_num;
+   logic 		 search_and_add_kick;
+   logic 		 search_and_add_busy;
+   logic [128+32-1:0] 	 search_and_add_din;
+   logic 		 search_and_add_we;
+   logic 		 search_and_add_full;
+   logic [7:0] 		 search_and_add_data_num;
    
-   logic 			      conv_buf_rd;
-   logic 			      conv_buf_valid;
-   logic [512-1:0] 		      conv_buf_dout;
+   logic 		 conv_buf_full;
+   logic 		 conv_buf_rd;
+   logic 		 conv_buf_valid;
+   logic [512-1:0] 	 conv_buf_dout;
 
-   logic [31:0] 		      data_counter;
-   logic [7:0] 			      state_counter;
-   logic 			      busy_reg;
+   logic [31:0] 	 data_counter;
+   logic [7:0] 		 state_counter;
+   logic 		 busy_reg;
    
-   logic [31:0] 		      num_of_words_reg;
-   logic [64-1:0] 		      memory_offset_reg;
-   logic [31:0] 		      target_words;
+   logic [31:0] 	 num_of_words_reg;
+   logic [64-1:0] 	 memory_offset_reg;
+   logic [31:0] 	 target_words;
    
-   logic [512-1-128:0] 		      conv_buf_reg;
+   logic [512-1-128:0] 	 conv_buf_reg;
 
-   logic [7:0] 			      input_counter;
+   logic [7:0] 		 input_counter;
    
    assign busy = busy_reg;
 
-   always @posedge(clk) begin
+   always_ff @(posedge clk) begin
       if(reset == 1) begin
 	 state_counter <= 0;
 	 busy_reg <= 0;
@@ -79,13 +74,14 @@ module search_and_add_ctrl
 
 	 case(state_counter)
 	   0: begin
-	     if(ap_start == 1)begin
-		busy_reg <= 1;
-		num_of_words_reg <= num_of_words;
-		memory_offset_reg <= memory_offset;
-	     end else begin
-		busy_reg <= 0;
-	     end
+	      if(kick == 1)begin
+		 busy_reg <= 1;
+		 num_of_words_reg <= num_of_words;
+		 memory_offset_reg <= memory_offset;
+		 state_counter <= state_counter + 1;
+	      end else begin
+		 busy_reg <= 0;
+	      end
 	      ctrl_start_reg <= 0;
 	      data_counter <= 0;
 	      search_and_add_we <= 0;
@@ -225,7 +221,7 @@ module search_and_add_ctrl
      (.clk(clk),
       .reset(reset),
       .ready(ready),
-    
+      
       .kick(search_and_add_kick),
       .busy(search_and_add_busy),
       .data_num(search_and_add_data_num),
@@ -238,5 +234,7 @@ module search_and_add_ctrl
       .accum_din(accum_din),
       .accum_we(accum_we)
       );
+
+endmodule // search_and_add_ctrl
 
 `default_nettype wire
