@@ -1,9 +1,9 @@
 `default_nettype none
 
-  module search_and_add_ctrl
-    #(
-      parameter integer MAX_WORDS = 16
-      )
+module search_and_add_ctrl
+  #(
+    parameter integer MAX_WORDS = 16
+    )
    (
     input wire 		 clk,
     input wire 		 reset,
@@ -178,6 +178,7 @@
 	      search_and_add_we <= 0;
 	      search_and_add_kick <= 1;
 	      search_and_add_data_num <= input_counter;
+	      input_counter <= 0;
 	      state_counter <= state_counter + 1;
 	   end
 
