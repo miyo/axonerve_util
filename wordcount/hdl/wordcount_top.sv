@@ -1,4 +1,6 @@
-module search_and_add_ctrl
+`default_nettype none
+
+module wordcout_top
   (
    input wire 		 clk,
    input wire 		 reset,
@@ -156,3 +158,5 @@ module search_and_add_ctrl
       );
    
 endmodule // search_and_add_ctrl
+
+`default_nettype wire
