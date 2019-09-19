@@ -59,7 +59,7 @@ module wordcout_top_sim ();
 	end
 
 	20: begin
-	   if(axonerve_ready == 1) begin
+	   if(busy == 0) begin
 	      counter <= counter + 1;
 	   end
 	end
