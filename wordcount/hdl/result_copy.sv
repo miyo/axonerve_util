@@ -6,12 +6,12 @@ module simple_result_copy(
 
        input wire 	      kick,
        output logic 	      busy,
-       input wire [31:0]     offset,
-       input wire [31:0]     words,
-       input wire [64-1:0]   memory_addr,
+       input wire [31:0]      offset,
+       input wire [31:0]      words,
+       input wire [64-1:0]    memory_addr,
 
        output logic [31:0]    addr,
-       input wire [64-1:0]   q,
+       input wire [64-1:0]    q,
 
        output logic 	      ctrl_start,
        input wire 	      ctrl_done,

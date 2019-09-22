@@ -134,8 +134,8 @@ module search_and_add_ctrl
 		 state_counter <= 6;
 		 search_and_add_we <= 0;
 	      end else begin
-		 conv_buf_reg <= {128'd0, conv_buf_dout[383:128]};
-		 search_and_add_din <= {data_counter, conv_buf_dout[127:0]};
+		 conv_buf_reg <= {128'd0, conv_buf_reg[383:128]};
+		 search_and_add_din <= {data_counter, conv_buf_reg[127:0]};
 		 search_and_add_we <= 1;
 		 input_counter <= input_counter + 1;
 		 data_counter <= data_counter + 1;
@@ -149,8 +149,8 @@ module search_and_add_ctrl
 		 state_counter <= 6;
 		 search_and_add_we <= 0;
 	      end else begin
-		 conv_buf_reg <= {128'd0, conv_buf_dout[383:128]};
-		 search_and_add_din <= {data_counter, conv_buf_dout[127:0]};
+		 conv_buf_reg <= {128'd0, conv_buf_reg[383:128]};
+		 search_and_add_din <= {data_counter, conv_buf_reg[127:0]};
 		 search_and_add_we <= 1;
 		 input_counter <= input_counter + 1;
 		 data_counter <= data_counter + 1;
@@ -164,8 +164,8 @@ module search_and_add_ctrl
 		 state_counter <= 6;
 		 search_and_add_we <= 0;
 	      end else begin
-		 conv_buf_reg <= {128'd0, conv_buf_dout[383:128]};
-		 search_and_add_din <= {data_counter, conv_buf_dout[127:0]};
+		 conv_buf_reg <= {128'd0, conv_buf_reg[383:128]};
+		 search_and_add_din <= {data_counter, conv_buf_reg[127:0]};
 		 search_and_add_we <= 1;
 		 input_counter <= input_counter + 1;
 		 data_counter <= data_counter + 1;
