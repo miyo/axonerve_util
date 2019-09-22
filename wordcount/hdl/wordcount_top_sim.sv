@@ -69,10 +69,11 @@ module wordcout_top_sim ();
 	   command <= 'd1;
 	   num_of_words = 128;
 	   global_memory_offset = {32'h00000000, 32'h80000000};
-	   state_counter <= state_counter + 1;
+	   counter <= counter + 1;
 	end
 
 	23: begin
+	   kick <= 0;
 	   if(busy == 0) begin
 	      counter <= counter + 1;
 	   end
