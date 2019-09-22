@@ -81,6 +81,10 @@ module axonerve_wordcount_rtl_kernel_sim();
 	   end
 	end
 
+	32: begin
+	   $finish;
+	end
+
 	default: begin
 	   counter <= counter + 1;
 	end
