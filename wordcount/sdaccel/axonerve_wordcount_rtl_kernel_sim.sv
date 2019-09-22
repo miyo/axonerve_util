@@ -71,9 +71,11 @@ module axonerve_wordcount_rtl_kernel_sim();
 	
 	18: begin
 	   ap_start <= 1;
+	   command <= 3;
 	   counter <= counter + 1;
 	end
 	19: begin
+	   ap_start <= 0;
 	   if(ap_done == 1) begin
 	      counter <= counter + 1;
 	   end

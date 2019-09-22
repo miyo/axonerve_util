@@ -69,6 +69,28 @@ logic                                ap_start_pulse                ;
 logic [LP_NUM_EXAMPLES-1:0]          ap_done_i                     ;
 logic [LP_NUM_EXAMPLES-1:0]          ap_done_r                      = {LP_NUM_EXAMPLES{1'b0}};
 
+(* KEEP = "yes" *) logic wordcount_kick;
+(* KEEP = "yes" *) logic wordcount_busy;
+
+// to/from axonerve_kvs_rtl_example_axi_read_master
+logic  			    reader_ctrl_start;
+logic 			    reader_ctrl_done;
+logic [64-1:0] 		    reader_ctrl_addr_offset;
+logic [64-1:0] 		    reader_ctrl_xfer_size_in_bytes;
+logic			    reader_s_axis_tvalid;
+logic 			    reader_s_axis_tready;
+logic [512-1:0] 		    reader_s_axis_tdata;
+logic 			    reader_s_axis_tlast;
+
+// to/from axonerve_kvs_rtl_example_axi_write_master
+logic			    writer_ctrl_start;
+logic			    writer_ctrl_done;
+logic [64-1:0] 		    writer_ctrl_addr_offset;
+logic [64-1:0] 		    writer_ctrl_xfer_size_in_bytes;
+logic 			    writer_m_axis_tvalid;
+logic 			    writer_m_axis_tready;
+logic [512-1:0] 		    writer_m_axis_tdata;
+   
 ///////////////////////////////////////////////////////////////////////////////
 // Begin RTL
 ///////////////////////////////////////////////////////////////////////////////
@@ -116,28 +138,6 @@ assign ap_done = &ap_done_r;
 
 assign kernel_clk = ap_clk;
 assign kernel_rst = areset;
-
-   logic 			    wordcount_kick;
-   logic 			    wordcount_busy;
-
-   // to/from axonerve_kvs_rtl_example_axi_read_master
-   logic  			    reader_ctrl_start;
-   logic 			    reader_ctrl_done;
-   logic [64-1:0] 		    reader_ctrl_addr_offset;
-   logic [64-1:0] 		    reader_ctrl_xfer_size_in_bytes;
-   logic			    reader_s_axis_tvalid;
-   logic 			    reader_s_axis_tready;
-   logic [512-1:0] 		    reader_s_axis_tdata;
-   logic 			    reader_s_axis_tlast;
-  
-   // to/from axonerve_kvs_rtl_example_axi_write_master
-   logic			    writer_ctrl_start;
-   logic			    writer_ctrl_done;
-   logic [64-1:0] 		    writer_ctrl_addr_offset;
-   logic [64-1:0] 		    writer_ctrl_xfer_size_in_bytes;
-   logic 			    writer_m_axis_tvalid;
-   logic 			    writer_m_axis_tready;
-   logic [512-1:0] 		    writer_m_axis_tdata;
 
    assign wordcount_kick = ap_start_pulse;
    assign ap_done_i[0] = ~wordcount_busy;
