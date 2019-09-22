@@ -1,6 +1,8 @@
 `default_nettype none
 module axonerve_wordcount_rtl_kernel #(
-  parameter integer C_M00_AXI_ADDR_WIDTH = 64 ,
+  parameter integer C_M_AXI_ADDR_WIDTH = 64,
+  parameter integer C_M_AXI_DATA_WIDTH = 512,
+  parameter integer C_M00_AXI_ADDR_WIDTH = 64,
   parameter integer C_M00_AXI_DATA_WIDTH = 512,
   parameter integer C_XFER_SIZE_WIDTH = 32,
   parameter integer C_ADDER_BIT_WIDTH = 32
@@ -45,6 +47,7 @@ timeprecision 1ps;
 ///////////////////////////////////////////////////////////////////////////////
 // Local Parameters
 ///////////////////////////////////////////////////////////////////////////////
+localparam integer LP_NUM_EXAMPLES = 1;
 localparam integer LP_DW_BYTES             = C_M_AXI_DATA_WIDTH/8;
 localparam integer LP_AXI_BURST_LEN        = 4096/LP_DW_BYTES < 256 ? 4096/LP_DW_BYTES : 256;
 localparam integer LP_LOG_BURST_LEN        = $clog2(LP_AXI_BURST_LEN);
@@ -176,7 +179,7 @@ assign kernel_rst = areset;
 						    .C_INCLUDE_DATA_FIFO ( 1                     )
 						    )
    inst_axi_read_master (
-			 .aclk                    ( aclk                    ) ,
+			 .aclk                    ( ap_clk                  ) ,
 			 .areset                  ( areset                  ) ,
 			 .ctrl_start              ( reader_ctrl_start       ) ,
 			 .ctrl_done               ( reader_ctrl_done        ) ,
@@ -207,7 +210,7 @@ assign kernel_rst = areset;
 						     .C_INCLUDE_DATA_FIFO ( 1                     )
 						     )
    inst_axi_write_master (
-			  .aclk                    ( aclk                    ) ,
+			  .aclk                    ( ap_clk                  ) ,
 			  .areset                  ( areset                  ) ,
 			  .ctrl_start              ( writer_ctrl_start       ) ,
 			  .ctrl_done               ( writer_ctrl_done        ) ,
