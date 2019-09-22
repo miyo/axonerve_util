@@ -64,27 +64,29 @@ module accum_array
 	   0: begin
 	      if(clear_kick == 1) begin
 		 clear_state_counter = clear_state_counter + 1;
-		 clear_busy = 1;
-		 clear_running = 1;
-		 clear_addr = 0;
-		 clear_we = 1;
-		 clear_din = 0;
+		 clear_busy <= 1;
+		 clear_running <= 1;
+		 clear_addr <= 0;
+		 clear_we <= 1;
+		 clear_din <= 0;
 	      end else begin
-		 clear_busy = 0;
-		 clear_running = 0;
-		 clear_we = 0;
+		 clear_busy <= 0;
+		 clear_running <= 0;
+		 clear_we <= 0;
 	      end
 	   end // case: 0
 	   1: begin
 	      if(&(clear_addr[ADDR_WIDTH-1:0]) == 1) begin
 		 clear_state_counter <= 0;
+		 clear_we <= 0;
+	      end else begin
+		 clear_we <= 1;
 	      end
 	      clear_addr <= clear_addr + 1;
-	      clear_we <= 1;
 	      clear_din <= 0;
 	   end
 	   default : begin
-	      clear_running = 0;
+	      clear_running <= 0;
 	   end
 	 endcase
       end
