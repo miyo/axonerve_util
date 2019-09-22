@@ -41,6 +41,15 @@ module wordcout_top_sim ();
       end
    end
 
+   always @(posedge clk) begin
+      if(writer_ctrl_start == 1) begin
+	 writer_ctrl_done <= 1;
+      end else begin
+	 writer_ctrl_done <= 0;
+      end
+   end
+   assign writer_m_axis_tready = 1;
+
    logic [31:0] counter = 32'h0;
    
    always @(posedge clk) begin
