@@ -94,8 +94,9 @@ always @(posedge ap_clk) begin
     ap_idle_r <= 1'b1;
   end
   else begin
-    ap_idle_r <= ap_done ? 1'b1 :
-      ap_start_pulse ? 1'b0 : ap_idle;
+     ap_idle_r <= ~wordcount_busy ? 1'b0 :
+		  ap_done ? 1'b1 :
+		  ap_start_pulse ? 1'b0 : ap_idle;
   end
 end
 
@@ -137,6 +138,9 @@ assign kernel_rst = areset;
    logic 			    writer_m_axis_tvalid;
    logic 			    writer_m_axis_tready;
    logic [512-1:0] 		    writer_m_axis_tdata;
+
+   assign wordcount_kick = ap_start_pulse;
+   assign ap_done_i[0] = ~wordcount_busy;
 
    wordcout_top wordcount_top_i
      (
