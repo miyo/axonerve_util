@@ -43,6 +43,8 @@ module wordcout_top
    logic [63:0] 	 search_and_add_accum_din;
    logic [0:0] 		 search_and_add_accum_we;
 
+   logic 		 accum_clear_kick;
+   logic 		 accum_clear_busy;
    logic [31:0] 	 accum_addr;
    logic [63:0] 	 accum_din;
    logic [0:0] 		 accum_we;
@@ -66,6 +68,7 @@ module wordcout_top
       if(reset == 1) begin
 	 search_and_add_kick <= 0;
 	 result_copy_kick <= 0;
+	 accum_clear_kick <= 0;
 	 top_busy <= 0;
 	 state_counter <= 'd0;
       end else begin
@@ -85,12 +88,18 @@ module wordcout_top
 		    search_and_add_num_of_words <= num_of_words;
 		    search_and_add_memory_offset <= global_memory_offset;
 		    result_copy_kick <= 0;
+		    accum_clear_kick <= 0;
 		 end else if(command == 2) begin
 		    result_copy_kick <= 1;
 		    result_copy_offset <= 0;
 		    result_copy_words <= num_of_words;
 		    result_copy_memory_offset <= global_memory_offset;
 		    search_and_add_kick <= 0;
+		    accum_clear_kick <= 0;
+		 end else if(command == 3) begin
+		    accum_clear_kick <= 1;
+		    search_and_add_kick <= 0;
+		    result_copy_kick <= 0;
 		 end else begin
 		    search_and_add_kick <= 0;
 		    result_copy_kick <= 0;
@@ -105,7 +114,13 @@ module wordcout_top
 	   2: begin
 	      search_and_add_kick <= 0;
 	      result_copy_kick <= 0;
-	      if(~(search_and_add_busy || result_copy_busy || result_copy_kick || search_and_add_kick)) begin
+	      accum_clear_kick <= 0;
+	      if(~(
+		      search_and_add_busy || search_and_add_kick
+		   || result_copy_busy || result_copy_kick
+		   || accum_clear_busy || accum_clear_kick
+		   )
+		 ) begin
 		 state_counter <= 'd1;
 		 top_busy <= 0;
 	      end
@@ -165,6 +180,9 @@ module wordcout_top
       .clk(clk),
       .reset(reset),
       
+      .clear_kick(accum_clear_kick),
+      .clear_busy(accum_clear_busy),
+
       .addr(accum_addr),
       .din(accum_din),
       .we(accum_we),
