@@ -79,7 +79,7 @@ nothing:
 #
 
 host.exe: libaxonerve_wordcount.so host.o
-	g++ host.o -o host -L. -laxonerve_wordcount -lxilinxopencl -lpthread -lrt -lstdc++ -L/opt/Xilinx/SDx/2018.3.op2405991/runtime/lib/x86_64
+	g++ host.o -o host -L. -laxonerve_wordcount -lxilinxopencl -lpthread -lrt -lstdc++ -L/opt/Xilinx/SDx/2018.3.op2405991/runtime/lib/x86_64 -L/opt/xilinx/xrt/lib/
 
 libaxonerve_wordcount_jni.so: ./axonerve_wordcount.o ./xcl2.o ./axonerve_wordcount_jni.o 
 	$(SDX_CXX) $(CXXFLAGS) -shared -fPIC -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.3.op2405991/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.3.op2405991/include/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/linux/ -O2 -Wall -fmessage-length=0 -o "$@" -Wl,-soname,libaxonerve_wordcount_jni.so axonerve_wordcount_jni.o xcl2.o axonerve_wordcount.o -lxilinxopencl -lpthread -lrt -lstdc++ -L/opt/Xilinx/SDx/2018.3.op2405991/runtime/lib/x86_64 -L/opt/xilinx/xrt/lib/
