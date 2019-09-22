@@ -74,12 +74,42 @@ module wordcout_top_sim ();
 
 	23: begin
 	   kick <= 0;
-	   if(busy == 0) begin
+	   if(kick == 0 && busy == 0) begin
 	      counter <= counter + 1;
 	   end
 	end
 
-	24: begin
+	26: begin
+	   kick <= 1'b1;
+	   command <= 'd2;
+	   num_of_words = 128;
+	   global_memory_offset = {32'h00000000, 32'h80000000};
+	   counter <= counter + 1;
+	end
+	
+	27: begin
+	   kick <= 0;
+	   if(kick == 0 && busy == 0) begin
+	      counter <= counter + 1;
+	   end
+	end
+
+	28: begin
+	   kick <= 1'b1;
+	   command <= 'd3;
+	   num_of_words = 128;
+	   global_memory_offset = {32'h00000000, 32'h80000000};
+	   counter <= counter + 1;
+	end
+	
+	29: begin
+	   kick <= 0;
+	   if(kick == 0 && busy == 0) begin
+	      counter <= counter + 1;
+	   end
+	end
+
+	30: begin
 	   $finish;
 	end
 	
