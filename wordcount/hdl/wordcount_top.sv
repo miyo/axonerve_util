@@ -4,7 +4,7 @@ module wordcout_top
   (
    input wire 		 clk,
    input wire 		 reset,
-   
+  
    input wire 		 kick,
    output wire 		 busy,
 
@@ -12,7 +12,7 @@ module wordcout_top
    input wire [31:0] 	 command,
    input wire [31:0] 	 num_of_words,
    input wire [64-1:0] 	 global_memory_offset,
-   
+  
    // to/from axonerve_kvs_rtl_example_axi_read_master
    output wire 		 reader_ctrl_start,
    input wire 		 reader_ctrl_done,
@@ -22,7 +22,7 @@ module wordcout_top
    output wire 		 reader_s_axis_tready,
    input wire [512-1:0]  reader_s_axis_tdata,
    input wire 		 reader_s_axis_tlast,
-   
+  
    // to/from axonerve_kvs_rtl_example_axi_write_master
    output wire 		 writer_ctrl_start,
    input wire 		 writer_ctrl_done,
@@ -84,14 +84,21 @@ module wordcout_top
 		    search_and_add_kick <= 1;
 		    search_and_add_num_of_words <= num_of_words;
 		    search_and_add_memory_offset <= global_memory_offset;
+		    result_copy_kick <= 0;
 		 end else if(command == 2) begin
 		    result_copy_kick <= 1;
 		    result_copy_offset <= 0;
 		    result_copy_words <= num_of_words;
 		    result_copy_memory_offset <= global_memory_offset;
+		    search_and_add_kick <= 0;
+		 end else begin
+		    search_and_add_kick <= 0;
+		    result_copy_kick <= 0;
 		 end
 	      end else begin // if (kick == 1)
 		 top_busy <= 0;
+		 search_and_add_kick <= 0;
+		 result_copy_kick <= 0;
 	      end // else: !if(kick == 1)
 	   end // case: 1
 	   
@@ -104,17 +111,16 @@ module wordcout_top
 	      end
 	   end
 
-	   default:
-	     state_counter <= 'd0;
+	   default: begin
+	      state_counter <= 'd0;
+	   end
 	   
-	end else begin
-	   top_busy <= 0;
-	   search_and_add_kick <= 0;
-	   result_copy_kick <= 0;
-	end
-      end
-   end
+	 endcase // case (state_counter)
+	 
+      end // else: !if(reset == 1)
+   end // always_ff @ (posedge clk)
    
+
    assign busy = ~(axonerve_ready) || search_and_add_busy || result_copy_busy || top_busy;
    assign accum_addr = command_reg == 1 ? search_and_add_accum_addr :
 		       command_reg == 2 ? result_copy_addr :
@@ -124,7 +130,7 @@ module wordcout_top
    assign accum_din = command_reg == 1 ? search_and_add_accum_din :
 		      0;
    assign result_copy_q = accum_q;
-   
+
    search_and_add_ctrl #(.MAX_WORDS(16))
    search_and_add_ctrl_i
      (
@@ -158,37 +164,37 @@ module wordcout_top
      (
       .clk(clk),
       .reset(reset),
-    
+      
       .addr(accum_addr),
       .din(accum_din),
       .we(accum_we),
       .q(accum_q)
-    );
+      );
 
    simple_result_copy
-   simple_result_copy_i
-     (
-      .clk(clk),
-      .reset(reset),
-      
-      .kick(result_copy_kick),
-      .busy(result_copy_busy),
-      .offset(result_copy_offset),
-      .words(result_copy_words),
-      .memory_addr(result_copy_memory_offset),
+     simple_result_copy_i
+       (
+	.clk(clk),
+	.reset(reset),
+       
+	.kick(result_copy_kick),
+	.busy(result_copy_busy),
+	.offset(result_copy_offset),
+	.words(result_copy_words),
+	.memory_addr(result_copy_memory_offset),
 
-      .addr(result_copy_addr),
-      .q(result_copy_q),
+	.addr(result_copy_addr),
+	.q(result_copy_q),
 
-      .ctrl_start(writer_ctrl_start),
-      .ctrl_done(writer_ctrl_done),
-      .ctrl_addr_offset(writer_ctrl_addr_offset),
-      .ctrl_xfer_size_in_bytes(writer_ctrl_xfer_size_in_bytes),
-      .m_axis_tvalid(writer_m_axis_tvalid),
-      .m_axis_tready(writer_m_axis_tready),
-      .m_axis_tdata(writer_m_axis_tdata)
-      );
-   
+	.ctrl_start(writer_ctrl_start),
+	.ctrl_done(writer_ctrl_done),
+	.ctrl_addr_offset(writer_ctrl_addr_offset),
+	.ctrl_xfer_size_in_bytes(writer_ctrl_xfer_size_in_bytes),
+	.m_axis_tvalid(writer_m_axis_tvalid),
+	.m_axis_tready(writer_m_axis_tready),
+	.m_axis_tdata(writer_m_axis_tdata)
+	);
+
 endmodule // search_and_add_ctrl
 
 `default_nettype wire
