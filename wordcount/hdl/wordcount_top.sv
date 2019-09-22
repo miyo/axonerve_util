@@ -59,35 +59,67 @@ module wordcout_top
 
    logic [31:0] 	 command_reg;
 
+   logic 		 top_busy;
+   logic [7:0] 		 state_counter = 0;
+
    always_ff @(posedge clk) begin
       if(reset == 1) begin
 	 search_and_add_kick <= 0;
 	 result_copy_kick <= 0;
+	 top_busy <= 0;
+	 state_counter <= 'd0;
       end else begin
-	if(kick == 1) begin
-	   command_reg <= command;
-	   if(command == 1) begin
-	      search_and_add_kick <= 1;
-	      search_and_add_num_of_words <= num_of_words;
-	      search_and_add_memory_offset <= global_memory_offset;
-	   end else if(command == 2) begin
-	      result_copy_kick <= 1;
-	      result_copy_offset <= 0;
-	      result_copy_words <= num_of_words;
-	      result_copy_memory_offset <= global_memory_offset;
+	 case(state_counter)
+	   0: begin
+	      if(axonerve_ready == 1) begin
+		 state_counter <= state_counter + 1;
+	      end
 	   end
+	   1: begin
+	      if(kick == 1) begin
+		 top_busy <= 1;
+		 command_reg <= command;
+		 state_counter <= state_counter + 1;
+		 if(command == 1) begin
+		    search_and_add_kick <= 1;
+		    search_and_add_num_of_words <= num_of_words;
+		    search_and_add_memory_offset <= global_memory_offset;
+		 end else if(command == 2) begin
+		    result_copy_kick <= 1;
+		    result_copy_offset <= 0;
+		    result_copy_words <= num_of_words;
+		    result_copy_memory_offset <= global_memory_offset;
+		 end
+	      end else begin // if (kick == 1)
+		 top_busy <= 0;
+	      end // else: !if(kick == 1)
+	   end // case: 1
+	   
+	   2: begin
+	      search_and_add_kick <= 0;
+	      result_copy_kick <= 0;
+	      if(~(search_and_add_busy || result_copy_busy || result_copy_kick || search_and_add_kick)) begin
+		 state_counter <= 'd1;
+		 top_busy <= 0;
+	      end
+	   end
+
+	   default:
+	     state_counter <= 'd0;
+	   
 	end else begin
+	   top_busy <= 0;
 	   search_and_add_kick <= 0;
 	   result_copy_kick <= 0;
 	end
       end
    end
    
-   assign busy = ~(axonerve_ready) || search_and_add_busy || result_copy_busy;
+   assign busy = ~(axonerve_ready) || search_and_add_busy || result_copy_busy || top_busy;
    assign accum_addr = command_reg == 1 ? search_and_add_accum_addr :
 		       command_reg == 2 ? result_copy_addr :
 		       0;
-   assign accum_we = command_reg == 1 ? search_and_add_accum_addr :
+   assign accum_we = command_reg == 1 ? search_and_add_accum_we[0] :
 		     0;
    assign accum_din = command_reg == 1 ? search_and_add_accum_din :
 		      0;
