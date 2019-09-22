@@ -1,7 +1,9 @@
 `default_nettype none
 module axonerve_wordcount_rtl_kernel #(
   parameter integer C_M00_AXI_ADDR_WIDTH = 64 ,
-  parameter integer C_M00_AXI_DATA_WIDTH = 512
+  parameter integer C_M00_AXI_DATA_WIDTH = 512,
+  parameter integer C_XFER_SIZE_WIDTH = 32,
+  parameter integer C_ADDER_BIT_WIDTH = 32
 )
 (
   // System Signals
@@ -43,23 +45,26 @@ timeprecision 1ps;
 ///////////////////////////////////////////////////////////////////////////////
 // Local Parameters
 ///////////////////////////////////////////////////////////////////////////////
-// Large enough for interesting traffic.
-localparam integer  LP_DEFAULT_LENGTH_IN_BYTES = 16384;
-localparam integer  LP_NUM_EXAMPLES    = 1;
+localparam integer LP_DW_BYTES             = C_M_AXI_DATA_WIDTH/8;
+localparam integer LP_AXI_BURST_LEN        = 4096/LP_DW_BYTES < 256 ? 4096/LP_DW_BYTES : 256;
+localparam integer LP_LOG_BURST_LEN        = $clog2(LP_AXI_BURST_LEN);
+localparam integer LP_BRAM_DEPTH           = 512;
+localparam integer LP_RD_MAX_OUTSTANDING   = LP_BRAM_DEPTH / LP_AXI_BURST_LEN;
+localparam integer LP_WR_MAX_OUTSTANDING   = 32;
+   
+logic kernel_clk;
+logic kernel_rst;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Wires and Variables
 ///////////////////////////////////////////////////////////////////////////////
 (* KEEP = "yes" *)
 logic                                areset                         = 1'b0;
-logic                                kernel_rst                     = 1'b0;
 logic                                ap_start_r                     = 1'b0;
 logic                                ap_idle_r                      = 1'b1;
 logic                                ap_start_pulse                ;
 logic [LP_NUM_EXAMPLES-1:0]          ap_done_i                     ;
 logic [LP_NUM_EXAMPLES-1:0]          ap_done_r                      = {LP_NUM_EXAMPLES{1'b0}};
-logic [32-1:0]                       ctrl_xfer_size_in_bytes        = LP_DEFAULT_LENGTH_IN_BYTES;
-logic [32-1:0]                       ctrl_constant                  = 32'd1;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Begin RTL
@@ -104,15 +109,9 @@ always @(posedge ap_clk) begin
 end
 
 assign ap_done = &ap_done_r;
-assign kernel_rst = areset;
 
-//`define WITH_ORIGINAL_TESTBENCH
-   
-`ifndef WITH_ORIGINAL_TESTBENCH
-   always @(posedge ap_clk) begin
-      ctrl_xfer_size_in_bytes <= data_num;
-   end
-`endif
+assign kernel_clk = ap_clk;
+assign kernel_rst = areset;
 
    logic 			    wordcount_kick;
    logic 			    wordcount_busy;
@@ -169,6 +168,69 @@ assign kernel_rst = areset;
       .writer_m_axis_tdata(writer_m_axis_tdata)
       );
 
+   axonerve_wordcount_rtl_example_axi_read_master #(
+						    .C_M_AXI_ADDR_WIDTH  ( C_M00_AXI_ADDR_WIDTH    ) ,
+						    .C_M_AXI_DATA_WIDTH  ( C_M00_AXI_DATA_WIDTH    ) ,
+						    .C_XFER_SIZE_WIDTH   ( C_XFER_SIZE_WIDTH     ) ,
+						    .C_MAX_OUTSTANDING   ( LP_RD_MAX_OUTSTANDING ) ,
+						    .C_INCLUDE_DATA_FIFO ( 1                     )
+						    )
+   inst_axi_read_master (
+			 .aclk                    ( aclk                    ) ,
+			 .areset                  ( areset                  ) ,
+			 .ctrl_start              ( reader_ctrl_start       ) ,
+			 .ctrl_done               ( reader_ctrl_done        ) ,
+			 .ctrl_addr_offset        ( reader_ctrl_addr_offset ) ,
+			 .ctrl_xfer_size_in_bytes ( reader_ctrl_xfer_size_in_bytes ) ,
+			 .m_axi_arvalid           ( m00_axi_arvalid           ) ,
+			 .m_axi_arready           ( m00_axi_arready           ) ,
+			 .m_axi_araddr            ( m00_axi_araddr            ) ,
+			 .m_axi_arlen             ( m00_axi_arlen             ) ,
+			 .m_axi_rvalid            ( m00_axi_rvalid            ) ,
+			 .m_axi_rready            ( m00_axi_rready            ) ,
+			 .m_axi_rdata             ( m00_axi_rdata             ) ,
+			 .m_axi_rlast             ( m00_axi_rlast             ) ,
+			 .m_axis_aclk             ( kernel_clk                ) ,
+			 .m_axis_areset           ( kernel_rst                ) ,
+			 .m_axis_tvalid           ( reader_s_axis_tvalid      ) ,
+			 .m_axis_tready           ( reader_s_axis_tready      ) ,
+			 .m_axis_tlast            ( reader_s_axis_tlast       ) ,
+			 .m_axis_tdata            ( reader_s_axis_tdata       )
+			 );
+
+
+   axonerve_wordcount_rtl_example_axi_write_master #(
+						     .C_M_AXI_ADDR_WIDTH  ( C_M_AXI_ADDR_WIDTH    ) ,
+						     .C_M_AXI_DATA_WIDTH  ( C_M_AXI_DATA_WIDTH    ) ,
+						     .C_XFER_SIZE_WIDTH   ( C_XFER_SIZE_WIDTH     ) ,
+						     .C_MAX_OUTSTANDING   ( LP_WR_MAX_OUTSTANDING ) ,
+						     .C_INCLUDE_DATA_FIFO ( 1                     )
+						     )
+   inst_axi_write_master (
+			  .aclk                    ( aclk                    ) ,
+			  .areset                  ( areset                  ) ,
+			  .ctrl_start              ( writer_ctrl_start       ) ,
+			  .ctrl_done               ( writer_ctrl_done        ) ,
+			  .ctrl_addr_offset        ( writer_ctrl_addr_offset ) ,
+			  .ctrl_xfer_size_in_bytes ( writer_ctrl_xfer_size_in_bytes ) ,
+			  .m_axi_awvalid           ( m00_axi_awvalid         ) ,
+			  .m_axi_awready           ( m00_axi_awready         ) ,
+			  .m_axi_awaddr            ( m00_axi_awaddr          ) ,
+			  .m_axi_awlen             ( m00_axi_awlen           ) ,
+			  .m_axi_wvalid            ( m00_axi_wvalid          ) ,
+			  .m_axi_wready            ( m00_axi_wready          ) ,
+			  .m_axi_wdata             ( m00_axi_wdata           ) ,
+			  .m_axi_wstrb             ( m00_axi_wstrb           ) ,
+			  .m_axi_wlast             ( m00_axi_wlast           ) ,
+			  .m_axi_bvalid            ( m00_axi_bvalid          ) ,
+			  .m_axi_bready            ( m00_axi_bready          ) ,
+			  .s_axis_aclk             ( kernel_clk              ) ,
+			  .s_axis_areset           ( kernel_rst              ) ,
+			  .s_axis_tvalid           ( writer_m_axis_tvalid    ) ,
+			  .s_axis_tready           ( writer_m_axis_tready    ) ,
+			  .s_axis_tdata            ( writer_m_axis_tdata     )
+			  );
+   
 endmodule : axonerve_kvs_rtl_example
 `default_nettype wire
 
