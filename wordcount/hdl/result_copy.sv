@@ -48,7 +48,12 @@ module simple_result_copy(
 	     if(kick == 1) begin
 		state_counter <= state_counter + 1;
 		busy <= 1;
-		words_reg <= words;
+		if(words[2:0] == 0) begin
+		   words_reg <= words;
+		end else begin
+		   words_reg[31:3] <= words[31:3] + 1;
+		   words_reg[2:0] <= 0;
+		end
 		if(words < MAX_WORDS_NUM) begin
 		   target_words <= words;
 		end else begin

@@ -49,7 +49,7 @@ module simple_result_copy_sim();
 	20: begin
 	   kick <= 1'b1;
 	   offset <= 32'd0;
-	   words <= 32'd2048;
+	   words <= 32'd2048 + 32'd 10;
 	   memory_addr <= 64'habadcafe_deadbeef;
 	   m_axis_tready <= 1;
 	   counter <= counter + 1;
