@@ -140,7 +140,12 @@ assign kernel_clk = ap_clk;
 assign kernel_rst = areset;
 
    assign wordcount_kick = ap_start_pulse;
-   assign ap_done_i[0] = ~wordcount_busy;
+
+   logic wordcount_busy_r;
+   always @(posedge ap_clk) begin
+      wordcount_busy_r <= wordcount_busy;
+   end
+   assign ap_done_i[0] = (~wordcount_busy) & wordcount_busy_r;
 
    wordcout_top wordcount_top_i
      (
