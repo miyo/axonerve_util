@@ -22,6 +22,8 @@ module simple_result_copy(
        output logic [512-1:0] m_axis_tdata
        );
 
+   localparam MAX_WORDS_NUM = 512;
+
    logic [511:0] 	     buf_din;
    logic 		     buf_we;
    logic 		     buf_full;
@@ -38,7 +40,7 @@ module simple_result_copy(
 	 busy <= 1;
 	 state_counter <= 0;
 	 ctrl_start <= 0;
-	 buf_we <= 1;
+	 buf_we <= 0;
       end else
 
 	case(state_counter)
@@ -47,10 +49,10 @@ module simple_result_copy(
 		state_counter <= state_counter + 1;
 		busy <= 1;
 		words_reg <= words;
-		if(words < 512) begin
+		if(words < MAX_WORDS_NUM) begin
 		   target_words <= words;
 		end else begin
-		   target_words <= 512;
+		   target_words <= MAX_WORDS_NUM;
 		end
 		offset_reg <= offset;
 		addr <= offset;
@@ -67,12 +69,15 @@ module simple_result_copy(
 
 	  2: begin
 	     addr <= addr + 1;
-	     if(words_reg[2:0] == 7) begin
+	     if(word_counter[2:0] == 7) begin
 		buf_we <= 1;
+	     end else begin
+		buf_we <= 0;
 	     end
-	     buf_din <= {q, buf_din[512-1-64:64]};
+	     buf_din <= {q, buf_din[512-1:64]};
 	     if(word_counter == target_words) begin
 		state_counter <= state_counter + 1;
+		word_counter <= 0;
 	     end else begin
 		word_counter <= word_counter + 1;
 	     end
@@ -91,12 +96,13 @@ module simple_result_copy(
 	     if(ctrl_start == 0 && ctrl_done == 1) begin
 		if(words_reg - target_words == 0) begin
 		   state_counter <= 0;
+		   words_reg <= words_reg - target_words;
 		end else begin
 		   words_reg <= words_reg - target_words;
 		   addr <= offset_reg + target_words;
 		   state_counter <= 1;
-		   if(words_reg - target_words > 512) begin
-		      target_words <= 512;
+		   if(words_reg - target_words > MAX_WORDS_NUM) begin
+		      target_words <= MAX_WORDS_NUM;
 		   end else begin
 		      target_words <= words_reg - target_words;
 		   end
@@ -120,7 +126,7 @@ module simple_result_copy(
 				      .srst(reset),
 				      .din      (buf_din),
 				      .wr_en    (buf_we),
-				      .full     (buf_full),
+				      .full     (),
 				      .empty    (),
 				      .prog_full(buf_full),
 				      .rd_en    (m_axis_tready),
