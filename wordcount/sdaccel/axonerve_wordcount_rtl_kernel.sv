@@ -234,6 +234,7 @@ assign kernel_rst = areset;
 			  .s_axis_tdata            ( writer_m_axis_tdata     )
 			  );
    
-endmodule : axonerve_kvs_rtl_example
+endmodule : axonerve_wordcount_rtl_kernel
+
 `default_nettype wire
 
