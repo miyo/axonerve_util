@@ -42,7 +42,7 @@ private:
     AxonerveWordcount(std::string binaryFile);
     void reset();
     void doWordCount(std::vector<Word, aligned_allocator<Word>>& buf);
-    bool getResult(std::vector<Result, aligned_allocator<Result>>& buf);
+    void getResult(std::vector<Result, aligned_allocator<Result>>& buf);
     void clear();
     void run(int command, int size);
     ~AxonerveWordcount();
