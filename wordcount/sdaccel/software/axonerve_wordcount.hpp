@@ -10,8 +10,8 @@ struct Word{
 };
 
 struct Result{
-    unsigned int addr;
     unsigned int value;
+    unsigned int addr;
 };
 
 class AxonerveWordcount{

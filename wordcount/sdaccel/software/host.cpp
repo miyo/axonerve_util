@@ -28,9 +28,14 @@ int main(int argc, char** argv)
 
     {
         std::vector<Word, aligned_allocator<Word>> buf(32);
-        for(int i = 0; i < buf.size(); i++){
+        for(int i = 0; i < 16; i++){
             for(int j = 0; j < 16; j++){
-                buf[i].w[j] = (char)i;
+                buf[i].w[j] = 0xFE;
+            }
+        }
+        for(int i = 0; i < 16; i++){
+            for(int j = 0; j < 16; j++){
+                buf[i].w[j] = 0x55;
             }
         }
         wordcount.doWordCount(buf);
