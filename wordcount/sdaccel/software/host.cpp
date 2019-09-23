@@ -25,6 +25,24 @@ int main(int argc, char** argv)
     AxonerveWordcount wordcount(bin);
     
     wordcount.clear();
+
+    {
+        std::vector<Word, aligned_allocator<Word>> buf(32);
+        for(int i = 0; i < buf.size(); i++){
+            for(int j = 0; j < 16; j++){
+                buf[i].w[j] = 0xaa;
+            }
+        }
+        wordcount.doWordCount(buf);
+    }
+
+    {
+        std::vector<Result, aligned_allocator<Result>> buf(16);
+        wordcount.getResult(buf);
+        for(int i = 0; i < buf.size(); i++){
+            std::cout << "addr=" << buf[i].addr << ", value=" << buf[i].value << std::endl;
+        }
+    }
     
     return (num_error == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }
