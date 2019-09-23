@@ -60,11 +60,18 @@ void AxonerveWordcount::getResult(std::vector<Result, aligned_allocator<Result>>
 }
 
 void AxonerveWordcount::clear(){
+
+    // dummy
+    std::vector<int, aligned_allocator<int>> buf(512); 
+    size_t vector_size_bytes = sizeof(int)*512;
+    std::vector<cl::Memory> bufVec;
+    cl::Buffer buffer_1(*context,  CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,  vector_size_bytes, buf.data());
+
     int command = 3; // clear
     axonerve_wordcount_rtl->setArg(0, 0);
     axonerve_wordcount_rtl->setArg(1, command);
     axonerve_wordcount_rtl->setArg(2, 0); // reserved
-    axonerve_wordcount_rtl->setArg(3, 0);
+    axonerve_wordcount_rtl->setArg(3, buffer_1);
 
     q->enqueueTask(*axonerve_wordcount_rtl);
 
