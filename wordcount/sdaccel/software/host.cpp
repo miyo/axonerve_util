@@ -26,22 +26,21 @@ int main(int argc, char** argv)
     
     wordcount.clear();
 
-    {
-        std::vector<Word, aligned_allocator<Word>> buf(32);
-        for(int i = 0; i < buf.size(); i++){
-            for(int j = 0; j < 16; j++){
-                buf[i].w[j] = (unsigned char)i;
-            }
+    std::vector<Word, aligned_allocator<Word>> buf(32);
+    for(int i = 0; i < buf.size(); i++){
+        for(int j = 0; j < 16; j++){
+            buf[i].w[j] = (unsigned char)i;
         }
-        wordcount.doWordCount(buf);
     }
-
-    {
-        std::vector<Result, aligned_allocator<Result>> buf(32);
-        wordcount.getResult(buf);
-        for(int i = 0; i < buf.size(); i++){
-            std::cout << "addr=" << buf[i].addr << ", value=" << buf[i].value << std::endl;
+    wordcount.doWordCount(buf);
+    std::vector<Result, aligned_allocator<Result>> q(32);
+    wordcount.getResult(q);
+    for(int i = 0; i < q.size(); i++){
+        std::cout << "addr=" << buf[i].addr << ", value=" << buf[i].value << " : ";
+        for(int j = 0; j < 16; j++){
+            std::cout << buf[buf[i].addr].w[j];
         }
+        std::cout << std::endl;
     }
     
     return (num_error == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
