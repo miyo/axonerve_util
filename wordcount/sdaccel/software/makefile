@@ -53,7 +53,7 @@ exe: $(HOST_EXE)
 .NOTPARALLEL: clean
 
 clean:
- 	-$(RM) $(HOST_EXE) $(HOST_OBJECTS) *.so
+	-$(RM) $(HOST_EXE) $(HOST_OBJECTS) *.so
 # 	-$(RM) $(BINARY_CONTAINERS) $(ALL_KERNEL_OBJS) $(ALL_MESSAGE_FILES)  $(HOST_EXE) $(HOST_OBJECTS)
 # 	-$(RM) *.xclbin.sh
 # 	-$(RMDIR) $(BUILD_SUBDIRS)
