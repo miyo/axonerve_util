@@ -37,7 +37,7 @@ int main(int argc, char** argv)
     }
 
     {
-        std::vector<Result, aligned_allocator<Result>> buf(16);
+        std::vector<Result, aligned_allocator<Result>> buf(32);
         wordcount.getResult(buf);
         for(int i = 0; i < buf.size(); i++){
             std::cout << "addr=" << buf[i].addr << ", value=" << buf[i].value << std::endl;
