@@ -66,13 +66,15 @@ module search_and_add_ctrl
    assign busy = busy_reg;
 
    logic [31:0] 	 read_rest_bytes;
-
+   logic 		 conv_buf_reset;
+  
    always_ff @(posedge clk) begin
       if(reset == 1) begin
 	 state_counter <= 0;
 	 busy_reg <= 0;
 	 search_and_add_kick <= 0;
 	 ctrl_start_reg <= 0;
+	 conv_buf_reset <= 1;
       end else begin
 
 	 case(state_counter)
@@ -91,6 +93,7 @@ module search_and_add_ctrl
 	      search_and_add_kick <= 0;
 	      input_counter <= 0;
 	      read_rest_bytes <= 0;
+	      conv_buf_reset <= 0;
 	   end
 
 	   1: begin // kick axi_reader
@@ -98,8 +101,8 @@ module search_and_add_ctrl
 	      if(num_of_words_reg > 0) begin
 		 
 		 if(read_rest_bytes == 0) begin // should read next data from AXI
-		    ctrl_xfer_size_in_bytes_reg <= READ_PAGESIZE; // pagesize = 4KB
 		    ctrl_start_reg <= 1;
+		    ctrl_xfer_size_in_bytes_reg <= READ_PAGESIZE; // pagesize = 4KB
 		    ctrl_addr_offset_reg <= memory_offset_reg;
 		    memory_offset_reg <= memory_offset_reg + READ_PAGESIZE;
 		    read_rest_bytes <= READ_PAGESIZE;
@@ -120,23 +123,25 @@ module search_and_add_ctrl
 	      end else begin
 		 ctrl_start_reg <= 0;
 		 state_counter <= 0; // wait for next request
+		 conv_buf_reset <= 1; // reset before wating for next request
 	      end
 	   end // case: 1
 	   
 	   2: begin // read data from FIFO
 	      ctrl_start_reg <= 0; // de-assert ctrl_start
-	      if(target_words == 0) begin
-		 state_counter <= 6;
-		 search_and_add_we <= 0;
-	      end else if(conv_buf_valid == 1) begin
+	      if(conv_buf_valid == 1) begin
+		 read_rest_bytes <= read_rest_bytes - 64; // consumed 64bytes(=512bit)
 		 conv_buf_reg <= conv_buf_dout[511:128];
 		 search_and_add_din <= {data_counter, conv_buf_dout[127:0]};
 		 search_and_add_we <= 1;
 		 input_counter <= input_counter + 1;
 		 data_counter <= data_counter + 1;
-		 state_counter <= state_counter + 1;
 		 target_words <= target_words - 1;
-		 read_rest_bytes <= read_rest_bytes - 64; // consumed 64bytes(=512bit)
+		 if(target_words == 1) begin
+		    state_counter <= 6;
+		 end else begin
+		    state_counter <= state_counter + 1;
+		 end
 	      end else begin
 		 search_and_add_we <= 0;
 	      end
@@ -144,47 +149,47 @@ module search_and_add_ctrl
 	   end // case: 2
 	   
 	   3:begin
-	      if(target_words == 0) begin
+	      conv_buf_reg <= {128'd0, conv_buf_reg[383:128]};
+	      search_and_add_din <= {data_counter, conv_buf_reg[127:0]};
+	      search_and_add_we <= 1;
+	      input_counter <= input_counter + 1;
+	      data_counter <= data_counter + 1;
+	      state_counter <= state_counter + 1;
+	      target_words <= target_words - 1;
+	      if(target_words == 1) begin
 		 state_counter <= 6;
-		 search_and_add_we <= 0;
 	      end else begin
-		 conv_buf_reg <= {128'd0, conv_buf_reg[383:128]};
-		 search_and_add_din <= {data_counter, conv_buf_reg[127:0]};
-		 search_and_add_we <= 1;
-		 input_counter <= input_counter + 1;
-		 data_counter <= data_counter + 1;
 		 state_counter <= state_counter + 1;
-		 target_words <= target_words - 1;
 	      end
 	   end
 	   
 	   4:begin
-	      if(target_words == 0) begin
+	      conv_buf_reg <= {128'd0, conv_buf_reg[383:128]};
+	      search_and_add_din <= {data_counter, conv_buf_reg[127:0]};
+	      search_and_add_we <= 1;
+	      input_counter <= input_counter + 1;
+	      data_counter <= data_counter + 1;
+	      state_counter <= state_counter + 1;
+	      target_words <= target_words - 1;
+	      if(target_words == 1) begin
 		 state_counter <= 6;
-		 search_and_add_we <= 0;
 	      end else begin
-		 conv_buf_reg <= {128'd0, conv_buf_reg[383:128]};
-		 search_and_add_din <= {data_counter, conv_buf_reg[127:0]};
-		 search_and_add_we <= 1;
-		 input_counter <= input_counter + 1;
-		 data_counter <= data_counter + 1;
 		 state_counter <= state_counter + 1;
-		 target_words <= target_words - 1;
 	      end
 	   end
 	   
 	   5:begin
-	      if(target_words == 0) begin
+	      conv_buf_reg <= {128'd0, conv_buf_reg[383:128]};
+	      search_and_add_din <= {data_counter, conv_buf_reg[127:0]};
+	      search_and_add_we <= 1;
+	      input_counter <= input_counter + 1;
+	      data_counter <= data_counter + 1;
+	      state_counter <= 2;
+	      target_words <= target_words - 1;
+	      if(target_words == 1) begin
 		 state_counter <= 6;
-		 search_and_add_we <= 0;
 	      end else begin
-		 conv_buf_reg <= {128'd0, conv_buf_reg[383:128]};
-		 search_and_add_din <= {data_counter, conv_buf_reg[127:0]};
-		 search_and_add_we <= 1;
-		 input_counter <= input_counter + 1;
-		 data_counter <= data_counter + 1;
 		 state_counter <= 2;
-		 target_words <= target_words - 1;
 	      end
 	   end
 	   
@@ -205,6 +210,7 @@ module search_and_add_ctrl
 
 	   default: begin
 	      state_counter <= 0;
+	      conv_buf_reset <= 1; // reset before wating for next request
 	   end
 	   
 	 endcase
@@ -214,7 +220,7 @@ module search_and_add_ctrl
    
    fifo_512_512_ft conv_buf
      (.clk(clk),
-      .srst(reset),
+      .srst(conv_buf_reset),
       .din(m_axis_tdata),
       .wr_en(m_axis_tvalid),
       .full(),
