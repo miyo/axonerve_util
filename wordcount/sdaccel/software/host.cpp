@@ -38,7 +38,7 @@ int main(int argc, char** argv)
     for(int i = 0; i < q.size(); i++){
         std::cout << "addr=" << q[i].addr << ", value=" << q[i].value << " : ";
         for(int j = 0; j < 16; j++){
-            std::cout << buf[q[i].addr].w[j];
+            std::cout << std::setw(2) << std::setfill('0') << std::hex << (int)(buf[q[i].addr].w[j]);
         }
         std::cout << std::endl;
     }
