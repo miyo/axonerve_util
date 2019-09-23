@@ -2,7 +2,8 @@
 
 module search_and_add_ctrl
   #(
-    parameter integer MAX_WORDS = 16
+    parameter integer MAX_WORDS = 16,
+    parameter integer READ_PAGESIZE = 4096
     )
    (
     input wire 		 clk,
@@ -18,7 +19,7 @@ module search_and_add_ctrl
     output wire 	 ctrl_start,
     input wire 		 ctrl_done,
     output wire [64-1:0] ctrl_addr_offset,
-    output wire [64-1:0] ctrl_xfer_size_in_bytes,
+    output wire [32-1:0] ctrl_xfer_size_in_bytes,
     input wire 		 m_axis_tvalid,
     output wire 	 m_axis_tready,
     input wire [512-1:0] m_axis_tdata,
@@ -32,7 +33,7 @@ module search_and_add_ctrl
    
    logic 		 ctrl_start_reg;
    logic [64-1:0] 	 ctrl_addr_offset_reg;
-   logic [512-1:0] 	 ctrl_xfer_size_in_bytes_reg;
+   logic [32-1:0] 	 ctrl_xfer_size_in_bytes_reg;
 
    assign ctrl_start = ctrl_start_reg;
    assign ctrl_addr_offset = ctrl_addr_offset_reg;
@@ -64,6 +65,8 @@ module search_and_add_ctrl
    
    assign busy = busy_reg;
 
+   logic [31:0] 	 read_rest_bytes;
+
    always_ff @(posedge clk) begin
       if(reset == 1) begin
 	 state_counter <= 0;
@@ -87,16 +90,25 @@ module search_and_add_ctrl
 	      search_and_add_we <= 0;
 	      search_and_add_kick <= 0;
 	      input_counter <= 0;
+	      read_rest_bytes <= 0;
 	   end
 
-	   1: begin
+	   1: begin // kick axi_reader
 	      search_and_add_we <= 0;
 	      if(num_of_words_reg > 0) begin
-		 ctrl_xfer_size_in_bytes_reg <= 256;
-		 ctrl_start_reg <= 1;
-		 ctrl_addr_offset_reg <= memory_offset_reg;
-		 memory_offset_reg <= memory_offset_reg + 256;
+		 
+		 if(read_rest_bytes == 0) begin // should read next data from AXI
+		    ctrl_xfer_size_in_bytes_reg <= READ_PAGESIZE; // pagesize = 4KB
+		    ctrl_start_reg <= 1;
+		    ctrl_addr_offset_reg <= memory_offset_reg;
+		    memory_offset_reg <= memory_offset_reg + READ_PAGESIZE;
+		    read_rest_bytes <= READ_PAGESIZE;
+		 end else begin // fifo has data
+		    // nothing to do
+		 end
+		 
 		 state_counter <= state_counter + 1;
+		 
 		 if(num_of_words_reg > MAX_WORDS) begin
 		    target_words <= MAX_WORDS;
 		    num_of_words_reg <= num_of_words_reg - MAX_WORDS;
@@ -104,13 +116,14 @@ module search_and_add_ctrl
 		    target_words <= num_of_words_reg;
 		    num_of_words_reg <= 0;
 		 end
+		 
 	      end else begin
 		 ctrl_start_reg <= 0;
 		 state_counter <= 0; // wait for next request
 	      end
 	   end // case: 1
 	   
-	   2: begin
+	   2: begin // read data from FIFO
 	      ctrl_start_reg <= 0; // de-assert ctrl_start
 	      if(target_words == 0) begin
 		 state_counter <= 6;
@@ -123,6 +136,7 @@ module search_and_add_ctrl
 		 data_counter <= data_counter + 1;
 		 state_counter <= state_counter + 1;
 		 target_words <= target_words - 1;
+		 read_rest_bytes <= read_rest_bytes - 64; // consumed 64bytes(=512bit)
 	      end else begin
 		 search_and_add_we <= 0;
 	      end

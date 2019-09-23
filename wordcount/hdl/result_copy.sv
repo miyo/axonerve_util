@@ -35,6 +35,8 @@ module simple_result_copy(
 
    logic [31:0] 	     target_words;
 
+   logic [64-1:0] 	     memory_addr_reg;
+
    always_ff @(posedge clk) begin
       if(reset == 1) begin
 	 busy <= 1;
@@ -55,10 +57,16 @@ module simple_result_copy(
 		   words_reg[2:0] <= 0;
 		end
 		if(words < MAX_WORDS_NUM) begin
-		   target_words <= words;
+		   if(words[2:0] == 0) begin
+		      target_words <= words;
+		   end else begin
+		      target_words[31:3] <= words[31:3] + 1;
+		      target_words[2:0] <= 0;
+		   end
 		end else begin
 		   target_words <= MAX_WORDS_NUM;
 		end
+		memory_addr_reg <= memory_addr;
 		offset_reg <= offset;
 		addr <= offset;
 		word_counter <= 0;
@@ -80,7 +88,7 @@ module simple_result_copy(
 		buf_we <= 0;
 	     end
 	     buf_din <= {q, buf_din[512-1:64]};
-	     if(word_counter == target_words) begin
+	     if(word_counter + 1 == target_words) begin
 		state_counter <= state_counter + 1;
 		word_counter <= 0;
 	     end else begin
@@ -91,8 +99,9 @@ module simple_result_copy(
 	  3: begin
 	     buf_we <= 0;
 	     ctrl_start <= 1;
-	     ctrl_addr_offset <= memory_addr;
-	     ctrl_xfer_size_in_bytes <= {words_reg[32-1-3:0], 3'b000}; // words_reg * 8 bytes
+	     ctrl_addr_offset <= memory_addr_reg;
+	     memory_addr_reg <= memory_addr_reg + {target_words[32-1-3:0], 3'b000};
+	     ctrl_xfer_size_in_bytes <= {target_words[32-1-3:0], 3'b000}; // words_reg * 8 bytes
 	     state_counter <= state_counter + 1;
 	  end
 
@@ -101,7 +110,7 @@ module simple_result_copy(
 	     if(ctrl_start == 0 && ctrl_done == 1) begin
 		if(words_reg - target_words == 0) begin
 		   state_counter <= 0;
-		   words_reg <= words_reg - target_words;
+		   words_reg <= 0;
 		end else begin
 		   words_reg <= words_reg - target_words;
 		   addr <= offset_reg + target_words;
