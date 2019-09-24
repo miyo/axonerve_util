@@ -1,0 +1,13 @@
+@import services._
+@(loginUserForm : Form[UserData])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@import helper._
+@main("サンプル"){
+    <font size=5>■ログイン画面</font><br/>
+    @helper.form( action = helper.CSRF(routes.LoginController.loginSubmit) ){
+        <fieldset>
+          @helper.inputText(loginUserForm("userid") , '_label -> "ログインID")
+          @helper.inputPassword(loginUserForm("userpw") , '_label -> "パスワード")
+        </fieldset>
+        <input type="submit" value="ログイン">
+    }
+}

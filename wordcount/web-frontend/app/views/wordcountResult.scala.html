@@ -1,0 +1,13 @@
+@(mesg1: String, mesg2: Array[WordCountResult], mesg3: Long)
+<html>
+<head><title>Result of Wordcount</title></head>
+<body>
+Result of Wordcount in <b>@mesg1</b><br>
+Elapsed time(count): <b>@mesg3</b> ms<br>
+<ul>
+    @for(obj <- mesg2) {
+    <li><b>@obj.word</b> = @obj.count</li>
+    }
+</ul>
+</body>
+</html>

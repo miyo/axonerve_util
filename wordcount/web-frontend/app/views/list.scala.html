@@ -1,0 +1,23 @@
+@import services._
+
+@(message: String, items: Seq[Todo])
+
+<html>
+<head>
+<title>Todo</title>
+</head>
+<body>
+@message
+<section>
+<table>
+<thread><tr><th>名前</th></tr></thead>
+<tbody>
+@items.map { todo =>
+<tr><td>@todo.name</td></tr>
+}
+</tbody>
+</table>
+<a href="/todo/new">登録画面</a>
+</section>
+</body>
+</html>

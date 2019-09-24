@@ -1,0 +1,16 @@
+@import helper.CSRF
+
+@main("wordcount") {
+Wordcount
+
+
+@helper.form(action = routes.WordCountController.upload, 'enctype -> "multipart/form-data") {
+    
+    <input type="file" name="file">
+    <p>
+        <input type="submit">
+    </p>
+    
+}
+
+}
