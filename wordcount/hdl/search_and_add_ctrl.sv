@@ -120,11 +120,11 @@ module search_and_add_ctrl
 		    num_of_words_reg <= 0;
 		 end
 		 
-	      end else begin
+	      end else begin // if (num_of_words_reg > 0)
 		 ctrl_start_reg <= 0;
 		 state_counter <= 0; // wait for next request
 		 conv_buf_reset <= 1; // reset before wating for next request
-	      end
+	      end // else: !if(num_of_words_reg > 0)
 	   end // case: 1
 	   
 	   2: begin // read data from FIFO
@@ -218,11 +218,13 @@ module search_and_add_ctrl
       end
    end
    
+   assign conv_buf_rd = (conv_buf_valid == 1 && state_counter == 2) ? 1 : 0;
+   assign m_axis_tready = ~conv_buf_full;
    fifo_512_512_ft conv_buf
      (.clk(clk),
       .srst(conv_buf_reset),
       .din(m_axis_tdata),
-      .wr_en(m_axis_tvalid),
+      .wr_en(m_axis_tvalid && m_axis_tready),
       .full(),
       .empty(),
       .prog_full(conv_buf_full),
@@ -232,8 +234,6 @@ module search_and_add_ctrl
       .wr_rst_busy(),
       .rd_rst_busy()
       );
-   assign conv_buf_rd = (conv_buf_valid == 1 && state_counter == 2) ? 1 : 0;
-   assign m_axis_tready = ~conv_buf_full;
 
    logic ready;
    assign axonerve_ready = ready;
