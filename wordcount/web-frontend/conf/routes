@@ -9,6 +9,7 @@ GET     /sample                     controllers.HomeController.index
 GET     /my-hello                   controllers.MyHello.hello
 GET     /todo                       controllers.TodoController.list
 GET     /wordcount                  controllers.WordCountController.index
+GET     /jni-test                   controllers.MyHello.jni_test
 
 GET     /login controllers.LoginController.loginInit
 POST    /login controllers.LoginController.loginSubmit

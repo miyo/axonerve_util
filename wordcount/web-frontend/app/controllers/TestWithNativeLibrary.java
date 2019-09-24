@@ -1,5 +1,12 @@
 package controllers;
 
+
+class NativeLibraryLoader {
+    public static void loadNativeLibrary() {
+        System.loadLibrary("test_with_native_library_jni");
+    }
+}
+
 public class TestWithNativeLibrary {
 
     private long ptr = 0;
@@ -7,6 +14,13 @@ public class TestWithNativeLibrary {
     private native void init(String bin);
     public native void add_vec(int[] x, int[] y, int[] z);
     public native void clear();
+
+    static {
+        try {
+            NativeLibraryLoader.loadNativeLibrary();
+        }catch(java.lang.UnsatisfiedLinkError e){
+        }
+    }
 
     public TestWithNativeLibrary(String bin){
         init(bin);
@@ -35,7 +49,5 @@ public class TestWithNativeLibrary {
             System.out.println("z[" + i + "] : " + z[i]);
         }
     }
-
-
 
 }
