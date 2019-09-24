@@ -19,18 +19,19 @@ public class TestWithNativeLibrary {
     public static void main(String... args){
         TestWithNativeLibrary obj = new TestWithNativeLibrary(args[0]);
         obj.clear();
-        int[] x = new int[1024];
-        int[] y = new int[1024];
-        int[] z = new int[1024];
-        for(int i = 0; i < 1024; i++){
+        int len = 128;
+        int[] x = new int[len];
+        int[] y = new int[len];
+        int[] z = new int[len];
+        for(int i = 0; i < len; i++){
             x[i] = i;
             y[i] = i;
         }
-        for(int i = 0; i < 1024; i++){
+        for(int i = 0; i < len; i++){
             System.out.println("z[" + i + "] : " + z[i]);
         }
         obj.add_vec(x, y, z);
-        for(int i = 0; i < 1024; i++){
+        for(int i = 0; i < len; i++){
             System.out.println("z[" + i + "] : " + z[i]);
         }
     }
