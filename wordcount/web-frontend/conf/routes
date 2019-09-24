@@ -4,7 +4,8 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
+GET     /                           controllers.WordCountController.index
+GET     /sample                     controllers.HomeController.index
 GET     /my-hello                   controllers.MyHello.hello
 GET     /todo                       controllers.TodoController.list
 GET     /wordcount                  controllers.WordCountController.index
