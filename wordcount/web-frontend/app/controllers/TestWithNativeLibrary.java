@@ -16,10 +16,7 @@ public class TestWithNativeLibrary {
     public native void clear();
 
     static {
-        try {
-            NativeLibraryLoader.loadNativeLibrary();
-        }catch(java.lang.UnsatisfiedLinkError e){
-        }
+        NativeLibraryLoader.loadNativeLibrary();
     }
 
     public TestWithNativeLibrary(String bin){
