@@ -1,6 +1,8 @@
 #include "AxonerveWordcount.h"
 #include "axonerve_wordcount.hpp"
 
+#include <iostream>
+
 using namespace Axonerve;
 
 inline AxonerveWordcount* instance(JNIEnv *env, jobject obj){
@@ -38,8 +40,7 @@ JNIEXPORT void JNICALL Java_AxonerveWordcount_doWordCount(JNIEnv *env, jobject o
     std::vector<Word, aligned_allocator<Word>> buf(wlen);
     for(unsigned int i = 0; i < wlen; i++){
         for(int j = 0; j < 16; j++){
-            buf[i].w[j] = *w;
-            w++;
+            buf[i].w[j] = w[16*i+j];
         }
     }
     wordcount->doWordCount(buf);

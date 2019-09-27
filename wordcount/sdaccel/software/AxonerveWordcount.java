@@ -21,7 +21,7 @@ public class AxonerveWordcount{
 	public static void main(String... args){
 		AxonerveWordcount wordcount = new AxonerveWordcount(args[0]);
 		wordcount.clear();
-		int num = 16;
+		int num = 1024;
 		char[] words = new char[num*16];
 		for(int i = 0; i < num; i++){
 			words[i*16 + 0] = 'a';
@@ -33,7 +33,12 @@ public class AxonerveWordcount{
 		int[] values = new int[num];
 		wordcount.getResult(addrs, values);
 		for(int i = 0; i < num; i++){
-			System.out.printf("values=%08x, addr=%08x\n", addrs[i], values[i]);
+			System.out.printf("addr=%08x, value=%08x : ", addrs[i], values[i]);
+			int a = addrs[i];
+			for(int j = 0; j < 16; j++){
+				System.out.printf("%02x", (int)words[16*a+j]);
+			}
+			System.out.println();
 		}
 	}
 
