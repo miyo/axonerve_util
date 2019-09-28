@@ -34,10 +34,10 @@ JNIEXPORT void JNICALL Java_AxonerveWordcount_reset
 /*
  * Class:     AxonerveWordcount
  * Method:    doWordCount
- * Signature: ([C)V
+ * Signature: ([B)V
  */
 JNIEXPORT void JNICALL Java_AxonerveWordcount_doWordCount
-  (JNIEnv *, jobject, jcharArray);
+  (JNIEnv *, jobject, jbyteArray);
 
 /*
  * Class:     AxonerveWordcount

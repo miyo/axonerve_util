@@ -33,9 +33,9 @@ JNIEXPORT void JNICALL Java_AxonerveWordcount_reset(JNIEnv *env , jobject obj){
     wordcount->reset();
 }
 
-JNIEXPORT void JNICALL Java_AxonerveWordcount_doWordCount(JNIEnv *env, jobject obj, jcharArray words){
+JNIEXPORT void JNICALL Java_AxonerveWordcount_doWordCount(JNIEnv *env, jobject obj, jbyteArray words){
     int wlen = env->GetArrayLength(words) / 16;
-    jchar *w = env->GetCharArrayElements(words, nullptr);
+    jbyte *w = env->GetByteArrayElements(words, nullptr);
     AxonerveWordcount *wordcount = instance(env, obj);
     std::vector<Word, aligned_allocator<Word>> buf(wlen);
     for(unsigned int i = 0; i < wlen; i++){
@@ -44,7 +44,7 @@ JNIEXPORT void JNICALL Java_AxonerveWordcount_doWordCount(JNIEnv *env, jobject o
         }
     }
     wordcount->doWordCount(buf);
-    env->ReleaseCharArrayElements(words, w, 0);
+    env->ReleaseByteArrayElements(words, w, 0);
     return;
 }
 

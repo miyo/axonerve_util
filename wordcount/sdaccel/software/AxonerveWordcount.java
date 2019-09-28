@@ -6,13 +6,28 @@ public class AxonerveWordcount{
     public native void close();
     public native void reset();
 	
-    public native void doWordCount(char[] words);
+    public native void doWordCount(byte[] words);
     public native void getResult(int[] addr, int[] value);
     public native void clear();
 
     public AxonerveWordcount(String bin){
         init(bin);
     }
+
+	public void packWords(String s, int offset, byte[] words){
+		if(offset + 16 >= words.length){
+			return;
+		}
+		byte[] b = s.getBytes();
+		int base = offset * 16;
+		for(int i = 0; i < 16; i++){
+			if(i < b.length){
+				words[base + i] = b[i];
+			}else{
+				words[base + i] = (byte)0;
+			}
+		}
+	}
 
     static {
         System.loadLibrary("axonerve_wordcount_jni");
@@ -22,12 +37,12 @@ public class AxonerveWordcount{
 		AxonerveWordcount wordcount = new AxonerveWordcount(args[0]);
 		wordcount.clear();
 		int num = 1024;
-		char[] words = new char[num*16];
+		byte[] words = new byte[num*16];
 		for(int i = 0; i < num; i++){
-			words[i*16 + 0] = 'a';
+			wordcount.packWords("a", i, words);
 		}
-		words[2*16 + 0] = 'i'; words[2*16 + 1] = 's';
-		words[3*16 + 0] = 'i'; words[3*16 + 1] = 's';
+		wordcount.packWords("is", 2, words);
+		wordcount.packWords("is", 3, words);
 		wordcount.doWordCount(words);
 		int[] addrs = new int[num];
 		int[] values = new int[num];
