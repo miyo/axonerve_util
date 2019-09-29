@@ -11,8 +11,16 @@ The below figure is the block diagram of this example.
 
 ## Getting started
 
-### Start AWS-F1 instance
+### Start AWS-F1 instance and setup environment.
 In the firewall settings, in-bound from 9000 port should be opned.
+To use this example, Java and SBT are required. please install them as the followings.
+```
+sudo yum install java-11-openjdk-deve
+wget https://sbt-downloads.cdnedge.bluemix.net/releases/v1.3.2/sbt-1.3.2.zip
+unzip sbt-1.3.2.zip
+sudo mv sbt /usr/local/
+sudo ln -s /usr/local/sbt/bin/sbt /usr/local/bin/
+```
 
 ### Clone this repositry and move the working directory
 
@@ -43,6 +51,7 @@ source $AWS_FPGA_REPO_DIR/sdaccel_setup.sh
 make libaxonerve_wordcount.so
 javac AxonerveWordcount.java
 sudo -s
+source $AWS_FPGA_REPO_DIR/sdaccel_setup.sh 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:.
 java -Djava.library.path=. AxonerveWordcount ../bin/binary_container_1.awsxclbin
 ```
@@ -52,9 +61,12 @@ java -Djava.library.path=. AxonerveWordcount ../bin/binary_container_1.awsxclbin
 ```
 cd $(ROOTDIR)/web-frontend
 source $AWS_FPGA_REPO_DIR/sdaccel_setup.sh 
-sbt compile
 sudo -s
+source $AWS_FPGA_REPO_DIR/sdaccel_setup.sh 
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./native/
+/usr/local/bin/sbt run
 ```
+Access the AWS-F1 by using Web browser.
 
 
 ## Example
