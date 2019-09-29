@@ -18,8 +18,14 @@ public class WordCountLogic {
     private String textData;
     private String[] words;
 
+    AxonerveWordcount hw;
+
     WordCountLogic(){
         init();
+		System.out.println("load FPGA");
+		String bin = "/home/centos/axonerve_util/wordcount/sdaccel/bin/binary_container_1.awsxclbin";
+		hw = new AxonerveWordcount(bin);
+		System.out.println("load FPGA...done");
     }
 
     public void init(){
@@ -57,6 +63,15 @@ public class WordCountLogic {
             }
         }
     }
+
+	public void doWithFPGA(){
+		byte[] w = new byte[words.length*16];
+		for(int i = 0; i < words.length; i++){
+			hw.packWords(words[i], i, w);
+		}
+		hw.clear();
+		hw.doWordCount(w);
+	}
 
     public void sort(){
         uniqWords.sort(new CountComparator(tbl));

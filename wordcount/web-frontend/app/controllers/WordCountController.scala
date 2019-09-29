@@ -37,9 +37,12 @@ class WordCountController @Inject()(mcc: MessagesControllerComponents)
       val end = System.currentTimeMillis()
       obj.sort();
       val result = obj.getResult();
+      val hw_start = System.currentTimeMillis()
+      obj.doWithFPGA();
+      val hw_end = System.currentTimeMillis()
 
       //Ok("File uploaded, " + s"$filename" + ", " + s"$contentType" + "<br>" + content)
-      Ok(views.html.wordcountResult(filename, result, (end-start)))
+      Ok(views.html.wordcountResult(filename, result, (end-start), (hw_end-hw_start)))
     }.getOrElse {
       Redirect(routes.WordCountController.index).flashing(
         "error" -> "Missing file")

@@ -95,7 +95,7 @@ libaxonerve_wordcount.so: ./axonerve_wordcount.o ./xcl2.o
 #	javac AxonerveWordcount.java -h .
 
 
-axonerve_wordcount_jni.o: ./axonerve_wordcount_jni.cpp ./AxonerveWordcount.h ./axonerve_wordcount.hpp
+axonerve_wordcount_jni.o: ./axonerve_wordcount_jni.cpp ./controllers_AxonerveWordcount.h ./axonerve_wordcount.hpp
 	@mkdir -p $(@D)
 	$(SDX_CXX) $(CXXFLAGS) -fPIC -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 $(XILINX_INCLUDE) $(JNI_INCLUDE) -O2 -Wall -c -fmessage-length=0 -o "$@" "$<"
 
