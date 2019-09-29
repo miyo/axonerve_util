@@ -8,7 +8,7 @@ This example includes the followings;
 - using PlayFramework to implemnet user-intefarce for FPGA.
 
 The below figure is the block diagram of this example.
-![blockdiagram](https://github.com/miyo/axonerve_util/raw/master/wordcount/figs/blockdiagram.png)
+![blockdiagram](https://github.com/miyo/axonerve_util/raw/master/wordcount/figs/block_diagram.png)
 
 ## Getting started
 
