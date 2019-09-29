@@ -8,6 +8,7 @@ This example includes the followings;
 - using PlayFramework to implemnet user-intefarce for FPGA.
 
 The below figure is the block diagram of this example.
+![blockdiagram](https://github.com/miyo/axonerve_util/raw/master/wordcount/figs/blockdiagram.png)
 
 ## Getting started
 
@@ -68,6 +69,6 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./native/
 ```
 Access the AWS-F1 by using Web browser.
 
-![overview](https://github.com/miyo/axonerve_util/raw/master/wordcount/figs/frontpage.png)
-![overview](https://github.com/miyo/axonerve_util/raw/master/wordcount/figs/result.png)
+![frontpage](https://github.com/miyo/axonerve_util/raw/master/wordcount/figs/frontpage.png)
+![result](https://github.com/miyo/axonerve_util/raw/master/wordcount/figs/result.png)
 (cf. pg35990.txt is in http://www.gutenberg.org/cache/epub/35990/pg35990.txt)
