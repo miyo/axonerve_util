@@ -68,6 +68,6 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./native/
 ```
 Access the AWS-F1 by using Web browser.
 
-
-## Example
- % wget http://www.gutenberg.org/cache/epub/35990/pg35990.txt
+![overview](https://github.com/miyo/axonerve_util/raw/master/wordcount/figs/frontpage.png)
+![overview](https://github.com/miyo/axonerve_util/raw/master/wordcount/figs/reuslt.png)
+(cf. wget http://www.gutenberg.org/cache/epub/35990/pg35990.txt)
