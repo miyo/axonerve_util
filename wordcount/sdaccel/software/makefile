@@ -79,11 +79,14 @@ nothing:
 # host rules
 #
 
+XILINX_INCLUDE = -I/opt/Xilinx/SDx/2018.3.op2405991/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.3.op2405991/include/
+JNI_INCLUDE = -I/usr/lib/jvm/java-8-openjdk-amd64/include/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/linux/ -I/usr/lib/jvm/java-11-openjdk-11.0.4.11-1.el7_7.x86_64/include/ -I/usr/lib/jvm/java-11-openjdk-11.0.4.11-1.el7_7.x86_64/include/linux/
+
 host.exe: libaxonerve_wordcount.so host.o
 	g++ host.o -o host -L. -laxonerve_wordcount -lxilinxopencl -lpthread -lrt -lstdc++ -L/opt/Xilinx/SDx/2018.3.op2405991/runtime/lib/x86_64 -L/opt/xilinx/xrt/lib/
 
 libaxonerve_wordcount_jni.so: ./axonerve_wordcount.o ./xcl2.o ./axonerve_wordcount_jni.o 
-	$(SDX_CXX) $(CXXFLAGS) -shared -fPIC -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.3.op2405991/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.3.op2405991/include/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/linux/ -O2 -Wall -fmessage-length=0 -o "$@" -Wl,-soname,libaxonerve_wordcount_jni.so axonerve_wordcount_jni.o xcl2.o axonerve_wordcount.o -lxilinxopencl -lpthread -lrt -lstdc++ -L/opt/Xilinx/SDx/2018.3.op2405991/runtime/lib/x86_64 -L/opt/xilinx/xrt/lib/
+	$(SDX_CXX) $(CXXFLAGS) -shared -fPIC -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 $(XILINX_INCLUDE) $(JNI_INCLUDE) -O2 -Wall -fmessage-length=0 -o "$@" -Wl,-soname,libaxonerve_wordcount_jni.so axonerve_wordcount_jni.o xcl2.o axonerve_wordcount.o -lxilinxopencl -lpthread -lrt -lstdc++ -L/opt/Xilinx/SDx/2018.3.op2405991/runtime/lib/x86_64 -L/opt/xilinx/xrt/lib/
 
 libaxonerve_wordcount.so: ./axonerve_wordcount.o ./xcl2.o
 	$(SDX_CXX) $(CXXFLAGS) -shared -fPIC -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.3.op2405991/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.3.op2405991/include/ -O2 -Wall -fmessage-length=0 -o "$@" -Wl,-soname,libaxonerve_wordcount.so axonerve_wordcount.o xcl2.o
@@ -94,7 +97,7 @@ libaxonerve_wordcount.so: ./axonerve_wordcount.o ./xcl2.o
 
 axonerve_wordcount_jni.o: ./axonerve_wordcount_jni.cpp ./AxonerveWordcount.h ./axonerve_wordcount.hpp
 	@mkdir -p $(@D)
-	$(SDX_CXX) $(CXXFLAGS) -fPIC -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 -I/opt/Xilinx/SDx/2018.3.op2405991/runtime/include/1_2/ -I/opt/Xilinx/Vivado/2018.3.op2405991/include/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/linux/ -I/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.222.b10-1.el7_7.x86_64/include/ -I/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.222.b10-1.el7_7.x86_64/include/linux/ -O2 -Wall -c -fmessage-length=0 -o "$@" "$<"
+	$(SDX_CXX) $(CXXFLAGS) -fPIC -DSDX_PLATFORM=$(SDX_PLATFORM) -D__USE_XOPEN2K8 $(XILINX_INCLUDE) $(JNI_INCLUDE) -O2 -Wall -c -fmessage-length=0 -o "$@" "$<"
 
 axonerve_wordcount.o: ./axonerve_wordcount.cpp ./axonerve_wordcount.hpp
 	@mkdir -p $(@D)
